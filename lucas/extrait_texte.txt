@@ -1,0 +1,461 @@
+       Hybrid Headlines: Combining Topics and Sentence Compression
+
+     David Zajic, Bonnie Dorr, Stacy President         Richard Schwartz
+         Department of Computer Science                BBN Technologies
+              University of Maryland           9861 Broken Land Parkway, Suite 156
+             College Park, MD 20742                   Columbia, MD 21046
+     dmzajic,bonnie @umiacs.umd.edu
+                                                    schwartz@bbn.com
+            stacypre@cs.umd.edu
+
+
+
+
+                     Abstract                             sets of topics with specific documents. The top-
+                                                          ics and sentence compressions are combined in a
+     This paper presents Topiary, a headline-             manner that preserves the advantages of each ap-
+     generation system that creates very                  proach: the fluency and event-oriented informa-
+     short, informative summaries for news                tion from the lead sentence with the broader cov-
+     stories by combining sentence compres-               erage of the topic models.
+     sion and unsupervised topic discovery.                  The next section presents previous work in the
+     We will show that the combination of                 area of automatic summarization. Following this
+     linguistically motivated sentence com-               we describe Hedge Trimmer and Unsupervised
+     pression with statistically selected topic           Topic Discovery in more detail, and describe the
+     terms performs better than either alone,             algorithm for combining sentence compression
+     according to some automatic summary                  with topics. Next we show that Topiary scores
+     evaluation measures. In addition we de-              higher than either Hedge Trimmer or Unsuper-
+     scribe experimental results establishing             vised Topic Discovery alone according to certain
+     an appropriate extrinsic task on which to            automatic evaluation tools for summarization. Fi-
+     measure the effect of summarization on               nally we propose event tracking as an extrinsic
+     human performance. We demonstrate                    task using automatic summarization for measur-
+     the usefulness of headlines in compar-               ing how human performance is affected by auto-
+     ison to full texts in the context of this            matic summarization, and for correlating human
+     extrinsic task.                                      peformance with automatic evaluation tools. We
+                                                          describe an experiment that supports event track-
+1 Introduction                                            ing as an appropriate task for this purpose, and
+                                                          show results that suggest that a well-written hu-
+In this paper we present Topiary, a headline-             man headline is nearly as useful for event tracking
+generation system that creates very short, infor-         as the full text.
+mative summaries for news stories by combining
+sentence compression and unsupervised topic dis-          2   Previous Work
+covery. Hedge Trimmer performs sentence com-
+pression by removing constituents from a parse            Hedge Trimmer is a sentence compression algo-
+tree of the lead sentence according to a set of           rithm based on linguistically-motivated heuristics.
+linguistically-motivated heuristics until a length        Previous work on sentence compression (Knight
+threshold is reached. Unsupervised Topic Discov-          and Marcu, 2000) uses a noisy-channel model to
+ery is a statistical method for deriving a set of topic   find the most probable short string that gener-
+models from a document corpus, assigning mean-            ated the observed full sentence. Other work (Eu-
+ingful names to the topic models, and associating         ler, 2002) combines a word-list with syntactic in-
+formation to decide which words and phrases to           parsing the sentence using the BBN SIFT parser
+cancel. Our approach differs from Knight’s in            (Miller et al., 1998) and removing low-content
+that we do not use a statistical model, so we do         syntactic constituents. Some constituents, such as
+not require any prior training on a large corpus         certain determiners (the, a) and time expressions
+of story/headline pairs. Topiary shares with Eu-         are always removed, because they rarely occur in
+ler the combination of topic lists and sentence          human-generated headlines and are low-content
+compression. However Euler uses the topic lists          in comparison to other constituents. Other con-
+to guide sentence selection and compression to-          stituents are removed one-by-one until a length
+wards a query-specific summary, whereas Topiary          threshold has been reached. These include, among
+uses topics to augment the concept coverage of a         others, relative clauses, verb-phrase conjunction,
+generic summary.                                         preposed adjuncts and prepositional phrases that
+   Summaries can also consist of lists of words or       do not contain named entities. 1 The threshold can
+short phrases indicating that the topic or concept       be specified either in number of words or number
+they denote is important in the document. Extrac-        of characters. If the threshold is specified in num-
+tive topic summaries consist of keywords or key          ber of characters, Hedge Trimmer will not include
+phrases that occur in the document. (Bergler et al.,     partial words.
+2003) achieves this by choosing noun phrases that
+represent the most important text entities, as repre-    3.2    Recent Hedge Trimmer Work
+sented by noun phrase coreference chains. (Zhou          Recently we have investigated a rendering of the
+and Hovy, 2003) imposes fluency onto a topic list        summary as “Headlinese” (Mårdh, 1980) in which
+by finding phrase clusters early in the text that con-   certain constituents are dropped with no loss of
+tain important topic words found throughout the          meaning. The result of this investigation has been
+text. In text categorization documents are assigned      used to enhance Hedge Trimmer, most notably
+to pre-defined categories. This is equivalent to as-     the removal of certain instances of have and be.
+signing topics to a document from a static topic         For example, the previous headline generator pro-
+list, so the words in the summary need not actually      duced summaries such as Sentence (2), whereas
+appear in the document. (Lewis, 1992) describes          the have/be removal produces (3).
+a probabilistic feature-based method for assigning
+                                                         (1) Input: The senior Olympic official who lev-
+Reuters topics to news stories. OnTopic (Schwartz
+                                                             eled stunning allegations of corruption within
+et al., 1997) uses a HMM to assign topics from a
+                                                             the IOC said Sunday he had been “muzzled”
+topic-annotated corpus to a new document.
+                                                             by president Juan Antonio Samaranch and
+3 Algorithm Description                                      might be thrown out of the organization.
+
+Topiary produces headlines by combining the out-         (2) Without participle have/be removal: Senior
+put of Hedge Trimmer, a sentence compression                 Olympic official said he had been muzzled
+algorithm, with Unsupervised Topic Detection
+                                                         (3) With participle have/be removal:   Senior
+(UTD). In this section we will give brief descrip-
+                                                             Olympic official said he muzzled by presi-
+tions of Hedge Trimmer, recent modifications to
+                                                             dent Juan Antonio Samaranch
+Hedge Trimmer, and UTD. We will then describe
+how Hedge Trimmer and UTD are combined.                  Have and be are removed if they are part of a past
+                                                         or present participle construction. In this exam-
+3.1   Hedge Trimmer                                      ple, the removal of had been allows a high-content
+Hedge Trimmer (Dorr et al., 2003b) generates             constituent by president Juan Antonio Samaranch
+a headline for a news story by compressing the           to fit into the headline.
+lead (or main) topic sentence according to a lin-           The removal of forms of to be allows Hedge
+guistically motivated algorithm. For news stories,       Trimmer to produce headlines that concentrate
+the first sentence of the document is taken to be           1
+                                                             More details of the Hedge Trimmer algorithm can be
+the lead sentence. The compression consists of           found in (Dorr et al., 2003b) and (Dorr et al., 2003a).
+more information in the allowed space. The re-         emergency shortening methods which are only
+moval of forms of to be results in sentences that      to be used when the alternative is truncating the
+are not grammatical in general English, but are        headline after the threshold, possibly cutting the
+typical of Headlinese English. For example, sen-       middle of a word. These include removal of ad-
+tences (5), (6) and all other examples in this paper   verbs and adverbial phrases, adjectives and adjec-
+were trimmed to fit in 75 characters.                  tive phrases, and nouns that modify other nouns.
+
+(4) Input: Leading maxi yachts Brindabella, Say-       3.3   Unsupervised Topic Discovery
+    onara and Marchioness were locked in a
+    three-way duel down the New South Wales            Unsupervised Topic Discovery (UTD) is used
+    state coast Saturday as the Sydney to Hobart       when we do not have a corpus annotated with top-
+    fleet faced deteriorating weather.                 ics. It takes as input a large unannotated corpus
+                                                       in any language and automatically creates a set of
+(5) Without to be removal: Sayonara and Mar-           topic models with meaningful names. The algo-
+    chioness were locked in three                      rithm has several stages. First, it analyzes the cor-
+                                                       pus to find strings of words that occur frequently.
+(6) With to be removal: Leading maxi yachts
+                                                       (It does this using a Minimum Description Length
+    Brindabella Sayonara and Marchioness
+                                                       criterion.) These are frequently phrases that are
+    locked in three
+                                                       meaningful names of topics.
+   When have and be occur with a modal verb, the          Second, it finds the high-content words in each
+modal verb is also removed. Sentence (9) shows         document (using a modified tf.idf measure). These
+an example of this. It could be argued that by         are possible topic names for each document. It
+removing modals such as should and would the           keeps only those names that occur in at least four
+meaning is vitally changed. The intended use of        different documents. These are taken to be an ini-
+the headline must be considered. If the headlines      tial set of topic names.
+are to be used for determining query relevance, re-       In the third stage UTD trains topic models cor-
+moval of modals may not hinder the user while          responding to these topic names. The modified
+making room for additional high-content words          EM procedure of OnTopicTM is used to determine
+may help.                                              which words in the documents often signify these
+                                                       topic names. This produces topic models.
+(7) Input: Organizers of December’s Asian
+                                                          Fourth, these topic models are used to find the
+    Games have dismissed press reports that a
+                                                       most likely topics for each document. This often
+    sports complex would not be completed on
+                                                       adds new topics to documents, even though the
+    time, saying preparations are well in hand, a
+                                                       topic name did not appear in the document.
+    local newspaper said Friday.
+                                                          We found, in various experiments, that the top-
+(8) Without Modal-Have/Be Removal: Organiz-            ics derived by this procedure were usually mean-
+    ers have dismissed press reports saying            ingful and that the topic assignment was about as
+                                                       good as when the topics were derived from a cor-
+(9) With Modal-Have/Be Removal: Organizers             pus that was annotated by people. We have also
+    dismissed press reports sports complex not         used this procedure on different languages and
+    completed saying                                   shown the same behavior.
+   In addition when it or there appears as a subject      Sentence (10) is a topic list generated for a story
+with a form of be or have, as in extraposition (It     about the investigation into the bombing of the
+was clear that the thief was hungry) or existential    U.S. Embassy in Nairobi on August 7, 1998.
+clauses (There have been a spate of dog maulings),
+the subject and the verb are removed.                  (10) BIN LADEN EMBASSY BOMBING PO-
+   Finally, for situations in which the length              LICE OFFICIALS PRISON HOUSE FIRE
+threshold is a hard constraint, we added some               KABILA
+3.4   Combination of Hedge Trimmer and                document no more than than 75 characters. The
+      Topics: Topiary                                 different ROUGE variants are sorted by overall
+The Hedge Trimmer algorithm is constrained to         performance of the systems. The key observations
+take its headline from a single sentence. It is of-   are that there was a wide range of performance
+ten the case that there is no single sentence that    among the submitted systems, and that Topiary
+contains all the important information in a story.    scored first or second among the automatic sys-
+The information can be spread over two or three       tems on each ROUGE measure.
+sentences, with pronouns or ellipsis used to link
+                                                      4     Evaluation
+them. In addition, our algorithms do not always
+select the ideal sentence and trim it perfectly.      We used two automatic evaluation systems, BLEU
+   Topics alone also have drawbacks. UTD rarely       (Papineni et al., 2002) and ROUGE (Lin and
+generates any topic names that are verbs. Thus        Hovy, 2003), to evaluate nine variants of our head-
+topic lists are good at indicating the general sub-   line generation systems. Both measures make n-
+ject are but rarely give any direct indication of     gram comparisons of the candidate systems to a
+what events took place.                               set of reference summaries. In our evaluations
+   Topiary is a modification of the enhanced          four reference summaries for each document were
+Hedge Trimmer algorithm to take a list of top-        used. The nine variants were run on 489 stories
+ics with relevance scores as additional input. The    from the DUC2004 single-document summariza-
+compression threshold is lowered so that there        tion headline generation task. The threshold was
+will be room for the highest scoring topic term       75 characters, and longer headlines were truncated
+that isn’t already in the headline. This amount of    to 75 characters. We also evaluated a baseline
+threshold lowering is dynamic, because the trim-      that consisted of the first 75 characters of the doc-
+ming of the sentence can remove a previously in-      ument. The systems and the average lengths of
+eligible high-scoring topic term from the headline.   the headlines they produced are shown in Table
+After trimming is complete, additional topic terms    1. Trimmer headlines tend to be shorter than the
+that do not occur in the headline are added to use    threshold because Trimmer removes constituents
+up any remaining space.                               until the length is below the threshold. Sometimes
+   This often results in one or more main topics      it must remove a large constituent in order to get
+about the story and a short sentence that says what   below the threshold. Topiary is able to make full
+happened concerning them. The combination is          use of the space by filling in topic words.
+often more concise than a fully fluent sentence and
+compensates for the fact that the topic and the de-   4.1    ROUGE
+scription of what happened to it do not appear in     ROUGE is a recall-based measure for summa-
+the same sentence in the original story.              rizations. This automatic metric counts the num-
+   Sentences (11) and (12) are the output of Hedge    ber of n-grams in the reference summaries that
+Trimmer and Topiary for the same story for which      occur in the candidate and divides by the num-
+the topics in Sentence (10) were generated.           ber of n-grams in the reference summaries. The
+                                                      size of the n-grams used by ROUGE is config-
+(11) FBI agents this week began questioning rel-      urable. ROUGE-n uses 1-grams through n-grams.
+     atives of the victims                            ROUGE-L is based on longest common subse-
+(12) BIN LADEN EMBASSY BOMBING FBI                    quences, and ROUGE-W-1.2 is based on weighted
+     agents this week began questioning relatives     longest common subsequences with a weighting
+                                                      of 1.2 on consecutive matches of length greater
+   Topiary was submitted to the Document Under-       than 1.
+standing Conference Workshop. Figure 1 shows             The ROUGE scores for the nine systems and the
+how Topiary peformed in comparison with other         baseline are shown in Table 2. Under ROUGE-
+DUC2004 participants on task 1, using ROUGE.          1 the Topiary variants scored significantly higher
+Task 1 was to produce a summary for a single news     than the Trimmer variants, and both scored signif-
+            0.35
+
+
+
+
+             0.3
+
+
+
+
+            0.25
+
+
+
+
+             0.2
+
+
+
+
+            0.15
+
+
+
+
+             0.1
+
+
+
+
+            0.05
+
+
+
+
+              0
+                    ROUGE-1        ROUGE-L       ROUGE-W-1.2       ROUGE-2      ROUGE-3       ROUGE-4
+
+
+                              Automatic Summaries              Reference Summaries        Topiary
+
+
+ Figure 1: ROUGE Scores for DUC2004 Automatic Summaries, Reference Summaries and Topiary
+
+
+                                                                icantly higher than the UTD topic lists with 95%
+                                                                confidence. Since fluency is not measured at all
+System         Description               Words     Chars
+Trim           Trimmer                   8.7       57.3
+                                                                by unigrams, we must conclude that the Trimmer
+               no have/be removal                               headlines, by selecting the lead sentence, included
+               no emergency shortening                          more or better topic words than UTD. The high-
+Trim.E         Trimmer                   8.7       57.1
+               no have/be removal                               est scoring UTD topics tend to be very meaning-
+               emergency shortening                             ful while the fifth and lower scoring topics tend
+Trim.HB        Trimmer                   8.6       57.7         to be very noisy. Thus the higher scores of Topi-
+               have/be removal
+               no emergency shortening                          ary can be attributed to including only the best of
+Trim.HB.E      Trimmer                   8.6       57.4         the UTD topics while preserving the lead sentence
+               have/be removal                                  topics. The same groupings occur with ROUGE-L
+               emergency shortening
+Top            Topiary                   10.8      73.3         and ROUGE-W, indicating that the longest com-
+               no have/be removal                               mon subsequences are dominated by sequences of
+               no emergency shortening                          length one.
+Top.E          Topiary                   10.8      73.2
+               no have/be removal
+               emergency shortening
+Top.HB         Topiary                   10.7      73.2
+               have/be removal
+               no emergency shortening                             Under the higher order ROUGE evaluations
+Top.HB.E       Topiary                   10.7      73.2         the systems group by the presence or absence of
+               have/be removal                                  have/be removal, with higher scores going to sys-
+               emergency shortening
+UTD            UTD Topics                9.5       71.1         tems in which have/be removal was performed.
+                                                                This indicates that the removal of these light con-
+      Table 1: Systems and Headline Lengths                     tent verbs makes the summaries more like the lan-
+                                                                guage of headlines. The value of emergency short-
+                                                                ening over truncation is not clear.
+                        ROUGE-1     ROUGE-2     ROUGE-3    ROUGE-4     ROUGE-L     ROUGE-W-1.2
+           Top.HB.E     0.24914     0.06449     0.02122    0.00712     0.19951     0.11891
+           Top.HB       0.24873     0.06595     0.02267    0.00826     0.20061     0.11970
+           Top.E        0.24812     0.06169     0.01874    0.00562     0.19856     0.11837
+           Top          0.24621     0.06309     0.01995    0.00639     0.19856     0.11861
+           baseline     0.22136     0.06370     0.02118    0.00707     0.11738     0.16955
+           Trim.HB.E    0.20415     0.06571     0.02527    0.00950     0.18506     0.11127
+           Trim.HB      0.20380     0.06565     0.02508    0.00945     0.18472     0.11118
+           Trim.E       0.20105     0.06226     0.02221    0.00774     0.18287     0.11003
+           Trim         0.20061     0.06283     0.02266    0.00792     0.18248     0.10996
+           UTD          0.15913     0.01585     0.00087    0.00000     0.13041     0.07797
+
+                              Table 2: ROUGE Scores sorted by ROUGE-1
+
+
+4.2   BLEU                                                            BLEU-1    BLEU-2    BLEU-3     BLEU-4
+                                                          Top.HB.E    0.4368    0.2443    0.1443     0.0849
+BLEU is a system for automatic evaluation of ma-          Top.HB      0.4362    0.2463    0.1476     0.0885
+chine translation that uses a modified n-gram pre-        Top.E       0.4310    0.2389    0.1381     0.0739
+                                                          Top         0.4288    0.2415    0.1417     0.0832
+cision measure to compare machine translations to         Trim.HB.E   0.3712    0.2333    0.1495     0.0939
+reference human translations. This automatic met-         Trim.HB     0.3705    0.2331    0.1493     0.0943
+ric counts the number of n-grams in the candidate         baseline    0.3695    0.2214    0.1372     0.0853
+                                                          Trim.E      0.3636    0.2285    0.1442     0.0897
+that occur in any of the reference summaries and          Trim        0.3635    0.2297    0.1461     0.0922
+divides by the number of n-grams in the candidate.        UTD         0.2859    0.0954    0.0263     0.0000
+The size of the n-grams used by BLEU is config-
+urable. BLEU-n uses 1-grams through n-grams. In             Table 3: BLEU Scores sorted by BLEU-1
+our evaluation of headline generation systems, we
+treat summarization as a type of translation from
+a verbose language to a concise one, and compare        jects cannot perform with a high level of agree-
+automatically generated headlines to human gen-         ment – even when they are shown the entire docu-
+erated headlines.                                       ment – it will not be possible to detect significant
+   The BLEU scores for the nine systems and             differences among different summarization meth-
+the baseline are shown in Table 3. For BLEU-1           ods because the amount of variation due to noise
+the Topiary variants score significantly better than    will overshadow the variation due to summariza-
+the Trimmer variants with 95% confidence. Un-           tion method.
+der BLEU-2 the Topiary scores are higher than              In an earlier experiment we attempted to use
+the Trimmer scores, but not significantly. Under        document selection in the context of informa-
+BLEU-4 the Trimmer variants score slightly but          tion retrieval as an extrinsic task. Subjects were
+not significantly higher than the Topiary variants,     asked to decide if a document was highly rele-
+and at BLEU-3 there is no clear pattern. Trim-          vant, somewhat relevant or not relevant to a given
+mer and Topiary variants score significantly higher     query. However we found that subjects who had
+than UTD for all settings of BLEU with 95% con-         been shown the entire document were only able
+fidence.                                                to agree with each other 75% of the time and
+                                                        agreed with the allegedly correct answers only
+5 Extrinsic Task                                        70% of the time. We were unable to draw any
+For an automatic summarization evaluation tool to       conclusions about the relative performance of the
+be of use to developers it must be shown to cor-        summarization systems, and thus were not able
+relate well with human performance on a specific        to make any correlations between human perfor-
+extrinsic task. In selecting the extrinsic task it is   mance and scores on automatic summarization
+important that the task be unambiguous enough           evaluation tools. For more details see (Zajic et al.,
+that subjects can perform it with a high level of       2004).
+agreement. If the task is so difficult that sub-           We propose a more constrained type of docu-
+ment relevance judgment as an appropriate extrin-                          Precision   Recall    
+                                                               Full Text   0.831       0.900    0.864
+sic task for evaluating human performance using                Headline    0.842       0.842    0.842
+automatic summarizations. The task, event track-
+ing, has been reported in NIST TDT evaluations          Table 4: Results of Event Tracking Experiment
+to provide the basis for more reliable results. Sub-
+jects are asked to decide if a document contains
+information related to a particular event in a spe-    with        .
+cific domain. The subject is told about a specific        The small difference in NIST agreement be-
+event, such as the bombing of the Murrah Federal       tween full texts and headlines seems to suggest
+Building in Oklahoma City. A detailed descrip-         that the best human-written headlines can supply
+tion is given about what information is considered     sufficient information for performing event track-
+relevent to an event in the given domain. For in-      ing. However it is possible that subjects found the
+stance, in the criminal case domain, information       task of reading entire texts dull, and allowed their
+about the crime, the investigation, the arrest, the    performance to diminish as they grew tired.
+trial and the sentence are relevant.                      Full texts yielded a higher recall than head-
+   We performed a small event tracking experi-         lines, which is not surprising. However headlines
+ment to compare human performance using full           yielded a slightly higher precision than full texts
+news story text against performance using human-       which means that subjects were able to reject non-
+generated headlines of the same stories. Seven         relevant documents as well with headlines as they
+events and twenty documents per event were cho-        could by reading the entire document. We ob-
+sen from the 1999 Topic Detection and Tracking         served that subjects sometimes marked documents
+(TDT3) corpus. Four subjects were asked to judge       as relevant if the full text contained even a brief
+the full news story texts or story headlines as rel-   mention of the event or any detail that could be
+evant or not relevant to each specified event. The     construed as satisfying the domain description. If
+documents in the TDT3 corpus were already an-          avoiding false positives (or increasing precision) is
+notated as relevant or not relevant to each event      an important goal, these results suggest that use of
+by NIST annotators. The NIST annotations were          headlines provides an advantage over reading the
+taken to be the correct answers by which to judge      entire text.
+the overall performance of the subjects. The sub-         Further event tracking experiments will include
+jects were shown a practice event, three events        a variety of methods for automatic summariza-
+with full story text and three events with story       tion. This will give us the ability to compare hu-
+headlines.                                             man performance using the summarization meth-
+                                                       ods against one another and against human perfor-
+   We calculated average agreement between sub-
+                                                       mance using full text. We do not expect that any
+jects as the number of documents on which two
+                                                       summarization method will allow humans to per-
+subjects made the same judgment divided by the
+                                                       form event tracking better than reading the entire
+number of documents on which the two subjects
+                                                       document, however we hope that we can improve
+had both made judgments. The average agreement
+                                                       human performance time while introducing only
+between subjects was 86% for full story texts and
+                                                       a small, acceptable loss in performance. We also
+80% for headlines. The average agreement with
+                                                       plan to calibrate automatic summarization evalu-
+the NIST annotations was slightly higher when us-
+                                                       ation tools, such as BLEU and ROUGE, to ac-
+ing the full story text than the headline, with text
+                                                       tual human performance on event tracking for each
+producing 86% overall agreement with NIST and
+                                                       method.
+headlines producing 84% agreement with NIST.
+Use of headlines resulted in a significant increase    6   Conclusions and Future Work
+in speed. Subjects spent an average of 30 seconds
+per document when shown the entire text, but only      We have shown the effectiveness of combining
+7.7 seconds per document when shown the head-          sentence compression and topic lists to construct
+line. Table 4 shows the precision, recall and        informative summaries. We have compared three
+approaches to automatic headline generation (Top-         the American Association for Artificial Intelligence
+iary, Hedge Trimmer and Unsupervised Topic Dis-           AAAI2000, Austin, Texas.
+covery) using two automatic summarization evalu-        David Lewis. 1992. An evaluation of phrasal and clus-
+ation tools (BLEU and ROUGE). We have stressed            tered representations on a text categorization task.
+the importance of correlating automatic evalua-           In Proceedings of the 15th annual international
+tions with human performance of an extrinsic task,        ACM SIGIR conference on Research and develop-
+                                                          ment in information retrieval, pages 37–50, Copen-
+and have proposed event tracking as an appropri-          hagen, Denmark.
+ate task for this purpose.
+   We plan to perform a study in which Topiary,         Chin-Yew Lin and Eduard Hovy. 2003. Auto-
+                                                          matic Evaluation of Summaries Using N-gram Co-
+Hedge Trimmer, Unsupervised Topic Discovery               Occurrences Statistics. In Proceedings of the Con-
+and other summarization methods will be evalu-            ference of the North American Chapter of the As-
+ated in the context of event tracking. We also plan       sociation for Computational Linguistics, Edmonton,
+to extend the tools described in this paper to the        Alberta.
+domains of transcribed broadcast news and cross-        Ingrid Mårdh. 1980. Headlinese: On the Grammar of
+language headline generation.                              English Front Page Headlines. Malmo.
+
+Acknowledgements                                        S. Miller, M. Crystal, H. Fox, L. Ramshaw,
+                                                          R. Schwartz, R. Stone, and R. Weischedel. 1998.
+The University of Maryland authors are sup-               Algorithms that Learn to Extract Information; BBN:
+                                                          Description of the SIFT System as Used for MUC-7.
+ported, in part, by BBNT Contract 020124-                 In Proceedings of the MUC-7.
+7157, DARPA/ITO Contract N66001-97-C-8540,
+and NSF CISE Research Infrastructure Award              K. Papineni, S. Roukos, T. Ward, and W. Zhu. 2002.
+                                                          Bleu: a Method for Automatic Evaluation of Ma-
+EIA0130422.
+                                                          chine Translation. In Proceedings of Association of
+                                                          Computational Linguistics, Philadelphia, PA.
+
+References                                              R. Schwartz, T. Imai, F. Jubala, L. Nguyen, and
+                                                          J. Makhoul. 1997. A maximum likelihood model
+Sabine Bergler, René Witte, Michelle Khalife,            for topic classification of broadcast news. In
+  Zhuoyan Li, and Frank Rudzicz. 2003. Using              Eurospeech-97, Rhodes, Greece.
+  knowledge-poor coreference resolution for text sum-
+  marization. In Proceedings of the 2003 Document       David Zajic, Bonnie Dorr, Richard Schwartz, and Stacy
+  Understanding Conference, Draft Papers, pages 85–       President. 2004. Headline evaluation experiment
+  92, Edmonton, Candada.                                  results, umiacs-tr-2004-18. Technical report, Uni-
+                                                          versity of Maryland Institute for Advanced Comput-
+Bonnie Dorr, David Zajic, and Richard Schwartz.           ing Studies, College Park, Maryland.
+  2003a. Cross-language headline generation for
+  hindi. ACM Transactions on Asian Language Infor-      Liang Zhou and Eduard Hovy. 2003. Headline sum-
+  mation Processing (TALIP), 2:2.                         marization at isi. In Proceedings of the 2003 Doc-
+                                                          ument Understanding Conference, Draft Papers,
+Bonnie Dorr, David Zajic, and Richard Schwartz.           pages 174–178, Edmonton, Candada.
+  2003b. Hedge trimmer: A parse-and-trim approach
+  to headline generation. In Proceedings of the HLT-
+  NAACL 2003 Text Summarization Workshop, Ed-
+  monton, Alberta, Canada, pages 1–8.
+
+T. Euler. 2002. Tailoring text using topic words: Se-
+   lection and compression. In Proceedings of 13th
+   International Workshop on Database and Expert
+   Systems Applications (DEXA 2002), 2-6 Septem-
+   ber 2002, Aix-en-Provence, France, pages 215–222.
+   IEEE Computer Society.
+
+Kevin Knight and Daniel Marcu. 2000. Statistics-
+  based summarization – step one: Sentence com-
+  pression. In The 17th National Conference of
