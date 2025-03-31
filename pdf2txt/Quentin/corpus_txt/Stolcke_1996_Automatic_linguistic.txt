@@ -1,0 +1,14 @@
+Titre :
+
+
+Auteurs :
+- Tomas Mikolov ()
+- Kai Chen ()
+- Greg Corrado ()
+- Jeffrey Dean ()
+
+Affiliation :
+Google Inc., Mountain View, CA
+
+-----------------------------------------
+
