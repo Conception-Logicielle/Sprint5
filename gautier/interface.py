@@ -91,7 +91,7 @@ class PDFConverterGUI(tk.Tk):
             return
 
         try:
-            result = subprocess.run(["./convert.bash", self.pdf_path], capture_output=True, text=True)
+            result = subprocess.run(["convert.bash", self.pdf_path], capture_output=True, text=True)
             if result.returncode == 0:
                 messagebox.showinfo("Succès", "Conversion réussie !")
                 if not self.download_btn.winfo_ismapped():
