@@ -38,3 +38,9 @@ il est necessaire d’avoir :
 chmod +x quentin.sh
 ./main.sh
 ```
+
+### AddON
+Une interface a été ajoutée par notre membre Gautier Jourdon dans le dossier interface. Cette dernière permet de selectionner
+un fichier PDF et de le convertir en texte brut peut importe le dossier dans lequel il se trouve.
+
+Warn : Il faut lancer le programme python "Interface" sur linux
