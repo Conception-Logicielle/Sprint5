@@ -141,13 +141,13 @@ fn main() -> io::Result<()> {
                 writeln!(
                     output_file,
                     "==============================\n\
-🗂 Fichier        : {}\n\
-📝 Titre          : {}\n\
-📄 Résumé         : {}\n\
-📊 Lignes totales : {}\n\
-✂️ Lignes résumé  : {}\n\
-🔠 Longueur texte : {} caractères\n\
-⏱ Temps analyse  : {} ms\n",
+Fichier        : {}\n\
+Titre          : {}\n\
+Résumé         : {}\n\
+Lignes totales : {}\n\
+Lignes résumé  : {}\n\
+Longueur texte : {} caractères\n\
+Temps analyse  : {} ms\n",
                     filename,
                     title,
                     abstract_text,
