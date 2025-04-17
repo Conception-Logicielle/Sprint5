@@ -19,7 +19,6 @@ fn extract_title_and_abstract(file_path: &Path) -> io::Result<(String, String, S
     let mut abstract_lines = Vec::new();
     let mut abstract_started = false;
 
-    // 1. Détecte le titre sur les premières lignes non vides
     for line in lines.iter().take(15) {
         let trimmed = line.trim();
         if trimmed.is_empty() { continue; }
@@ -28,14 +27,12 @@ fn extract_title_and_abstract(file_path: &Path) -> io::Result<(String, String, S
             break;
         }
 
-        // Exclure les emails ou adresses
         if trimmed.contains("@") || trimmed.contains("http") || trimmed.contains("www") {
             break;
         }
 
         title_lines.push(trimmed.to_string());
 
-        // On coupe après 3 lignes pour éviter d'absorber tout le début
         if title_lines.len() >= 3 {
             break;
         }
@@ -48,7 +45,6 @@ fn extract_title_and_abstract(file_path: &Path) -> io::Result<(String, String, S
     for line in &lines {
         let l = line.trim();
 
-        // Début de l'abstract
         if !abstract_started && l.to_lowercase().starts_with("abstract") {
             abstract_started = true;
 
@@ -57,7 +53,6 @@ fn extract_title_and_abstract(file_path: &Path) -> io::Result<(String, String, S
                 continue;
             }
 
-            // Cas inline : "Abstract — résumé..."
             let cleaned = l
                 .trim_start_matches(|c: char| c.is_alphabetic() || c == ':' || c == '—' || c == '-' || c == ' ')
                 .trim();
@@ -67,7 +62,6 @@ fn extract_title_and_abstract(file_path: &Path) -> io::Result<(String, String, S
             continue;
         }
 
-        // Ligne juste après un "Abstract" seul
         if next_line_is_abstract {
             if l.is_empty() {
                 next_line_is_abstract = false;
@@ -91,7 +85,6 @@ fn extract_title_and_abstract(file_path: &Path) -> io::Result<(String, String, S
     }
 
 
-    // Mise en forme de l'abstract
     let mut abstract_text = abstract_lines
         .join(" ")
         .replace("- ", "")
