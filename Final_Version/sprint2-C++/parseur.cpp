@@ -4,6 +4,7 @@
 #include <regex>
 #include <sstream>
 #include <algorithm>
+#include <chrono>
 
 // Parser d'articles scientifiques en C++
 // Utilisation : ./parser <dossier_input_txt>
@@ -15,6 +16,8 @@
 int main(int argc, char** argv) {
     using namespace std;
     namespace fs = std::filesystem;
+
+    auto start_time = chrono::high_resolution_clock::now(); // Début de la mesure du temps
 
     if (argc != 2) {
         cerr << "Usage: " << argv[0] << " <dossier_input_txt>\n";
@@ -89,6 +92,10 @@ int main(int argc, char** argv) {
         ofs << abstract << "\n";
         ofs.close();
     }
+
+    auto end_time = chrono::high_resolution_clock::now(); // Fin de la mesure du temps
+    chrono::duration<double> elapsed_time = end_time - start_time;
+    cout << "Temps total pour transformer les PDF : " << elapsed_time.count() << " secondes." << endl;
 
     cout << "Traitement terminé. Fichiers générés dans : " << output_dir << "\n";
     return 0;
