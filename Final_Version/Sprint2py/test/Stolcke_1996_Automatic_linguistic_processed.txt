@@ -1,0 +1,3 @@
+Stolcke_1996_Automatic_linguistic.txt
+                             AUTOMATIC LINGUISTIC SEGMENTATION
+As speech recognition moves toward more unconstrained domains
