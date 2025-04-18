@@ -1,6 +1,7 @@
 ## 📚 Parseur d'Articles Scientifiques en Texte
 
-Ce projet convertit automatiquement des articles scientifiques au format PDF en texte brut.
+Ce projet convertit automatiquement des articles scientifiques au format PDF en texte brut et
+en fait des résumés.
 
 ---
 
@@ -10,11 +11,11 @@ il est necessaire d’avoir :
 
 - Un environnement **Linux/WSL** avec `bash`  
 - **Poppler-utils** (pour utiliser `pdftotext`)  
-  Installe-le si nécessaire :
   ```bash
   sudo apt update
   sudo apt install poppler-utils
   ```
+- **Un environnement Rust pour effectuer la génération de résumé**  
 
 ---
 
@@ -35,7 +36,7 @@ il est necessaire d’avoir :
 ### 🚀 Lancer le script
 
 ```bash
-chmod +x quentin.sh
+chmod +x main.sh
 ./main.sh
 ```
 
