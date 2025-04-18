@@ -5,8 +5,10 @@ Résumé         : This paper presents Topiary, a headlinegeneration system that
 Lignes totales : 461
 Lignes résumé  : 19
 Longueur texte : 671 caractères
-Temps analyse  : 3 ms
+Temps analyse  : 4 ms
 
+==============================
+Traitement terminé en 4 ms
 ==============================
 Fichier        : Boudin-Torres-2006.txt
 Titre          : A Scalable MMR Approach to Sentence Scor for Multi-Document Update Summarization Florian Boudin \ and Marc El-Bèze \
@@ -17,14 +19,18 @@ Longueur texte : 392 caractères
 Temps analyse  : 2 ms
 
 ==============================
+Traitement terminé en 6 ms
+==============================
 Fichier        : compression.txt
 Titre          : Multi-Candidate Reduction: Sentence Compression as a Tool for Document Summarization Tasks∗ David Zajic1 , Bonnie J. Dorr1 , Jimmy Lin1 , Richard Schwartz2
 Résumé         : This article examines the application of two single-document sentence compression techniques to the problem of multi-document summarization—a “parse-and-trim” approach and a statistical noisy-channel approach. We introduce the Multi-Candidate Reduction (MCR) framework for multi-document summarization, in which many compressed candidates are generated for each source sentence. These candidates are then selected for inclusion in the final summary based on a combination of static and dynamic features. Evaluations demonstrate that sentence compression is a valuable component of a larger multi-document summarization framework. Keywords: headline generation, summarization, parse-and-trim, Hidden Markov Model PACS: Artificial intelligence, 07.05.Mh; Computer science and technology, 89.20.Ff; Spoken languages, processing of, 43.71.Sy
 Lignes totales : 1368
 Lignes résumé  : 14
 Longueur texte : 843 caractères
-Temps analyse  : 10 ms
+Temps analyse  : 7 ms
 
+==============================
+Traitement terminé en 14 ms
 ==============================
 Fichier        : compression_phrases_Prog-Linear-jair.txt
 Titre          : Journal of Artificial Intelligence Research 31 (2008) 399-429    Submitted 09/07; published 03/08 Global Inference for Sentence Compression An Integer Linear Programming Approach
@@ -32,8 +38,10 @@ Résumé         : Sentence compression holds promise for many applications rang
 Lignes totales : 1644
 Lignes résumé  : 9
 Longueur texte : 547 caractères
-Temps analyse  : 8 ms
+Temps analyse  : 10 ms
 
+==============================
+Traitement terminé en 25 ms
 ==============================
 Fichier        : hybrid_approach.txt
 Titre          : Sentence Compression for Automated Subtitling: A Hybr Vincent Vandeghinste and Y Centre for Computational Li
@@ -44,6 +52,8 @@ Longueur texte : 0 caractères
 Temps analyse  : 3 ms
 
 ==============================
+Traitement terminé en 28 ms
+==============================
 Fichier        : marcu_statistics_sentence_pass_one.txt
 Titre          : 
 Résumé         : When humans produce summaries of documents, they do not simply extract sentences and concatenate them. Rather, they create new sentences that are grammatical, that cohere with one another, and that capture the most salient pieces of information in the original document. Given that large collections of text/abstract pairs are available online, it is now possible to envisio algorithms that are trained to mimic this process. In this paper, we focus on sentence compression, a simpler version of this larger challenge. We aim to achieve two goals simultaneously: our compressions should be grammatical, and they should retain the most important pieces of information. These two goals can conﬂict. We devise both noisy-channel and decision-tree approaches to the problem, and we evaluate results against manual compressions and a simple baseline.
@@ -53,14 +63,18 @@ Longueur texte : 847 caractères
 Temps analyse  : 5 ms
 
 ==============================
+Traitement terminé en 33 ms
+==============================
 Fichier        : mikheev.txt
 Titre          : Periods, Capitalized Words, etc. Andrei Mikheev∗ University of Edinburgh
 Résumé         : 
 Lignes totales : 1719
 Lignes résumé  : 0
 Longueur texte : 0 caractères
-Temps analyse  : 10 ms
+Temps analyse  : 11 ms
 
+==============================
+Traitement terminé en 44 ms
 ==============================
 Fichier        : probabilistic_sentence_reduction.txt
 Titre          : Probabilistic Sentence Reduction Using Support Vector Minh Le Nguyen, Akira Shimazu, Susumu Bao Tu Ho and Masaru Fukushi
@@ -71,6 +85,8 @@ Longueur texte : 331 caractères
 Temps analyse  : 3 ms
 
 ==============================
+Traitement terminé en 48 ms
+==============================
 Fichier        : Stolcke_1996_Automatic_linguistic.txt
 Titre          : AUTOMATIC LINGUISTIC SEGMENTATION OF CONVERSATIONAL SPEECH Andreas Stolcke
 Résumé         : As speech recognition moves toward more unconstrained domains such as conversational speech, we encounter a need to be able to segment (or resegment) waveforms and recognizer output into lin guistically meaningful units, such a sentences. Toward this end, we present a simple automatic segmenter of transcripts based on N-gram language modeling. We also study the relevance of several word-level features for segmentation performance. Using only word-level information, we achieve 85% recall and 70% precision on linguistic boundary detection.
@@ -80,14 +96,18 @@ Longueur texte : 543 caractères
 Temps analyse  : 2 ms
 
 ==============================
+Traitement terminé en 51 ms
+==============================
 Fichier        : Torres.txt
 Titre          : Summary Evaluation with and without References Juan-Manuel Torres-Moreno, Horacio Saggion, Iria da Cunha, Eric SanJuan, and Patricia Velázquez-Morales
 Résumé         : (peer) has to be compared the evaluation of text summarization systems without with one or more reference summaries (models). DUC used human models which is used to produce system rankings. an interface called SEE to allow human judges to compare The research is carried out using a new content-based evaluation framework called F RESA to compute a variety of a peer with a model. Thus, judges give a C OVERAGE score divergences among probability distributions. We apply our to each peer produced by a system and the final system comparison framework to various well-established content-based C OVERAGE score is the average of the C OVERAGE’s scores evaluation measures in text summarization such as C OVERAGE, asigned. These system’s C OVERAGE scores can then be used R ESPONSIVENESS, P YRAMIDS and ROUGE studying their to rank summarization systems. In the case of query-focused associations in various text summarization tasks including generic multi-document summarization in English and French, summarization (e.g. when the summary should answer a focus-based multi-document summarization in English and question or series of questions) a R ESPONSIVENESS score generic single-document summarization in French and Spanish. is also assigned to each summary, which indicates how
 Lignes totales : 522
 Lignes résumé  : 13
 Longueur texte : 1284 caractères
-Temps analyse  : 4 ms
+Temps analyse  : 6 ms
 
+==============================
+Traitement terminé en 57 ms
 ==============================
 Fichier        : Word2Vec.txt
 Titre          : Efficient Estimation of Word Representations in Vector Space Tomas Mikolov                   Kai Chen
@@ -95,5 +115,7 @@ Résumé         : We propose two novel model architectures for computing contin
 Lignes totales : 656
 Lignes résumé  : 10
 Longueur texte : 644 caractères
-Temps analyse  : 4 ms
+Temps analyse  : 3 ms
 
+==============================
+Traitement terminé en 61 ms

@@ -31,7 +31,6 @@ fn detect_column_cutoff(lines: &[String]) -> usize {
         }
     }
 
-    // Si aucune coupure claire détectée → monocolonne
     if histogram.is_empty() {
         println!("Pas de coupure détectée, document considéré comme monocolonne.");
         return usize::MAX;
@@ -44,7 +43,6 @@ fn detect_column_cutoff(lines: &[String]) -> usize {
 
     let ratio = count as f32 / total_lines as f32;
 
-    // Si la coupure ne concerne qu'une minorité de lignes → probablement bruit
     if ratio < 0.15 {
         println!(
             "Coupure détectée à {} caractères mais trop rare ({} lignes sur {}), ignorée.",
@@ -54,16 +52,11 @@ fn detect_column_cutoff(lines: &[String]) -> usize {
     }
 
     println!(
-        "✅ Coupure détectée à {} caractères ({} occurrences sur {}).",
+        "Coupure détectée à {} caractères ({} occurrences sur {}).",
         cutoff, count, total_lines
     );
     cutoff
 }
-
-
-
-
-
 
 fn keep_left_column(lines: &[String], dynamic_width: usize) -> Vec<String> {
     lines
@@ -240,6 +233,10 @@ Temps analyse  : {} ms\n",
                 )?;
             }
         }
+        writeln!(output_file, "==============================")?;
+        writeln!(output_file, "Traitement terminé en {} ms",
+                 total_duration.as_millis()
+        ).expect("TODO: panic message");
     }
 
     println!(
