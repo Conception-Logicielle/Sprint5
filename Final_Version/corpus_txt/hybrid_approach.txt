@@ -1,429 +1,432 @@
-    Sentence Compression for Automated Subtitling: A Hybrid Approach
-                               Vincent Vandeghinste and Yi Pan
-                              Centre for Computational Linguistics
-                                 Katholieke Universiteit Leuven
-                                    Maria Theresiastraat 21
-                                        BE-3000 Leuven
-                                            Belgium
-               vincent.vandeghinste@ccl.kuleuven.ac.be, yi.pan@ccl.kuleuven.ac.be
+Sentence Compression for Automated Subtitling: A Hybrid Approach
 
-                     Abstract                            scribed in this paper is not a subtitling tool. When
-                                                         subtitling, only when a sentence needs to be re-
-In this paper a sentence compression tool is de-
-                                                         duced, and the amount of reduction is known, the
-scribed. We describe how an input sentence gets
-                                                         sentence is sent to the sentence compression tool.
-analysed by using a.o. a tagger, a shallow parser
-                                                         So the sentence compression tool is a module of an
-and a subordinate clause detector, and how, based
-                                                         automated subtitling tool. The output of the sen-
-on this analysis, several compressed versions of this
-                                                         tence compression tool needs to be processed ac-
-sentence are generated, each with an associated es-
-                                                         cording to the subtitling guidelines like (Dewulf and
-timated probability. These probabilities were esti-
-                                                         Saerens, 2000), in order to be in the correct lay-out
-mated from a parallel transcript/subtitle corpus. To
-                                                         which makes it usable for actual subtitling. Manu-
-avoid ungrammatical sentences, the tool also makes
-                                                         ally post-editing the subtitles will still be required,
-use of a number of rules. The evaluation was done
-                                                         as for some sentences no automatic compression is
-on three different pronunciation speeds, averaging
-                                                         generated.
+                                Vincent Vandeghinste and Yi Pan
+                               Centre for Computational Linguistics
+
+                                   Katholieke Universiteit Leuven
+                                       Maria Theresiastraat 21
+                                           BE-3000 Leuven
+                                                Belgium
+
+           vincent.vandeghinste@ccl.kuleuven.ac.be, yi.pan@ccl.kuleuven.ac.be
+
+                      Abstract                          scribed in this paper is not a subtitling tool. When
+                                                        subtitling, only when a sentence needs to be re-
+In this paper a sentence compression tool is de-        duced, and the amount of reduction is known, the
+scribed. We describe how an input sentence gets         sentence is sent to the sentence compression tool.
+analysed by using a.o. a tagger, a shallow parser       So the sentence compression tool is a module of an
+and a subordinate clause detector, and how, based       automated subtitling tool. The output of the sen-
+on this analysis, several compressed versions of this   tence compression tool needs to be processed ac-
+sentence are generated, each with an associated es-     cording to the subtitling guidelines like (Dewulf and
+timated probability. These probabilities were esti-     Saerens, 2000), in order to be in the correct lay-out
+mated from a parallel transcript/subtitle corpus. To    which makes it usable for actual subtitling. Manu-
+avoid ungrammatical sentences, the tool also makes      ally post-editing the subtitles will still be required,
+use of a number of rules. The evaluation was done       as for some sentences no automatic compression is
+on three different pronunciation speeds, averaging      generated.
 sentence reduction rates of 40% to 17%. The num-
-                                                            In real subtitling it often occurs that the sentences
-ber of reasonable reductions ranges between 32.9%
-                                                         are not compressed, but to keep the subtitles syn-
-and 51%, depending on the average estimated pro-
-                                                         chronized with the speech, some sentences are en-
-nunciation speed.
-                                                         tirely removed.
-                                                            In section 2 we describe the processing of a sen-
-1 Introduction                                           tence in the sentence compressor, from input to out-
-A sentence compression tool has been built with          put. In section 3 we describe how the system was
-the purpose of automating subtitle generation for        evaluated and the results of the evaluation. Section
-the deaf and hard-of-hearing. Verbatim transcrip-        4 contains the conclusions.
-tions cannot be presented as the subtitle presentation
-time is between 690 and 780 characters per minute,       2 From Full Sentence to Compressed
-which is more or less 5.5 seconds for two lines (ITC,      Sentence
-1997), (Dewulf and Saerens, 2000), while the aver-       The sentence compression tool is inspired by (Jing,
-age speech rate contains a lot more than the equiva-     2001). Although her goal is text summarization
-lent of 780 characters per minute.                       and not subtitling, her sentence compression system
-   The actual amount of compression needed de-           could serve this purpose.
-pends on the speed of the speaker and on the amount         She uses multiple sources of knowledge on which
-of time available after the sentence. In documen-        her sentence reduction is based. She makes use of
-taries, for instance, there are often large silent in-   a corpus of sentences, aligned with human-written
-tervals between two sentences, the speech is often       sentence reductions which is similar to the parallel
-slower and the speaker is off-screen, so the avail-      corpus we use (Vandeghinste and Tjong Kim Sang,
-able presentation time is longer. When the speaker       2004). She applies a syntactic parser to analyse the
-is off-screen, the synchrony of the subtitles with       syntactic structure of the input sentences. As there
-the speech is of minor importance. When subti-           was no syntactic parser available for Dutch (Daele-
-tling the news the speech rate is often very high        mans and Strik, 2002), we created ShaRPA (Van-
-so the amount of reduction needed to allow the           deghinste, submitted), a shallow rule-based parser
-synchronous presentation of subtitles and speech is      which could give us a shallow parse tree of the
-much greater. The sentence compression rate is a         input sentence. Jing uses several other knowl-
-parameter which can be set for each sentence.            edge sources, which are not used (not available for
-   Note that the sentence compression tool de-           Dutch) or not yet used in our system (like WordNet).
-   In figure 1 the processing flow of an input sen-      comes EU) and replaces the full form with its ab-
-tence is sketched.                                       breviation. The database can also contain the tag
-                                                         of the abbreviated part (E.g. the tag for EU is
-        Input Sentence                                   N(eigen,zijd,ev,basis,stan) [E: singular non-neuter
-                                                         proper noun]).
-            Tagger
-                                                            In a third step, all numbers which are written in
-                                                         words in the input are replaced by their form in dig-
-                                                         its. This is done for all numbers which are smaller
-         Abbreviator                                     than one million, both for cardinal and ordinal nu-
-                                                         merals.
-      Numbers to Digits
-                                                            In a fourth step, the sentence is sent to ShaRPa,
-                                                         which will result in a shallow parse-tree of the sen-
-                                                         tence. The chunking accuracy for noun phrases
-           Chunker                                       (NPs) has an F-value of 94.7%, while the chunk-
-                                                         ing accuracy of prepositional phrases (PPs) has an
-  Subordinate Clause Detector
-                                                         F-value of 95.1% (Vandeghinste, submitted).
-                                                            A last step before the actual sentence compres-
-                                                         sion consists of rule-based clause-detection: Rel-
-        Shallow Parse
-             Tree                                        ative phrases (RELP), subordinate clauses (SSUB)
-                                Grammar                  and OTI-phrases (OTI is om ... te + infinitive1 ) are
-                                Rules
-                                                         detected. The accuracy of these detections was eval-
-                                                         uated on 30 files from the CGN component of read-
-                                Removal,                 aloud books, which contained 7880 words. The
-        Compressor
-                                Non−removal,             evaluation results are presented in table 1.
-                                Reduction
-                                Database
-                                                                Type of S   Precision      Recall     F-value
-                                                                OTI          71.43%       65.22%      68.18%
-                                Word Reducer
-                                                                RELP         69.66%       68.89%      69.27%
-         Compressed
-          Sentence                                              SSUB         56.83%       60.77%      58.74%
+ber of reasonable reductions ranges between 32.9%          In real subtitling it often occurs that the sentences
+and 51%, depending on the average estimated pro-        are not compressed, but to keep the subtitles syn-
+nunciation speed.                                       chronized with the speech, some sentences are en-
+                                                        tirely removed.
+1 Introduction
+                                                           In section 2 we describe the processing of a sen-
+A sentence compression tool has been built with         tence in the sentence compressor, from input to out-
+the purpose of automating subtitle generation for       put. In section 3 we describe how the system was
+the deaf and hard-of-hearing. Verbatim transcrip-       evaluated and the results of the evaluation. Section
+tions cannot be presented as the subtitle presentation  4 contains the conclusions.
+time is between 690 and 780 characters per minute,
+which is more or less 5.5 seconds for two lines (ITC,   2 From Full Sentence to Compressed
+1997), (Dewulf and Saerens, 2000), while the aver-          Sentence
+age speech rate contains a lot more than the equiva-
+lent of 780 characters per minute.                      The sentence compression tool is inspired by (Jing,
+                                                        2001). Although her goal is text summarization
+   The actual amount of compression needed de-          and not subtitling, her sentence compression system
+pends on the speed of the speaker and on the amount     could serve this purpose.
+of time available after the sentence. In documen-
+taries, for instance, there are often large silent in-     She uses multiple sources of knowledge on which
+tervals between two sentences, the speech is often      her sentence reduction is based. She makes use of
+slower and the speaker is off-screen, so the avail-     a corpus of sentences, aligned with human-written
+able presentation time is longer. When the speaker      sentence reductions which is similar to the parallel
+is off-screen, the synchrony of the subtitles with      corpus we use (Vandeghinste and Tjong Kim Sang,
+the speech is of minor importance. When subti-          2004). She applies a syntactic parser to analyse the
+tling the news the speech rate is often very high       syntactic structure of the input sentences. As there
+so the amount of reduction needed to allow the          was no syntactic parser available for Dutch (Daele-
+synchronous presentation of subtitles and speech is     mans and Strik, 2002), we created ShaRPA (Van-
+much greater. The sentence compression rate is a        deghinste, submitted), a shallow rule-based parser
+parameter which can be set for each sentence.           which could give us a shallow parse tree of the
+                                                        input sentence. Jing uses several other knowl-
+   Note that the sentence compression tool de-          edge sources, which are not used (not available for
+                                                        Dutch) or not yet used in our system (like WordNet).
+   In ﬁgure 1 the processing ﬂow of an input sen-      comes EU) and replaces the full form with its ab-
+tence is sketched.                                     breviation. The database can also contain the tag
+                                                       of the abbreviated part (E.g. the tag for EU is
+             Input Sentence                            N(eigen,zijd,ev,basis,stan) [E: singular non-neuter
+                                                       proper noun]).
+Tagger
+                                                          In a third step, all numbers which are written in
+Abbreviator                                            words in the input are replaced by their form in dig-
+                                                       its. This is done for all numbers which are smaller
+Numbers to Digits                                      than one million, both for cardinal and ordinal nu-
+                                                       merals.
+Chunker
+                                                          In a fourth step, the sentence is sent to ShaRPa,
+Subordinate Clause Detector  Grammar                   which will result in a shallow parse-tree of the sen-
+                             Rules                     tence. The chunking accuracy for noun phrases
+        Shallow Parse                                  (NPs) has an F-value of 94.7%, while the chunk-
+              Tree                                     ing accuracy of prepositional phrases (PPs) has an
+                                                       F-value of 95.1% (Vandeghinste, submitted).
+Compressor                   Removal,
+                             Non−removal,                 A last step before the actual sentence compres-
+                             Reduction                 sion consists of rule-based clause-detection: Rel-
+                             Database                  ative phrases (RELP), subordinate clauses (SSUB)
+                                                       and OTI-phrases (OTI is om ... te + inﬁnitive1) are
+                                                       detected. The accuracy of these detections was eval-
+                                                       uated on 30 ﬁles from the CGN component of read-
+                                                       aloud books, which contained 7880 words. The
+                                                       evaluation results are presented in table 1.
 
-                                                                   Table 1: Clause Detection Accuracy
-    Figure 1: Sentence Processing Flow Chart
+Compressed                   Word Reducer              Type of S  Precision  Recall  F-value
+  Sentence
+                                                       OTI        71.43%     65.22%  68.18%
+                                                       RELP       69.66%     68.89%  69.27%
+                                                       SSUB       56.83%     60.77%  58.74%
 
-   First we describe how the sentence is analysed
-                                                            The errors are mainly due to a wrong analysis
-(2.1), then we describe how the actual sentence
-                                                         of coordinating conjunctions, which is not only the
-compression is done (2.2), and after that we de-
-                                                         weak point in the clause-detection module, but also
-scribe how words can be reduced for extra compres-
-                                                         in ShaRPa. A full parse is needed to accurately
-sion (2.3). The final part describes the selection of
-                                                         solve this problem.
+Figure 1: Sentence Processing Flow Chart               Table 1: Clause Detection Accuracy
+
+   First we describe how the sentence is analysed         The errors are mainly due to a wrong analysis
+(2.1), then we describe how the actual sentence        of coordinating conjunctions, which is not only the
+compression is done (2.2), and after that we de-       weak point in the clause-detection module, but also
+scribe how words can be reduced for extra compres-     in ShaRPa. A full parse is needed to accurately
+sion (2.3). The ﬁnal part describes the selection of   solve this problem.
 the ouput sentence (2.4).
-2.1 Sentence Analysis                                    2.2     Sentence Compression
-In order to apply an accurate sentence compression,      For each chunk or clause detected in the previous
-we need a syntactic analysis of the input sentence.      steps, the probabilities of removal, non-removal and
-   In a first step, the input sentence gets tagged for   reduction are estimated. This is described in more
-parts-of-speech. Before that, it needs to be trans-      detail in 2.2.1.
-formed into a valid input format for the part-of-           Besides the statistical component in the compres-
-speech tagger. The tagger we use is TnT (Brants,         sion, there are also a number of rules in the com-
-2000) , a hidden Markov trigram tagger, which was        pression program, which are described in more de-
-trained on the Spoken Dutch Corpus (CGN), Inter-         tail in 2.2.2.
-nal Release 6. The accuracy of TnT trained on CGN           The way the statistical component and the rule-
-is reported to be 96.2% (Oostdijk et al., 2002).         based component are combined is described in
-   In a second step, the sentence is sent to the         2.2.3.
-Abbreviator. This tool connects to a database
-of common abbreviations, which are often pro-               1
-                                                            There is no equivalent construction in English. OTI is a
-nounced in full words (E.g. European Union be-           VP-selecting complementizer.
-2.2.1 Use of Statistics                                   of reduction2 ( ). For the terminal nodes, only the
-Chunk and clause removal, non-removal and reduc-          measures of removal and of non-removal are used.
-tion probabilities are estimated from the frequencies
-of removal, non-removal and reduction of certain                                        NP
-types of chunks and clauses in the parallel corpus.                                     = 0.54
-   The parallel corpus consists of transcripts of tele-                                 X 0.27
-                                                                                         0.05
-vision programs on the one hand and the subti-
-tles of these television programs on the other hand.
-A detailed description of how the parallel corpus                           ADJ                  ADJ
-                                                          DET                                                         N
-was collected, and how the sentences and chunks           = 0.68
-                                                                            = 0.56               = 0.56
-                                                                                                                      = 0.65
-were aligned is given in (Vandeghinste and Tjong                            X 0.35               X 0.35
-                                                          X 0.28                                                      X 0.26
-                                                                            groot-               Bel-
-Kim Sang, 2004).                                          de
-                                                                            ste                  gische
-                                                                                                                      bank
-   All sentences in the source corpus (transcripts)
-and the target corpus (subtitles) are analysed in the
-same way as described in section 2.1, and are chunk             For every combination the probability estimate
-aligned. The chunk alignment accuracy is about            is calculated. So if we generate all possible com-
-95% (F-value).                                            pressions (including no compression), the phrase
-   We estimated the removal, non-removal and re-          de grootste Belgische bank will get the
-duction probabilities for the chunks of the types NP,     probability estimate             
-PP, adjectival phrase (AP), SSUB, RELP, and OTI,            . For the phrase de Belgische
-based on their chunk removal, non-removal and re-         bank the probability estimate is ! "
-duction frequencies.                                       #$$%& ## , and so on for the
-   For the tokens not belonging to either of these        other alternatives.
-types, the removal and non-removal probabilities                In this way, the probability estimate of all possi-
-were estimated based on the part-of-speech tag for        ble alternatives is calculated.
-those words. A reduced tagset was used, as the orig-      2.2.2 Use of Rules
-inal CGN-tagset (Van Eynde, 2004) was too fine-           As the statistical information allows the generation
-grained and would lead to a multiplication of the         of ungrammatical sentences, a number of rules were
-number of rules which are now used in ShaRPa. The         added to avoid generating such sentences. The pro-
-first step in SharPa consists of this reduction.          cedure keeps the necessary tokens for each kind of
-   For the PPs, the SSUBs and the RELPs, as well          node. The rules were built in a bootstrapping man-
-as for the adverbs, the chunk/tag information was         ner
-considered as not fine-grained enough, so the es-            In some of these rules, this procedure is applied
-timation of the removal, non-removal and reduc-           recursively. These are the rules implemented in our
-tion probabilities for these types are based on the       system:
-first word of those phrases/clauses and the reduc-
-tion, removal and non-removal probabilities of such          ' If a node is of type SSUB or RELP, keep the
-phrases in the parallel corpus, as the first words of              first word.
-these chunk-types are almost always the heads of             ' If a node is of type S, SSUB or RELP, keep
-the chunk. This allows for instance to make the
-distinction between several adverbs in one sentence,
-so they do not all have the same removal and non-                    – the verbs. If there are prepositions which
-removal probabilities. A disadvantage is that this                     are particles of the verb, keep the prepo-
-approach leads to sparse data concerning the less                      sitions. If there is a prepositional phrase
-frequent adverbs, for which a default value (average                   which has a preposition which is in the
-over all adverbs) will be employed.                                    complements list of the verb, keep the
-                                                                       necessary tokens3 of that prepositional
-An example : A noun phrase.                                            phrase.
-  de grootste Belgische bank
-  [E: the largest Belgian bank]                              2
-                                                                These measures are estimated probabilities and do not need
-                                                          to add up to 1, because in the parallel training corpus, some-
-   After tagging and chunking the sentence and af-        times a match was detected with a chunk which was not a re-
-                                                          duction of the source chunk or which was not identical to the
-ter detecting subordinate clauses, for every non-         source chunk: the chunk could be paraphrased, or even have
-terminal node in the shallow parse tree we retrieve       become longer.
-                                                              3
-the measure of removal (X), of non-removal (=) and              Recursive use of the rules
-         – each token which is in the list of nega-              2.2.3 Combining Statistics and Rules
-           tive words. These words are kept to avoid             In the current version of the system, in a first stage
-           altering the meaning of the sentence by               all variations on a sentence are generated in the sta-
-           dropping words which negate the mean-                 tistical part, and they are ranked according to their
-           ing.                                                  probability. In a second stage, all ungrammatical
-         – the necessary tokens of the te + infinitives          sentences are (or should be) filtered out, so the only
-           (TI).                                                 sentence alternatives which remain should be gram-
-         – the conjunctions.                                     matical ones.
-                                                                    This is true, only if tagging as well as chunking
-         – the necessary tokens of each NP.                      were correct. If errors are made on these levels, the
-         – the numerals.                                         generation of an ungrammatical alternative is still
-         – the adverbially used adjectives.                      possible.
-                                                                    For efficiency reasons, a future version of the sys-
-   ' If a node is of type NP, keep                               tem should combine the rules and statistics in one
-                                                                 stage, so that the statistical module only generates
-         – each noun.                                            grammatically valid sentence alternatives, although
-         – each nominalised adjectival phrase.                   there is no effect on correctness, as the resulting sen-
-                                                                 tence alternatives would be the same if statistics and
-         – each token which is in the list of negative
-                                                                 rules were better integrated.
-           words.
-         – the determiners.                                      2.3   Word Reduction
-         – the numerals.                                         After the generation of several grammatical reduc-
-         – the indefinite prenominal pronouns.                   tions, which are ordered according to their prob-
-                                                                 ability estimated by the product of the removal,
-   ' If a node is of type PP, keep                               non-removal and reduction probabilities of all its
-                                                                 chunks, for every word in every compressed alterna-
-         – the preposition.                                      tive of the sentence it is checked whether the word
-         – the determiners.                                      can be reduced.
-                                                                    The words are sent to a WordSplitter-module,
-         – the necessary tokens of the NPs.
-                                                                 which takes a word as its input and checks if it is
-   ' If the node is of type adjectival phrase, keep              a compound by trying to split it up in two parts:
-                                                                 the modifier and the head. This is done by lexicon
-         – the head of the adjectival phrase.                    lookup of both parts. If this is possible, it is checked
-                                                                 whether the modifier and the head can be recom-
-         – the prenominal numerals.
-                                                                 pounded according to the word formation rules for
-         – each word which is in the list of negative            Dutch (Booij and van Santen, 1995), (Haeseryn et
-           words.                                                al., 1997). This is done by sending the modifier
-   ' If the node is of type OTI, keep                            and the head to a WordBuilding-module, which is
-                                                                 described in more detail in (Vandeghinste, 2002).
-         – the verbs.                                            This is a hybrid module combining the compound-
-                                                                 ing rules with statistical information about the fre-
-         – the te + infinitives.                                 quency of compounds with the samen head, the fre-
-   ' If the node is of type TI, keep the node.                   quency of compounds with the same modifier, and
-                                                                 the number of different compounds with the same
-   ' If the node is a time phrase4 , keep it.                    head.
-                                                                    Only if this module allows the recomposition of
-   These rules are chosen because in tests on earlier            the modifier and the head, the word can be consid-
-versions of the system, using a different test set, un-          ered to be a compound, and it can potentially be re-
-grammatical output was generated. By using these                 duced to its head, removing the modifier.
-rules the output should be grammatical, provided                    If the words occur in a database which contains
-that the input sentence was analysed correctly.                  a list of compounds which should not be split up,
-   4
-    A time phrase, as defined in ShaRPa is used for special
-                                                                 the word cannot be reduced. For example, the
-phrases, like dates, times, etc. E.g. 27 september 1998, kwart   word voetbal [E: football] can be split up and re-
-voor drie [E: quarter to three].                                 compounded according to the word formation rules
-for Dutch (voet [E: foot] and bal [E: ball]), but          input sentence, taking into account the meaning of
-we should not replace the word voetbal with the            the previous sentences on the same topic.
-word bal if we want an accurate compression, with
-the same meaning as the original sentence, as this         3.1    Method
-would alter the meaning of the sentence too much.          To estimate the available number of characters in a
-The word voetbal has (at least) two different mean-        subtitle, it is necessary to estimate the average pro-
-ings: soccer and the ball with which soccer is             nunciation time of the input sentence, provided that
-played. Reducing it to bal would only keep the sec-        it is unknown. We estimate sentence duration by
-ond meaning. The word gevangenisstraf [E: prison           counting the number of syllables in a sentence and
-sentence] can be split up and recompounded (gevan-         multiplying this with the average duration per sylla-
-genis [E: prison] and straf [E: punishment]). We           ble (ASD).
-can replace the word gevangenisstraf by the word              The ASD for Dutch is reported to be about 177
-straf. This would still alter the meaning of the sen-      ms (Koopmans-van Beinum and van Donzel, 1996),
-tence, but not to the same amount as it would have         which is the syllable speed without including pauses
-been altered in the case of the word voetbal.              between words or sentences.
-2.4 Selection of the Compressed Sentence                      We did some similar research on CGN using the
-Applying all the steps described in the previous sec-      ASD as a unit of analysis, while we consider both
-tions results in an ordered list of sentence alterna-      the situation without pauses and the situation with
-tives, which are supposedly grammatically correct.         pauses. Results of this research are presented in ta-
-   When word reduction was possible, the word-             ble 2.
-reduced alternative is inserted in this list, just after
-its full-words equivalent.                                       ASD           no pauses    pauses included
-   The first sentence in this list with a length smaller
-                                                                 All files          186                 237
-than the maximal length (depending on the available
-                                                                 One speaker        185                 239
-presentation time) is selected.
-                                                                 Read-aloud         188                 256
-   In a future version of the system, the word reduc-
-tion information can be integrated in a better way                Table 2: Average Syllable Duration (ms)
-with the rest of the module, by combining the proba-
-bility of reduction/non-reduction of a word with the
-probability of the sentence alternative. The reduc-
-                                                              We extract the word duration from all the files
-tion probability of a word would then play its role
-                                                           in each component of CGN. A description of the
-in the estimated probability of the compressed sen-
-                                                           components can be found in (Oostdijk et al., 2002).
-tence alternative containing this reduced word.
-                                                              We created a syllable counter for Dutch words,
-3 Evaluation                                               which we evaluated on all words in the CGN lexi-
-The evaluation of a sentence compression module is         con. For 98.3% of all words in the lexicon, syllables
-not an easy task. The output of the system needs to        are counted correctly. Most errors occur in very low
-be judged manually for its accuracy. This is a very        frequency words or in foreign words.
-time consuming task. Unlike (Jing, 2001), we do               By combining word duration information and the
-not compare the system results with the human sen-         number of syllables we can calculate the average
-tence reductions. Jing reports a succes rate of 81.3%      speaking speed.
-for her program, but this measure is calculated as the        We evaluated sentence compression in three dif-
-percentage of decisions on which the system agrees         ferent conditions:
-with the decisions taken by the human summarizer.             The fastest ASD in our ASD-research was 185 ms
-This means that 81.3% of all system decisions are          (one speaker, no pauses), which was used for Con-
-correct, but does not say anything about how many          dition A. We consider this ASD as the maximum
-sentences are correctly reduced.                           speed for Dutch.
-   In our evaluation we do not expect the compres-            The slowest ASD (256 ms) was used for Condi-
-sor to simulate human summarizer behaviour. The            tion C. We consider this ASD to be the minimum
-results presented here are calculated on the sentence      speed for Dutch.
-level: the amount of valid reduced sentences, be-             We created a testset of 100 sentences mainly fo-
-ing those reductions which are judged by human             cused on news broadcasts in which we use the real
-raters to be accurate reductions: grammatical sen-         pronunciation time of each sentence in the testset
-tences with (more or less) the same meaning as the         which results in an ASD of 192ms. This ASD was
-   used for Condition B, and is considered as the real      without changing the content too much. The amount
-   speed for news broadcasts.                               of test sentences where no output was generated
-      We created a testset of 300 sentences, of which       is presented in table 3. The high percentage of
-   200 were taken from transcripts of television news,      sentences where no output was generated in condi-
-   and 100 were taken from the ’broadcast news’ com-        tions A and B is most probably due to the fact that
-   ponent of CGN.                                           the compression rates in these conditions are higher
-      To evaluate the compressor, we estimate the du-       than they would be in a real life application. Condi-
-   ration of each sentence, by counting the number of       tion C seems to be closer to the real life compression
-   syllables and multiplying that number with the ASD       rate needed in subtitling.
-   for that condition. This leads to an estimated pro-          Each condition has an average reduction rate over
-   nunciation time. This is converted to the number of      the 300 test sentences. This reduction rate is based
-   characters, which is available for the subtitle.         on the available amount of characters in the subtitle
-      We know the average time for subtitle presenta-       and the number of characters in the source sentence.
-   tion at the VRT (Flemish Broadcasting Coorpora-              A rater scores a compressed sentence as + when
-   tion) is 70 characters in 6 seconds, which gives us      it is grammatically correct and semantically equiva-
-   an average of 11.67 characters per second.               lent to the input sentence. No essential information
-      So, for example, if we have a test sentence of        should be missing. A sentence is scored as +/-
-   15 syllables, this gives us an estimated pronunci-       when it is grammatically correct, but some infor-
-   ation time of 2.775 seconds (15 syllables        185     mation is missing, but is clear from the context in
-   ms/syllable) in condition A. When converting this to     which the sentence occurs. All other compressed
-   the available characters, we multiply 2.775 seconds      sentences get scored as -.
-   by 11.67 characters/second, resulting in 32 (2.775s          Each sentence is evaluated by two raters. The
-      11.67 ch/s = 32.4 ch) available characters.           lowest score of the two raters is the score which the
-      In condition B (considered to be real-time) for       sentence gets. Interrater agreement is calculated on
-   the part of the test-sentences coming from CGN,          a 2 point score: if both raters score a sentence as +
-   the pronunciation time was not estimated, as it was      or +/- or both raters score a sentence as -, it is con-
-   available in CGN.                                        sidered an agreed judgement. Interrater agreement
-                                                            results are presented in table 3.
-   3.2   Results                                                Sentence compression results are presented in ta-
-   The results of our experiments on the sentence com-      ble 3. We consider both the + and +/- results as
-   pression module are presented in table 3.                reasonable compressions.
-                                                                The resulting percentages of reasonable compres-
-Condition                  A          B          C          sions seem to be rather low, but one should keep
-No output (0)           44.33%     41.67%     15.67%        in mind that these results are based on the sentence
-Avg Syllable speed                                          level. One little mistake in one sentence can lead
-(msec/syllable)           185        192        256         to an inaccurate compression, although the major
-Avg Reduction Rate      39.93%     37.65%     16.93%        part of the decisions taken in the compression pro-
-Interrater Agreement    86.2%      86.9%       91.7%        cess can still be correct. This makes it very hard
-Accurate Compr.          4.8%       8.0%       28.9%        to compare our results to the results presented by
-+/- Acc. Compr.         28.1%      26.3%       22.1%        Jing (2001), but we presented our results on sen-
-Reasonable Compr.       32.9%      34.3%        51%         tence evaluations as it gives a clearer idea on how
-                                                            well the system would actually perform in a real life
-   Table 3: Sentence Compression Evaluation on the          application.
-   Sentence Level                                               As we do not try to immitate human subtitling be-
-                                                            haviour, but try to develop an equivalent approach,
-      The sentence compressor does not generate out-        our system is not evaluated in the same way as the
-   put for all test sentences in all conditions: In those   system deviced by Jing.
-   cases where no output was generated, the sentence
-   compressor was not able to generate a sentence           4 Conclusion
-   alternative which was shorter than the maximum           We have described a hybrid approach to sentence
-   number of characters available for that sentence.        compression which seems to work in general. The
-   The cases where no output is generated are not con-      combination of using statistics and filtering out in-
-   sidered as errors because it is often impossible, even   valid results because they are ungrammatical by us-
-   for humans, to reduce a sentence by about 40%,           ing a set of rules is a feasible way for automated
-sentence compression.                                   ITC.       1997.        Guidance on standards
-   The way of combining the probability-estimates          for     subtitling.         Technical       report,
-of chunk removal to get a ranking in the generated         ITC.        Online at http://www.itc.org.uk/
-sentence alternatives is working reasonably well,          codes guidelines/broadcasting/tv/sub sign
-but could be improved by using more fine-grained            audio/subtitling stnds/.
-chunk types for data collection.                        H. Jing. 2001. Cut-and-Paste Text Summarization.
-   A full syntactic analysis of the input sentence         Ph.D. thesis, Columbia University.
-would lead to better results, as the current sentence   F.J. Koopmans-van Beinum and M.E. van Donzel.
-analysis tools have one very weak point: the han-          1996. Relationship Between Discourse Structure
-dling of coordinating conjunction, which leads to          and Dynamic Speech Rate. In Proceedings IC-
-chunking errors, both in the input sentence as in the      SLP 1996, Philadelphia, USA.
-processing of the used parallel corpus. This leads to   N. Oostdijk, W. Goedertier, F. Van Eynde, L. Boves,
-misestimations of the compression probabilities and        J.P. Marters, M. Moortgat, and H. Baayen. 2002.
-creates noise in the behaviour of our system.              Experiences from the Spoken Dutch Corpus. In
-   Making use of semantics would most probably             Proceedings of LREC 2002, volume I, pages 340–
-lead to better results, but a semantic lexicon and         347, Paris. ELRA.
-semantic analysis tools are not available for Dutch,    F. Van Eynde. 2004. Part-of-speech Tagging
-and creating them would be out of the scope of the         en Lemmatisering. Internal manual of Cor-
-current project.                                           pus Gesproken Nederlands, published online at
-   In future research we will check the effects of         http://www.ccl.kuleuven.ac.be/Papers/
-improved word-reduction modules, as word reduc-            POSmanual febr2004.pdf.
-tions often seem to lead to inaccurate compres-         V. Vandeghinste and E. Tjong Kim Sang. 2004. Us-
-sions. Leaving out the word-reduction module               ing a parallel transcript/subtitle corpus for sen-
-would probably lead to an even bigger amount of            tence compression. In Proceedings of LREC
-no output-cases. This will also be checked in future       2004, Paris. ELRA.
-research.                                               V. Vandeghinste. 2002. Lexicon optimization:
-                                                           Maximizing lexical coverage in speech recogni-
-5 Acknowledgements                                         tion through automated compounding. In Pro-
-Research funded by IWT (Institute for Innovation           ceedings of LREC 2002, volume IV, pages 1270–
-in Science and Technology) in the STWW pro-                1276, Paris. ELRA.
-gram, project ATraNoS (Automatic Transcription          V. Vandeghinste. submitted. ShaRPa: Shallow
-and Normalisation of Speech). For more informa-            Rule-based Parsing, focused on Dutch. In Pro-
-tion visit http://atranos.esat.kuleuven.ac.be/.            ceedings of CLIN 2003.
-   We would like to thank Ineke Schuurman for rat-
-ing the reduced sentences.
+                                                       2.2 Sentence Compression
+2.1 Sentence Analysis
+                                                       For each chunk or clause detected in the previous
+In order to apply an accurate sentence compression,    steps, the probabilities of removal, non-removal and
+we need a syntactic analysis of the input sentence.    reduction are estimated. This is described in more
+                                                       detail in 2.2.1.
+   In a ﬁrst step, the input sentence gets tagged for
+parts-of-speech. Before that, it needs to be trans-       Besides the statistical component in the compres-
+formed into a valid input format for the part-of-      sion, there are also a number of rules in the com-
+speech tagger. The tagger we use is TnT (Brants,       pression program, which are described in more de-
+2000) , a hidden Markov trigram tagger, which was      tail in 2.2.2.
+trained on the Spoken Dutch Corpus (CGN), Inter-
+nal Release 6. The accuracy of TnT trained on CGN         The way the statistical component and the rule-
+is reported to be 96.2% (Oostdijk et al., 2002).       based component are combined is described in
+                                                       2.2.3.
+   In a second step, the sentence is sent to the
+Abbreviator. This tool connects to a database              1There is no equivalent construction in English. OTI is a
+of common abbreviations, which are often pro-          VP-selecting complementizer.
+nounced in full words (E.g. European Union be-
+2.2.1 Use of Statistics                                  of reduction2 ( ). For the terminal nodes, only the
+                                                         measures of removal and of non-removal are used.
+Chunk and clause removal, non-removal and reduc-
+tion probabilities are estimated from the frequencies                    NP
+of removal, non-removal and reduction of certain
+types of chunks and clauses in the parallel corpus.                      = 0.54
 
-References
-G. Booij and A. van Santen. 1995. Morfologie. De
+   The parallel corpus consists of transcripts of tele-                  X¡  0.27
+vision programs on the one hand and the subti-                               0.05
+tles of these television programs on the other hand.
+A detailed description of how the parallel corpus        DET     ADJ               ADJ     N
+was collected, and how the sentences and chunks          = 0.68  = 0.56            = 0.56  = 0.65
+were aligned is given in (Vandeghinste and Tjong         X 0.28  X 0.35            X 0.35  X 0.26
+Kim Sang, 2004).                                         de      groot-            Bel-    bank
+
+   All sentences in the source corpus (transcripts)              ste               gische
+and the target corpus (subtitles) are analysed in the
+same way as described in section 2.1, and are chunk         For every combination the probability estimate
+aligned. The chunk alignment accuracy is about           is calculated. So if we generate all possible com-
+95% (F-value).                                           pressions (including no compression), the phrase
+                                                         de grootste Belgische bank will get the
+   We estimated the removal, non-removal and re-         probability estimate ¤¢ ¦£ ¨¥ § ©  ¤¢ £©¢ !£ "¥ #© ¢ £!¥"©
+duction probabilities for the chunks of the types NP,    ¢¤£$&¥ %()' ¤¢ £$¢ 012§ $ ¥ . For the phrase de Belgische
+PP, adjectival phrase (AP), SSUB, RELP, and OTI,         bank the probability estimate is ¢ £¦¢ 3¥ ©) ¢¤£ 4 ©
+based on their chunk removal, non-removal and re-        ¢¤£5$6¥ ©#¤¢ £¦¥&6 ©#¢¤¦£  ¥ 7% '8¢ ¦£ &¢ "¢ 2§ 5&5 , and so on for the
+duction frequencies.                                     other alternatives.
+
+   For the tokens not belonging to either of these          In this way, the probability estimate of all possi-
+types, the removal and non-removal probabilities         ble alternatives is calculated.
+were estimated based on the part-of-speech tag for
+those words. A reduced tagset was used, as the orig-     2.2.2 Use of Rules
+inal CGN-tagset (Van Eynde, 2004) was too ﬁne-
+grained and would lead to a multiplication of the        As the statistical information allows the generation
+number of rules which are now used in ShaRPa. The        of ungrammatical sentences, a number of rules were
+ﬁrst step in SharPa consists of this reduction.          added to avoid generating such sentences. The pro-
+                                                         cedure keeps the necessary tokens for each kind of
+   For the PPs, the SSUBs and the RELPs, as well         node. The rules were built in a bootstrapping man-
+as for the adverbs, the chunk/tag information was        ner
+considered as not ﬁne-grained enough, so the es-
+timation of the removal, non-removal and reduc-             In some of these rules, this procedure is applied
+tion probabilities for these types are based on the      recursively. These are the rules implemented in our
+ﬁrst word of those phrases/clauses and the reduc-        system:
+tion, removal and non-removal probabilities of such
+phrases in the parallel corpus, as the ﬁrst words of        9 If a node is of type SSUB or RELP, keep the
+these chunk-types are almost always the heads of               ﬁrst word.
+the chunk. This allows for instance to make the
+distinction between several adverbs in one sentence,        9 If a node is of type S, SSUB or RELP, keep
+so they do not all have the same removal and non-
+removal probabilities. A disadvantage is that this                – the verbs. If there are prepositions which
+approach leads to sparse data concerning the less                    are particles of the verb, keep the prepo-
+frequent adverbs, for which a default value (average                 sitions. If there is a prepositional phrase
+over all adverbs) will be employed.                                  which has a preposition which is in the
+                                                                     complements list of the verb, keep the
+An example : A noun phrase.                                          necessary tokens3 of that prepositional
+   de grootste Belgische bank                                        phrase.
+   [E: the largest Belgian bank]
+                                                             2These measures are estimated probabilities and do not need
+   After tagging and chunking the sentence and af-       to add up to 1, because in the parallel training corpus, some-
+ter detecting subordinate clauses, for every non-        times a match was detected with a chunk which was not a re-
+terminal node in the shallow parse tree we retrieve      duction of the source chunk or which was not identical to the
+the measure of removal (X), of non-removal (=) and       source chunk: the chunk could be paraphrased, or even have
+                                                         become longer.
+
+                                                             3Recursive use of the rules
+         – each token which is in the list of nega-             2.2.3 Combining Statistics and Rules
+            tive words. These words are kept to avoid
+            altering the meaning of the sentence by             In the current version of the system, in a ﬁrst stage
+            dropping words which negate the mean-               all variations on a sentence are generated in the sta-
+            ing.                                                tistical part, and they are ranked according to their
+                                                                probability. In a second stage, all ungrammatical
+         – the necessary tokens of the te + inﬁnitives          sentences are (or should be) ﬁltered out, so the only
+            (TI).                                               sentence alternatives which remain should be gram-
+                                                                matical ones.
+         – the conjunctions.
+         – the necessary tokens of each NP.                        This is true, only if tagging as well as chunking
+         – the numerals.                                        were correct. If errors are made on these levels, the
+         – the adverbially used adjectives.                     generation of an ungrammatical alternative is still
+   9 If a node is of type NP, keep                              possible.
+
+         – each noun.                                              For efﬁciency reasons, a future version of the sys-
+         – each nominalised adjectival phrase.                  tem should combine the rules and statistics in one
+         – each token which is in the list of negative          stage, so that the statistical module only generates
+                                                                grammatically valid sentence alternatives, although
+            words.                                              there is no effect on correctness, as the resulting sen-
+         – the determiners.                                     tence alternatives would be the same if statistics and
+         – the numerals.                                        rules were better integrated.
+         – the indeﬁnite prenominal pronouns.
+   9 If a node is of type PP, keep                              2.3 Word Reduction
+
+         – the preposition.                                     After the generation of several grammatical reduc-
+         – the determiners.                                     tions, which are ordered according to their prob-
+         – the necessary tokens of the NPs.                     ability estimated by the product of the removal,
+   9 If the node is of type adjectival phrase, keep             non-removal and reduction probabilities of all its
+                                                                chunks, for every word in every compressed alterna-
+         – the head of the adjectival phrase.                   tive of the sentence it is checked whether the word
+         – the prenominal numerals.                             can be reduced.
+         – each word which is in the list of negative
+                                                                   The words are sent to a WordSplitter-module,
+            words.                                              which takes a word as its input and checks if it is
+   9 If the node is of type OTI, keep                           a compound by trying to split it up in two parts:
+                                                                the modiﬁer and the head. This is done by lexicon
+         – the verbs.                                           lookup of both parts. If this is possible, it is checked
+         – the te + inﬁnitives.                                 whether the modiﬁer and the head can be recom-
+   9 If the node is of type TI, keep the node.                  pounded according to the word formation rules for
+   9 If the node is a time phrase4, keep it.                    Dutch (Booij and van Santen, 1995), (Haeseryn et
+                                                                al., 1997). This is done by sending the modiﬁer
+   These rules are chosen because in tests on earlier           and the head to a WordBuilding-module, which is
+versions of the system, using a different test set, un-         described in more detail in (Vandeghinste, 2002).
+grammatical output was generated. By using these                This is a hybrid module combining the compound-
+rules the output should be grammatical, provided                ing rules with statistical information about the fre-
+that the input sentence was analysed correctly.                 quency of compounds with the samen head, the fre-
+                                                                quency of compounds with the same modiﬁer, and
+    4A time phrase, as deﬁned in ShaRPa is used for special     the number of different compounds with the same
+phrases, like dates, times, etc. E.g. 27 september 1998, kwart  head.
+voor drie [E: quarter to three].
+                                                                   Only if this module allows the recomposition of
+                                                                the modiﬁer and the head, the word can be consid-
+                                                                ered to be a compound, and it can potentially be re-
+                                                                duced to its head, removing the modiﬁer.
+
+                                                                   If the words occur in a database which contains
+                                                                a list of compounds which should not be split up,
+                                                                the word cannot be reduced. For example, the
+                                                                word voetbal [E: football] can be split up and re-
+                                                                compounded according to the word formation rules
+for Dutch (voet [E: foot] and bal [E: ball]), but         input sentence, taking into account the meaning of
+we should not replace the word voetbal with the           the previous sentences on the same topic.
+word bal if we want an accurate compression, with
+the same meaning as the original sentence, as this        3.1 Method
+would alter the meaning of the sentence too much.
+The word voetbal has (at least) two different mean-       To estimate the available number of characters in a
+ings: soccer and the ball with which soccer is            subtitle, it is necessary to estimate the average pro-
+played. Reducing it to bal would only keep the sec-       nunciation time of the input sentence, provided that
+ond meaning. The word gevangenisstraf [E: prison          it is unknown. We estimate sentence duration by
+sentence] can be split up and recompounded (gevan-        counting the number of syllables in a sentence and
+genis [E: prison] and straf [E: punishment]). We          multiplying this with the average duration per sylla-
+can replace the word gevangenisstraf by the word          ble (ASD).
+straf. This would still alter the meaning of the sen-
+tence, but not to the same amount as it would have           The ASD for Dutch is reported to be about 177
+been altered in the case of the word voetbal.             ms (Koopmans-van Beinum and van Donzel, 1996),
+                                                          which is the syllable speed without including pauses
+2.4 Selection of the Compressed Sentence                  between words or sentences.
+
+Applying all the steps described in the previous sec-        We did some similar research on CGN using the
+tions results in an ordered list of sentence alterna-     ASD as a unit of analysis, while we consider both
+tives, which are supposedly grammatically correct.        the situation without pauses and the situation with
+                                                          pauses. Results of this research are presented in ta-
+   When word reduction was possible, the word-            ble 2.
+reduced alternative is inserted in this list, just after
+its full-words equivalent.                                ASD          no pauses   pauses included
+                                                          All ﬁles            186                237
+   The ﬁrst sentence in this list with a length smaller   One speaker         185                239
+than the maximal length (depending on the available       Read-aloud          188                256
+presentation time) is selected.
+                                                          Table 2: Average Syllable Duration (ms)
+   In a future version of the system, the word reduc-
+tion information can be integrated in a better way           We extract the word duration from all the ﬁles
+with the rest of the module, by combining the proba-      in each component of CGN. A description of the
+bility of reduction/non-reduction of a word with the      components can be found in (Oostdijk et al., 2002).
+probability of the sentence alternative. The reduc-
+tion probability of a word would then play its role          We created a syllable counter for Dutch words,
+in the estimated probability of the compressed sen-       which we evaluated on all words in the CGN lexi-
+tence alternative containing this reduced word.           con. For 98.3% of all words in the lexicon, syllables
+                                                          are counted correctly. Most errors occur in very low
+3 Evaluation                                              frequency words or in foreign words.
+
+The evaluation of a sentence compression module is           By combining word duration information and the
+not an easy task. The output of the system needs to       number of syllables we can calculate the average
+be judged manually for its accuracy. This is a very       speaking speed.
+time consuming task. Unlike (Jing, 2001), we do
+not compare the system results with the human sen-           We evaluated sentence compression in three dif-
+tence reductions. Jing reports a succes rate of 81.3%     ferent conditions:
+for her program, but this measure is calculated as the
+percentage of decisions on which the system agrees           The fastest ASD in our ASD-research was 185 ms
+with the decisions taken by the human summarizer.         (one speaker, no pauses), which was used for Con-
+This means that 81.3% of all system decisions are         dition A. We consider this ASD as the maximum
+correct, but does not say anything about how many         speed for Dutch.
+sentences are correctly reduced.
+                                                             The slowest ASD (256 ms) was used for Condi-
+   In our evaluation we do not expect the compres-        tion C. We consider this ASD to be the minimum
+sor to simulate human summarizer behaviour. The           speed for Dutch.
+results presented here are calculated on the sentence
+level: the amount of valid reduced sentences, be-            We created a testset of 100 sentences mainly fo-
+ing those reductions which are judged by human            cused on news broadcasts in which we use the real
+raters to be accurate reductions: grammatical sen-        pronunciation time of each sentence in the testset
+tences with (more or less) the same meaning as the        which results in an ASD of 192ms. This ASD was
+used for Condition B, and is considered as the real     without changing the content too much. The amount
+speed for news broadcasts.                              of test sentences where no output was generated
+                                                        is presented in table 3. The high percentage of
+   We created a testset of 300 sentences, of which      sentences where no output was generated in condi-
+200 were taken from transcripts of television news,     tions A and B is most probably due to the fact that
+and 100 were taken from the ’broadcast news’ com-       the compression rates in these conditions are higher
+ponent of CGN.                                          than they would be in a real life application. Condi-
+                                                        tion C seems to be closer to the real life compression
+   To evaluate the compressor, we estimate the du-      rate needed in subtitling.
+ration of each sentence, by counting the number of
+syllables and multiplying that number with the ASD         Each condition has an average reduction rate over
+for that condition. This leads to an estimated pro-     the 300 test sentences. This reduction rate is based
+nunciation time. This is converted to the number of     on the available amount of characters in the subtitle
+characters, which is available for the subtitle.        and the number of characters in the source sentence.
+
+   We know the average time for subtitle presenta-         A rater scores a compressed sentence as + when
+tion at the VRT (Flemish Broadcasting Coorpora-         it is grammatically correct and semantically equiva-
+tion) is 70 characters in 6 seconds, which gives us     lent to the input sentence. No essential information
+an average of 11.67 characters per second.              should be missing. A sentence is scored as +/-
+                                                        when it is grammatically correct, but some infor-
+   So, for example, if we have a test sentence of       mation is missing, but is clear from the context in
+15 syllables, this gives us an estimated pronunci-      which the sentence occurs. All other compressed
+ation time of 2.775 seconds (15 syllables © 185         sentences get scored as -.
+ms/syllable) in condition A. When converting this to
+the available characters, we multiply 2.775 seconds        Each sentence is evaluated by two raters. The
+by 11.67 characters/second, resulting in 32 (2.775s     lowest score of the two raters is the score which the
+© 11.67 ch/s = 32.4 ch) available characters.           sentence gets. Interrater agreement is calculated on
+                                                        a 2 point score: if both raters score a sentence as +
+   In condition B (considered to be real-time) for      or +/- or both raters score a sentence as -, it is con-
+the part of the test-sentences coming from CGN,         sidered an agreed judgement. Interrater agreement
+the pronunciation time was not estimated, as it was     results are presented in table 3.
+available in CGN.
+                                                           Sentence compression results are presented in ta-
+3.2 Results                                             ble 3. We consider both the + and +/- results as
+                                                        reasonable compressions.
+The results of our experiments on the sentence com-
+pression module are presented in table 3.                  The resulting percentages of reasonable compres-
+                                                        sions seem to be rather low, but one should keep
+Condition                A       B       C              in mind that these results are based on the sentence
+                      44.33%  41.67%  15.67%            level. One little mistake in one sentence can lead
+No output (0)                                           to an inaccurate compression, although the major
+Avg Syllable speed      185     192     256             part of the decisions taken in the compression pro-
+(msec/syllable)       39.93%  37.65%  16.93%            cess can still be correct. This makes it very hard
+Avg Reduction Rate    86.2%   86.9%   91.7%             to compare our results to the results presented by
+Interrater Agreement                  28.9%             Jing (2001), but we presented our results on sen-
+Accurate Compr.        4.8%    8.0%   22.1%             tence evaluations as it gives a clearer idea on how
++/- Acc. Compr.       28.1%   26.3%                     well the system would actually perform in a real life
+Reasonable Compr.     32.9%   34.3%    51%              application.
+
+Table 3: Sentence Compression Evaluation on the            As we do not try to immitate human subtitling be-
+Sentence Level                                          haviour, but try to develop an equivalent approach,
+                                                        our system is not evaluated in the same way as the
+   The sentence compressor does not generate out-       system deviced by Jing.
+put for all test sentences in all conditions: In those
+cases where no output was generated, the sentence       4 Conclusion
+compressor was not able to generate a sentence
+alternative which was shorter than the maximum          We have described a hybrid approach to sentence
+number of characters available for that sentence.       compression which seems to work in general. The
+The cases where no output is generated are not con-     combination of using statistics and ﬁltering out in-
+sidered as errors because it is often impossible, even  valid results because they are ungrammatical by us-
+for humans, to reduce a sentence by about 40%,          ing a set of rules is a feasible way for automated
+sentence compression.                                  ITC. 1997. Guidance on standards
+   The way of combining the probability-estimates
+                                                       for subtitling.           Technical report,
+of chunk removal to get a ranking in the generated
+sentence alternatives is working reasonably well,      ITC. Online at http://www.itc.org.uk/
+but could be improved by using more ﬁne-grained
+chunk types for data collection.                       codes guidelines/broadcasting/tv/sub sign
+
+   A full syntactic analysis of the input sentence     audio/subtitling stnds/.
+would lead to better results, as the current sentence
+analysis tools have one very weak point: the han-      H. Jing. 2001. Cut-and-Paste Text Summarization.
+dling of coordinating conjunction, which leads to
+chunking errors, both in the input sentence as in the  Ph.D. thesis, Columbia University.
+processing of the used parallel corpus. This leads to
+misestimations of the compression probabilities and    F.J. Koopmans-van Beinum and M.E. van Donzel.
+creates noise in the behaviour of our system.
+                                                       1996. Relationship Between Discourse Structure
+   Making use of semantics would most probably
+lead to better results, but a semantic lexicon and     and Dynamic Speech Rate. In Proceedings IC-
+semantic analysis tools are not available for Dutch,
+and creating them would be out of the scope of the     SLP 1996, Philadelphia, USA.
+current project.
+                                                       N. Oostdijk, W. Goedertier, F. Van Eynde, L. Boves,
+   In future research we will check the effects of
+improved word-reduction modules, as word reduc-        J.P. Marters, M. Moortgat, and H. Baayen. 2002.
+tions often seem to lead to inaccurate compres-
+sions. Leaving out the word-reduction module           Experiences from the Spoken Dutch Corpus. In
+would probably lead to an even bigger amount of
+no output-cases. This will also be checked in future   Proceedings of LREC 2002, volume I, pages 340–
+research.
+                                                       347, Paris. ELRA.
+5 Acknowledgements
+                                                       F. Van Eynde. 2004. Part-of-speech Tagging
+Research funded by IWT (Institute for Innovation
+in Science and Technology) in the STWW pro-            en Lemmatisering. Internal manual of Cor-
+gram, project ATraNoS (Automatic Transcription
+and Normalisation of Speech). For more informa-        pus Gesproken Nederlands, published online at
+tion visit http://atranos.esat.kuleuven.ac.be/.
+                                                       http://www.ccl.kuleuven.ac.be/Papers/
+   We would like to thank Ineke Schuurman for rat-
+ing the reduced sentences.                             POSmanual febr2004.pdf.
+
+References                                             V. Vandeghinste and E. Tjong Kim Sang. 2004. Us-
+
+G. Booij and A. van Santen. 1995. Morfologie. De       ing a parallel transcript/subtitle corpus for sen-
    woordstructuur van het Nederlands. Amsterdam
-   University Press, Amsterdam, Netherlands.
-T. Brants. 2000. TnT - A Statistical Part-of-Speech
+   University Press, Amsterdam, Netherlands.           tence compression. In Proceedings of LREC
+
+T. Brants. 2000. TnT - A Statistical Part-of-Speech    2004, Paris. ELRA.
    Tagger. Published online at http://www.coli.uni-
-   sb.de/thorsten/tnt.
-W. Daelemans and H. Strik. 2002. Het Neder-
+   sb.de/thorsten/tnt.                                 V. Vandeghinste. 2002. Lexicon optimization:
+
+W. Daelemans and H. Strik. 2002. Het Neder-            Maximizing lexical coverage in speech recogni-
    lands in Taal- en Spraaktechnologie: Prioriteiten
-   voor Basisvoorzieningen. Technical report, Ne-
+   voor Basisvoorzieningen. Technical report, Ne-      tion through automated compounding. In Pro-
    derlandse Taalunie.
+                                                       ceedings of LREC 2002, volume IV, pages 1270–
 B. Dewulf and G. Saerens. 2000. Stijlboek
-   Teletekst Ondertiteling. Technical report, VRT,
+   Teletekst Ondertiteling. Technical report, VRT,     1276, Paris. ELRA.
    Brussel. Internal Subtitling Guidelines.
+                                                       V. Vandeghinste. submitted. ShaRPa: Shallow
 W. Haeseryn, G. Geerts, J de Rooij, and
-   M. van den Toorn. 1997. Algemene Neder-
+   M. van den Toorn. 1997. Algemene Neder-             Rule-based Parsing, focused on Dutch. In Pro-
    landse Spraakkunst. Martinus Nijhoff Uitgevers,
-   Groningen.
+   Groningen.                                          ceedings of CLIN 2003.

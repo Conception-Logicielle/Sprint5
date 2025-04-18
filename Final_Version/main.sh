@@ -31,3 +31,10 @@ for fichier_pdf in "$DOSSIER_PDF"/*.pdf; do
 done
 
 echo "✅ Conversion et mise en page terminées pour tous les fichiers."
+
+echo "🔄 Génération des fichier de résumés..."
+DOSSIER_RESUMES="./resumes"
+
+cd extractInfo/main
+
+cargo run --release ../../corpus_txt ../../resume
