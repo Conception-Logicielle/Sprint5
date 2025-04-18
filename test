@@ -1,0 +1,104 @@
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <regex>
+#include <sstream>
+#include <algorithm>
+
+// Parser d'articles scientifiques en C++
+// Utilisation : ./parser <dossier_input_txt>
+// Le programme lit chaque fichier .txt (déjà converti depuis PDF),
+// extrait le nom de fichier (espaces remplacés par '_'), le titre,
+// et le résumé (abstract) de la première colonne, puis génère un fichier _parsed.txt
+// dans le sous-dossier "parsed_texts" du dossier d'entrée.
+
+int main(int argc, char** argv) {
+    using namespace std;
+    namespace fs = std::filesystem;
+
+    if (argc != 2) {
+        cerr << "Usage: " << argv[0] << " <dossier_input_txt>\n";
+        return 1;
+    }
+    fs::path input_dir = argv[1];
+    if (!fs::exists(input_dir) || !fs::is_directory(input_dir)) {
+        cerr << "Dossier invalide : " << input_dir << "\n";
+        return 1;
+    }
+
+    fs::path output_dir = input_dir / "parsed_texts";
+    if (fs::exists(output_dir)) fs::remove_all(output_dir);
+    fs::create_directory(output_dir);
+
+    regex header_re("^\\s*(Abstract|ABSTRACT)\\s*[:\\-]?\\s*(.*)$", regex::icase);
+    regex section_re("^\\s*\\d+\\s+.*");
+
+    for (const auto& entry : fs::directory_iterator(input_dir)) {
+        if (!entry.is_regular_file()) continue;
+        fs::path txt_path = entry.path();
+        if (txt_path.extension() != ".txt") continue;
+
+        string original = txt_path.filename().string();
+        replace(original.begin(), original.end(), ' ', '_');
+
+        ifstream ifs(txt_path);
+        if (!ifs) {
+            cerr << "Impossible d'ouvrir : " << txt_path << "\n";
+            continue;
+        }
+
+        string line, title;
+        ostringstream abs_stream;
+        bool found_header = false;
+        bool skip_next = false;
+
+        // Extraction du titre (première ligne non vide)
+        while (getline(ifs, line)) {
+            if (!line.empty()) { title = line; break; }
+        }
+
+        // Retour au début pour l'abstract
+        ifs.clear(); ifs.seekg(0);
+
+        // Modification pour ne prendre en compte que le premier paragraphe de l'abstract dans la première colonne.
+        while (getline(ifs, line)) {
+            smatch m;
+            if (!found_header) {
+                if (regex_search(line, m, header_re)) {
+                    found_header = true;
+                    skip_next = true; // Indique qu'on doit sauter la ligne suivante
+                }
+            } else {
+                if (skip_next) {
+                    skip_next = false;
+                    continue; // Passe à la ligne suivante après "Abstract"
+                }
+                if (line.empty()) break; // Arrête si une ligne vide est rencontrée
+                if (regex_match(line, section_re)) break; // Arrête si une nouvelle section est détectée
+                // Capture uniquement la première colonne (avant deux espaces consécutifs ou tabulation)
+                size_t sep = line.find("  ");
+                string first_col = (sep != string::npos ? line.substr(0, sep) : line);
+                abs_stream << " " << first_col;
+                // Arrête si une ligne vide est rencontrée après avoir commencé à capturer l'abstract
+                if (line.empty()) break;
+            }
+        }
+
+        string abstract = abs_stream.str();
+        // nettoyage des espaces en excès
+        abstract = regex_replace(abstract, regex("\\s+"), " ");
+        abstract = regex_replace(abstract, regex("^\\s+|\\s+$"), "");
+
+        if (abstract.empty()) {
+            cerr << "Aucun abstract trouvé dans " << txt_path.filename() << "\n";
+        }
+
+        fs::path out_file = output_dir / (txt_path.stem().string() + string("_parsed.txt"));
+        ofstream ofs(out_file);
+        ofs << original << "\n" << title << "\n" << abstract << "\n";
+    }
+
+    cout << "Terminé. Fichiers dans : " << output_dir << "\n";
+    return 0;
+}
+
