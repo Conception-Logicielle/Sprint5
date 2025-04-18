@@ -27,6 +27,7 @@ for fichier_pdf in "$DOSSIER_PDF"/*.pdf; do
     fi
 
     echo "🧠 fichier $fichier_txt convertit"
+
 done
 
 echo "✅ Conversion et mise en page terminées pour tous les fichiers."
