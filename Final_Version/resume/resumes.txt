@@ -6,9 +6,6 @@ Lignes totales : 424
 Lignes résumé  : 19
 Longueur texte : 671 caractères
 Temps analyse  : 4 ms
-
-==============================
-Traitement terminé en 4 ms
 ==============================
 Fichier        : Boudin-Torres-2006.txt
 Titre          : A Scalable MMR Approach to Sentence Scoring for Multi-Document Update Summarization Florian Boudin and Marc El-Be`ze
