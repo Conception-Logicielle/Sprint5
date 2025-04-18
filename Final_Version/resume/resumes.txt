@@ -18,21 +18,21 @@ Temps analyse  : 2 ms
 
 ==============================
 Fichier        : compression.txt
-Titre          : Multi-Candidate Reduction: Sentence Compression as a Tool for Document Summarization Tasks∗ David Zajic1 , Bonnie J. Dorr1 , Jimmy Lin1 , Rich
-Résumé         : This article examines the application of two single-docume to the problem of multi-document summarization—a “parse-and-tr cal noisy-channel approach. We introduce the Multi-Candidate R multi-document summarization, in which many compressed candida sentence. These candidates are then selected for inclusion in bination of static and dynamic features. Evaluations demonstra valuable component of a larger multi-document summarization fr Keywords: headline generation, summarization, parse-and-trim, PACS: Artificial intelligence, 07.05.Mh; Computer science and guages, processing of, 43.71.Sy
+Titre          : Multi-Candidate Reduction: Sentence Compression as a Tool for Document Summarization Tasks∗ David Zajic1 , Bonnie J. Dorr1 , Jimmy Lin1 , Richard Schwartz2
+Résumé         : This article examines the application of two single-document sentence compression techniques to the problem of multi-document summarization—a “parse-and-trim” approach and a statistical noisy-channel approach. We introduce the Multi-Candidate Reduction (MCR) framework for multi-document summarization, in which many compressed candidates are generated for each source sentence. These candidates are then selected for inclusion in the final summary based on a combination of static and dynamic features. Evaluations demonstrate that sentence compression is a valuable component of a larger multi-document summarization framework. Keywords: headline generation, summarization, parse-and-trim, Hidden Markov Model PACS: Artificial intelligence, 07.05.Mh; Computer science and technology, 89.20.Ff; Spoken languages, processing of, 43.71.Sy
 Lignes totales : 1368
 Lignes résumé  : 14
-Longueur texte : 595 caractères
-Temps analyse  : 6 ms
+Longueur texte : 843 caractères
+Temps analyse  : 10 ms
 
 ==============================
 Fichier        : compression_phrases_Prog-Linear-jair.txt
-Titre          : Journal of Artificial Intelligence Research 31 Global Inference for Sentence An Integer Linear Programming
-Résumé         : 
+Titre          : Journal of Artificial Intelligence Research 31 (2008) 399-429    Submitted 09/07; published 03/08 Global Inference for Sentence Compression An Integer Linear Programming Approach
+Résumé         : Sentence compression holds promise for many applications ranging from summarization to subtitle generation. Our work views sentence compression as an optimization problem and uses integer linear programming (ILP) to infer globally optimal compressions in the presence of linguistically motivated constraints. We show how previous formulations of sentence compression can be recast as ILPs and extend these models with novel global constraints. Experimental results on written and spoken texts demonstrate improvements over state-of-the-art models.
 Lignes totales : 1644
-Lignes résumé  : 0
-Longueur texte : 0 caractères
-Temps analyse  : 7 ms
+Lignes résumé  : 9
+Longueur texte : 547 caractères
+Temps analyse  : 8 ms
 
 ==============================
 Fichier        : hybrid_approach.txt
@@ -41,7 +41,7 @@ Résumé         :
 Lignes totales : 429
 Lignes résumé  : 0
 Longueur texte : 0 caractères
-Temps analyse  : 2 ms
+Temps analyse  : 3 ms
 
 ==============================
 Fichier        : marcu_statistics_sentence_pass_one.txt
@@ -50,7 +50,7 @@ Résumé         : When humans produce summaries of documents, they do not simpl
 Lignes totales : 542
 Lignes résumé  : 18
 Longueur texte : 847 caractères
-Temps analyse  : 4 ms
+Temps analyse  : 5 ms
 
 ==============================
 Fichier        : mikheev.txt
@@ -59,7 +59,7 @@ Résumé         :
 Lignes totales : 1719
 Lignes résumé  : 0
 Longueur texte : 0 caractères
-Temps analyse  : 7 ms
+Temps analyse  : 10 ms
 
 ==============================
 Fichier        : probabilistic_sentence_reduction.txt
@@ -68,7 +68,7 @@ Résumé         : This paper investigates a novel application of sup port vecto
 Lignes totales : 442
 Lignes résumé  : 15
 Longueur texte : 331 caractères
-Temps analyse  : 2 ms
+Temps analyse  : 3 ms
 
 ==============================
 Fichier        : Stolcke_1996_Automatic_linguistic.txt
@@ -77,23 +77,23 @@ Résumé         : As speech recognition moves toward more unconstrained domains
 Lignes totales : 258
 Lignes résumé  : 13
 Longueur texte : 543 caractères
-Temps analyse  : 1 ms
+Temps analyse  : 2 ms
 
 ==============================
 Fichier        : Torres.txt
-Titre          : Summary Evaluation with and without References Juan-Manuel Torres-Moreno, Horacio Saggion, Iria da Cunha, Eric SanJuan, and
-Résumé         : the evaluation of text summarization systems without human models which is used to produce system rankings. The research is carried out using a new content-based evaluation framework called F RESA to compute a variety of divergences among probability distributions. We apply our comparison framework to various well-established content-based evaluation measures in text summarization such as C OVERAGE, R ESPONSIVENESS, P YRAMIDS and ROUGE studying their associations in various text summarization tasks including generic multi-document summarization in English and French, focus-based multi-document summarization in English and generic single-document summarization in French and Spanish.
+Titre          : Summary Evaluation with and without References Juan-Manuel Torres-Moreno, Horacio Saggion, Iria da Cunha, Eric SanJuan, and Patricia Velázquez-Morales
+Résumé         : (peer) has to be compared the evaluation of text summarization systems without with one or more reference summaries (models). DUC used human models which is used to produce system rankings. an interface called SEE to allow human judges to compare The research is carried out using a new content-based evaluation framework called F RESA to compute a variety of a peer with a model. Thus, judges give a C OVERAGE score divergences among probability distributions. We apply our to each peer produced by a system and the final system comparison framework to various well-established content-based C OVERAGE score is the average of the C OVERAGE’s scores evaluation measures in text summarization such as C OVERAGE, asigned. These system’s C OVERAGE scores can then be used R ESPONSIVENESS, P YRAMIDS and ROUGE studying their to rank summarization systems. In the case of query-focused associations in various text summarization tasks including generic multi-document summarization in English and French, summarization (e.g. when the summary should answer a focus-based multi-document summarization in English and question or series of questions) a R ESPONSIVENESS score generic single-document summarization in French and Spanish. is also assigned to each summary, which indicates how
 Lignes totales : 522
-Lignes résumé  : 12
-Longueur texte : 690 caractères
-Temps analyse  : 3 ms
+Lignes résumé  : 13
+Longueur texte : 1284 caractères
+Temps analyse  : 4 ms
 
 ==============================
 Fichier        : Word2Vec.txt
-Titre          : Efficient Estimation of Word Repre Vector Space Tomas Mikolov
-Résumé         : 
+Titre          : Efficient Estimation of Word Representations in Vector Space Tomas Mikolov                   Kai Chen
+Résumé         : We propose two novel model architectures for computing continuous vector representations of words from very large data sets. The quality of these representations is measured in a word similarity task, and the results are compared to the previously best performing techniques based on different types of neural networks. We observe large improvements in accuracy at much lower computational cost, i.e. it takes less than a day to learn high quality word vectors from a 1.6 billion words data set. Furthermore, we show that these vectors provide state-of-the-art performance on our test set for measuring syntactic and semantic word similarities.
 Lignes totales : 656
-Lignes résumé  : 0
-Longueur texte : 0 caractères
-Temps analyse  : 3 ms
+Lignes résumé  : 10
+Longueur texte : 644 caractères
+Temps analyse  : 4 ms
 

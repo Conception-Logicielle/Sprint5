@@ -1,3 +1,4 @@
+use std::alloc::System;
 use std::env;
 use std::fs::{self, File};
 use std::io::{self, BufRead, BufReader, Write};
@@ -10,11 +11,14 @@ fn detect_column_cutoff(lines: &[String]) -> usize {
     let mut total_lines = 0;
 
     for line in lines {
-        if line.trim().is_empty() { continue; }
+        if line.trim().is_empty() {
+            continue;
+        }
         total_lines += 1;
 
         let chars: Vec<char> = line.chars().collect();
         let mut space_count = 0;
+
         for (i, &c) in chars.iter().enumerate().skip(40) {
             if c == ' ' {
                 space_count += 1;
@@ -27,9 +31,10 @@ fn detect_column_cutoff(lines: &[String]) -> usize {
         }
     }
 
-    // Pas de coupure détectée ou trop rare ? => document monocolonne
+    // Si aucune coupure claire détectée → monocolonne
     if histogram.is_empty() {
-        return usize::MAX; // pas de limite
+        println!("Pas de coupure détectée, document considéré comme monocolonne.");
+        return usize::MAX;
     }
 
     let (cutoff, count) = histogram
@@ -37,13 +42,24 @@ fn detect_column_cutoff(lines: &[String]) -> usize {
         .max_by_key(|&(_, count)| count)
         .unwrap();
 
-    // if total_lines > 0 && count < total_lines / 3 {
-    //     // Si la colonne droite ne commence que dans < 30 % des lignes → on ignore
-    //     return usize::MAX;
-    // }
+    let ratio = count as f32 / total_lines as f32;
 
+    // Si la coupure ne concerne qu'une minorité de lignes → probablement bruit
+    if ratio < 0.15 {
+        println!(
+            "Coupure détectée à {} caractères mais trop rare ({} lignes sur {}), ignorée.",
+            cutoff, count, total_lines
+        );
+        return usize::MAX;
+    }
+
+    println!(
+        "✅ Coupure détectée à {} caractères ({} occurrences sur {}).",
+        cutoff, count, total_lines
+    );
     cutoff
 }
+
 
 
 
@@ -66,6 +82,7 @@ fn keep_left_column(lines: &[String], dynamic_width: usize) -> Vec<String> {
 
 
 fn extract_title_and_abstract(file_path: &Path) -> io::Result<(String, String, String, usize, usize)> {
+    println!("Traitement du fichier : {:?}", file_path);
     let file = File::open(file_path)?;
     let reader = BufReader::new(file);
     let raw_lines: Vec<String> = reader.lines().filter_map(Result::ok).collect();
@@ -161,6 +178,7 @@ fn extract_title_and_abstract(file_path: &Path) -> io::Result<(String, String, S
         .join(" ");
 
     let abstract_line_count = abstract_lines.len();
+    println!("------------------------");
 
     Ok((
         file_name,
