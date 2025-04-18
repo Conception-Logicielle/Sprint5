@@ -4,10 +4,73 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 
+fn detect_column_cutoff(lines: &[String]) -> usize {
+    use std::collections::HashMap;
+    let mut histogram = HashMap::new();
+    let mut total_lines = 0;
+
+    for line in lines {
+        if line.trim().is_empty() { continue; }
+        total_lines += 1;
+
+        let chars: Vec<char> = line.chars().collect();
+        let mut space_count = 0;
+        for (i, &c) in chars.iter().enumerate().skip(40) {
+            if c == ' ' {
+                space_count += 1;
+            } else {
+                if space_count >= 4 {
+                    *histogram.entry(i).or_insert(0) += 1;
+                }
+                space_count = 0;
+            }
+        }
+    }
+
+    // Pas de coupure détectée ou trop rare ? => document monocolonne
+    if histogram.is_empty() {
+        return usize::MAX; // pas de limite
+    }
+
+    let (cutoff, count) = histogram
+        .into_iter()
+        .max_by_key(|&(_, count)| count)
+        .unwrap();
+
+    // if total_lines > 0 && count < total_lines / 3 {
+    //     // Si la colonne droite ne commence que dans < 30 % des lignes → on ignore
+    //     return usize::MAX;
+    // }
+
+    cutoff
+}
+
+
+
+
+
+fn keep_left_column(lines: &[String], dynamic_width: usize) -> Vec<String> {
+    lines
+        .iter()
+        .map(|line| {
+            let trimmed = line.trim_end();
+            trimmed
+                .chars()
+                .take(dynamic_width)
+                .collect::<String>()
+                .trim_end()
+                .to_string()
+        })
+        .collect()
+}
+
+
 fn extract_title_and_abstract(file_path: &Path) -> io::Result<(String, String, String, usize, usize)> {
     let file = File::open(file_path)?;
     let reader = BufReader::new(file);
-    let lines: Vec<String> = reader.lines().filter_map(Result::ok).collect();
+    let raw_lines: Vec<String> = reader.lines().filter_map(Result::ok).collect();
+    let cutoff = detect_column_cutoff(&raw_lines);
+    let lines = keep_left_column(&raw_lines, cutoff);
     let total_lines = lines.len();
 
     let file_name = file_path.file_name()
@@ -73,10 +136,11 @@ fn extract_title_and_abstract(file_path: &Path) -> io::Result<(String, String, S
         }
 
         if abstract_started {
-            if l.is_empty()
-                || l.starts_with("1 ")
+            if  l.starts_with("1 ")
                 || l.starts_with("1.")
                 || l.to_lowercase().starts_with("introduction")
+                || l.starts_with("I.")
+                || l.starts_with("I")
             {
                 break;
             }

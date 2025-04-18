@@ -1,99 +1,99 @@
 ==============================
-🗂 Fichier        : ACL2004-HEADLINE.txt
-📝 Titre          : Hybrid Headlines: Combining Topics and Sentence Compression David Zajic, Bonnie Dorr, Stacy President     Richard Schwartz Department of Computer Science        BBN Technologies
-📄 Résumé         : . The topics and sentence compressions are combined in a This paper presents Topiary, a headline manner that preserves the advantages of each apgeneration system that creates very proach: the fluency and event-oriented informashort, informative summaries for news tion from the lead sentence with the broader covstories by combining sentence compres erage of the topic models. sion and unsupervised topic discovery. The next section presents previous work in the We will show that the combination of area of automatic summarization. Following this linguistically motivated sentence com we describe Hedge Trimmer and Unsupervised pression with statistically selected topic Topic Discovery in more detail, and describe the terms performs better than either alone, algorithm for combining sentence compression according to some automatic summary with topics. Next we show that Topiary scores evaluation measures. In addition we de higher than either Hedge Trimmer or Unsuperscribe experimental results establishing vised Topic Discovery alone according to certain an appropriate extrinsic task on which to automatic evaluation tools for summarization. Fimeasure the effect of summarization on nally we propose event tracking as an extrinsic human performance. We demonstrate task using automatic summarization for measurthe usefulness of headlines in compar ing how human performance is affected by autoison to full texts in the context of this matic summarization, and for correlating human extrinsic task. peformance with automatic evaluation tools. We describe an experiment that supports event track-
-📊 Lignes totales : 461
-✂️ Lignes résumé  : 21
-🔠 Longueur texte : 1601 caractères
-⏱ Temps analyse  : 0 ms
+Fichier        : ACL2004-HEADLINE.txt
+Titre          : Hybrid Headlines: Combining Topics and Sentence Com David Zajic, Bonnie Dorr, Stacy President     Ric Department of Computer Science        BBN
+Résumé         : This paper presents Topiary, a headlinegeneration system that creates very short, informative summaries for news stories by combining sentence compression and unsupervised topic discovery. We will show that the combination of linguistically motivated sentence compression with statistically selected topic terms performs better than either alone, according to some automatic summary evaluation measures. In addition we describe experimental results establishing an appropriate extrinsic task on which to measure the effect of summarization on human performance. We demonstrate the usefulness of headlines in comparison to full texts in the context of this extrinsic task.
+Lignes totales : 461
+Lignes résumé  : 19
+Longueur texte : 671 caractères
+Temps analyse  : 3 ms
 
 ==============================
-🗂 Fichier        : Boudin-Torres-2006.txt
-📝 Titre          : A Scalable MMR Approach to Sentence Scoring for Multi-Document Update Summarization Florian Boudin \ and Marc El-Bèze \             Juan-Manuel Torres-Moreno \,[
-📄 Résumé         : (history) has to be removed from the extract. We present S MMR, a scalable sentence scoring method for query-oriented up A natural way to go about update summarization date summarization. Sentences are scored would be extracting temporal tags (dates, elapsed thanks to a criterion combining query rele times, temporal expressions...) (Mani and Wilson, vance and dissimilarity with already read 2000) or to automatically construct the timeline documents (history). As the amount of from documents (Swan and Allan, 2000). These data in history increases, non-redundancy temporal marks could be used to focus extracts on is prioritized over query-relevance. We the most recently written facts. However, most reshow that S MMR achieves promising re cently written facts are not necessarily new facts. sults on the DUC 2007 update corpus. Machine Reading (MR) was used by (Hickl et al., 2007) to construct knowledge representations
-📊 Lignes totales : 279
-✂️ Lignes résumé  : 13
-🔠 Longueur texte : 926 caractères
-⏱ Temps analyse  : 0 ms
+Fichier        : Boudin-Torres-2006.txt
+Titre          : A Scalable MMR Approach to Sentence Scor for Multi-Document Update Summarization Florian Boudin \ and Marc El-Bèze \
+Résumé         : We present S MMR, a scalable sentence scoring method for query-oriented update summarization. Sentences are scored thanks to a criterion combining query relevance and dissimilarity with already read documents (history). As the amount of data in history increases, non-redundancy is prioritized over query-relevance. We show that S MMR achieves promising results on the DUC 2007 update corpus.
+Lignes totales : 279
+Lignes résumé  : 11
+Longueur texte : 392 caractères
+Temps analyse  : 2 ms
 
 ==============================
-🗂 Fichier        : compression.txt
-📝 Titre          : Multi-Candidate Reduction: Sentence Compression as a Tool for Document Summarization Tasks∗ David Zajic1 , Bonnie J. Dorr1 , Jimmy Lin1 , Richard Schwartz2
-📄 Résumé         : This article examines the application of two single-document sentence compression techniques to the problem of multi-document summarization—a “parse-and-trim” approach and a statistical noisy-channel approach. We introduce the Multi-Candidate Reduction (MCR) framework for multi-document summarization, in which many compressed candidates are generated for each source sentence. These candidates are then selected for inclusion in the final summary based on a combination of static and dynamic features. Evaluations demonstrate that sentence compression is a valuable component of a larger multi-document summarization framework.
-📊 Lignes totales : 1368
-✂️ Lignes résumé  : 7
-🔠 Longueur texte : 635 caractères
-⏱ Temps analyse  : 0 ms
+Fichier        : compression.txt
+Titre          : Multi-Candidate Reduction: Sentence Compression as a Tool for Document Summarization Tasks∗ David Zajic1 , Bonnie J. Dorr1 , Jimmy Lin1 , Rich
+Résumé         : This article examines the application of two single-docume to the problem of multi-document summarization—a “parse-and-tr cal noisy-channel approach. We introduce the Multi-Candidate R multi-document summarization, in which many compressed candida sentence. These candidates are then selected for inclusion in bination of static and dynamic features. Evaluations demonstra valuable component of a larger multi-document summarization fr Keywords: headline generation, summarization, parse-and-trim, PACS: Artificial intelligence, 07.05.Mh; Computer science and guages, processing of, 43.71.Sy
+Lignes totales : 1368
+Lignes résumé  : 14
+Longueur texte : 595 caractères
+Temps analyse  : 6 ms
 
 ==============================
-🗂 Fichier        : compression_phrases_Prog-Linear-jair.txt
-📝 Titre          : Journal of Artificial Intelligence Research 31 (2008) 399-429    Submitted 09/07; published 03/08 Global Inference for Sentence Compression An Integer Linear Programming Approach
-📄 Résumé         : Sentence compression holds promise for many applications ranging from summarization to subtitle generation. Our work views sentence compression as an optimization problem and uses integer linear programming (ILP) to infer globally optimal compressions in the presence of linguistically motivated constraints. We show how previous formulations of sentence compression can be recast as ILPs and extend these models with novel global constraints. Experimental results on written and spoken texts demonstrate improvements over state-of-the-art models.
-📊 Lignes totales : 1644
-✂️ Lignes résumé  : 7
-🔠 Longueur texte : 547 caractères
-⏱ Temps analyse  : 0 ms
+Fichier        : compression_phrases_Prog-Linear-jair.txt
+Titre          : Journal of Artificial Intelligence Research 31 Global Inference for Sentence An Integer Linear Programming
+Résumé         : 
+Lignes totales : 1644
+Lignes résumé  : 0
+Longueur texte : 0 caractères
+Temps analyse  : 7 ms
 
 ==============================
-🗂 Fichier        : hybrid_approach.txt
-📝 Titre          : Sentence Compression for Automated Subtitling: A Hybrid Approach Vincent Vandeghinste and Yi Pan Centre for Computational Linguistics
-📄 Résumé         : . When subtitling, only when a sentence needs to be reIn this paper a sentence compression tool is deduced, and the amount of reduction is known, the scribed. We describe how an input sentence gets sentence is sent to the sentence compression tool. analysed by using a.o. a tagger, a shallow parser So the sentence compression tool is a module of an and a subordinate clause detector, and how, based automated subtitling tool. The output of the senon this analysis, several compressed versions of this tence compression tool needs to be processed acsentence are generated, each with an associated escording to the subtitling guidelines like (Dewulf and timated probability. These probabilities were estiSaerens, 2000), in order to be in the correct lay-out mated from a parallel transcript/subtitle corpus. To which makes it usable for actual subtitling. Manuavoid ungrammatical sentences, the tool also makes ally post-editing the subtitles will still be required, use of a number of rules. The evaluation was done as for some sentences no automatic compression is on three different pronunciation speeds, averaging generated. sentence reduction rates of 40% to 17%. The numIn real subtitling it often occurs that the sentences ber of reasonable reductions ranges between 32.9% are not compressed, but to keep the subtitles synand 51%, depending on the average estimated prochronized with the speech, some sentences are ennunciation speed. tirely removed. In section 2 we describe the processing of a sen-
-📊 Lignes totales : 429
-✂️ Lignes résumé  : 33
-🔠 Longueur texte : 1506 caractères
-⏱ Temps analyse  : 0 ms
+Fichier        : hybrid_approach.txt
+Titre          : Sentence Compression for Automated Subtitling: A Hybr Vincent Vandeghinste and Y Centre for Computational Li
+Résumé         : 
+Lignes totales : 429
+Lignes résumé  : 0
+Longueur texte : 0 caractères
+Temps analyse  : 2 ms
 
 ==============================
-🗂 Fichier        : marcu_statistics_sentence_pass_one.txt
-📝 Titre          : 
-📄 Résumé         : , compressing long sentences into shorter ones, aggregating When humans produce summaries of documents, they sentences, repairing reference links, etc. do not simply extract sentences and concatenate them. Rather, they create new sentences that are grammati Our goal is also to generate coherent abstracts. Howcal, that cohere with one another, and that capture the ever, in contrast with the above work, we intend to most salient pieces of information in the original doc eventually use Abstract, Text tuples, which are widely ument. Given that large collections of text/abstract available, in order to automatically learn how to rewrite pairs are available online, it is now possible to envision Texts as coherent Abstracts. In the spirit of the work algorithms that are trained to mimic this process. In in the statistical MT community, which is focused on this paper, we focus on sentence compression, a sim sentence-to-sentence translations, we also decided to fopler version of this larger challenge. We aim to achieve cus ﬁrst on a simpler problem, that of sentence comprestwo goals simultaneously: our compressions should be sion. We chose this problem for two reasons: grammatical, and they should retain the most important pieces of information. These two goals can con • First, the problem is complex enough to require the ﬂict. We devise both noisy-channel and decision-tree development of sophisticated compression models: approaches to the problem, and we evaluate results Determining what is important in a sentence and against manual compressions and a simple baseline. determining how to convey the important information grammatically, using only a few words, is just a
-📊 Lignes totales : 542
-✂️ Lignes résumé  : 20
-🔠 Longueur texte : 1694 caractères
-⏱ Temps analyse  : 0 ms
+Fichier        : marcu_statistics_sentence_pass_one.txt
+Titre          : 
+Résumé         : When humans produce summaries of documents, they do not simply extract sentences and concatenate them. Rather, they create new sentences that are grammatical, that cohere with one another, and that capture the most salient pieces of information in the original document. Given that large collections of text/abstract pairs are available online, it is now possible to envisio algorithms that are trained to mimic this process. In this paper, we focus on sentence compression, a simpler version of this larger challenge. We aim to achieve two goals simultaneously: our compressions should be grammatical, and they should retain the most important pieces of information. These two goals can conﬂict. We devise both noisy-channel and decision-tree approaches to the problem, and we evaluate results against manual compressions and a simple baseline.
+Lignes totales : 542
+Lignes résumé  : 18
+Longueur texte : 847 caractères
+Temps analyse  : 4 ms
 
 ==============================
-🗂 Fichier        : mikheev.txt
-📝 Titre          : Periods, Capitalized Words, etc. Andrei Mikheev∗ University of Edinburgh
-📄 Résumé         : 
-📊 Lignes totales : 1719
-✂️ Lignes résumé  : 0
-🔠 Longueur texte : 0 caractères
-⏱ Temps analyse  : 1 ms
+Fichier        : mikheev.txt
+Titre          : Periods, Capitalized Words, etc. Andrei Mikheev∗ University of Edinburgh
+Résumé         : 
+Lignes totales : 1719
+Lignes résumé  : 0
+Longueur texte : 0 caractères
+Temps analyse  : 7 ms
 
 ==============================
-🗂 Fichier        : probabilistic_sentence_reduction.txt
-📝 Titre          : Probabilistic Sentence Reduction Using Support Vector Machines Minh Le Nguyen, Akira Shimazu, Susumu Horiguchi Bao Tu Ho and Masaru Fukushi
-📄 Résumé         : (Lin 03), the best sentence reduction output for a single sentence is This paper investigates a novel application of supnot approximately best for text summarization. port vector machines (SVMs) for sentence reduction. This means that “local optimal” refers to the We also propose a new probabilistic sentence reducbest reduced output for a single sentence, while tion method based on support vector machine learnthe best reduced output for the whole text is ing. Experimental results show that the proposed “global optimal”. Thus, it would be very valumethods outperform earlier methods in term of senable if the sentence reduction task could genertence reduction performance. ate multiple reduced outputs and select the best one using the whole text document. However,
-📊 Lignes totales : 442
-✂️ Lignes résumé  : 17
-🔠 Longueur texte : 778 caractères
-⏱ Temps analyse  : 0 ms
+Fichier        : probabilistic_sentence_reduction.txt
+Titre          : Probabilistic Sentence Reduction Using Support Vector Minh Le Nguyen, Akira Shimazu, Susumu Bao Tu Ho and Masaru Fukushi
+Résumé         : This paper investigates a novel application of sup port vector machines (SVMs) for sentence reduction. We also propose a new probabilistic sentence reduc tion method based on support vector machine learn ing. Experimental results show that the proposed methods outperform earlier methods in term of sen tence reduction performance.
+Lignes totales : 442
+Lignes résumé  : 15
+Longueur texte : 331 caractères
+Temps analyse  : 2 ms
 
 ==============================
-🗂 Fichier        : Stolcke_1996_Automatic_linguistic.txt
-📝 Titre          : AUTOMATIC LINGUISTIC SEGMENTATION OF CONVERSATIONAL SPEECH Andreas Stolcke          Elizabeth Shriberg
-📄 Résumé         : to help end-point a user’s speech input. A speech indexing and reAs speech recognition moves toward more unconstrained domains trieval system (such as for transcribed broadcast audio) could prosuch as conversational speech, we encounter a need to be able to cess its data in more meaningful units if the locations of linguistic segment (or resegment) waveforms and recognizer output into linsegment boundaries were known. guistically meaningful units, such a sentences. Toward this end, we present a simple automatic segmenter of transcripts based on Our main motivation for the work reported here comes from speech N-gram language modeling. We also study the relevance of sev language modeling. Experiments at the 1995 Johns Hopkins Laneral word-level features for segmentation performance. Using only guage Modeling Workshop showed that the quality of a language word-level information, we achieve 85% recall and 70% precision model (LM) can be improved if both training and test data are segon linguistic boundary detection. mented linguistically, rather than acoustically [8]. We showed in [10] and [9] that proper modeling of filled pauses requires knowl-
-📊 Lignes totales : 258
-✂️ Lignes résumé  : 14
-🔠 Longueur texte : 1162 caractères
-⏱ Temps analyse  : 0 ms
+Fichier        : Stolcke_1996_Automatic_linguistic.txt
+Titre          : AUTOMATIC LINGUISTIC SEGMENTATION OF CONVERSATIONAL SPEECH Andreas Stolcke
+Résumé         : As speech recognition moves toward more unconstrained domains such as conversational speech, we encounter a need to be able to segment (or resegment) waveforms and recognizer output into lin guistically meaningful units, such a sentences. Toward this end, we present a simple automatic segmenter of transcripts based on N-gram language modeling. We also study the relevance of several word-level features for segmentation performance. Using only word-level information, we achieve 85% recall and 70% precision on linguistic boundary detection.
+Lignes totales : 258
+Lignes résumé  : 13
+Longueur texte : 543 caractères
+Temps analyse  : 1 ms
 
 ==============================
-🗂 Fichier        : Torres.txt
-📝 Titre          : Summary Evaluation with and without References Juan-Manuel Torres-Moreno, Horacio Saggion, Iria da Cunha, Eric SanJuan, and Patricia Velázquez-Morales
-📄 Résumé         : (peer) has to be compared the evaluation of text summarization systems without with one or more reference summaries (models). DUC used human models which is used to produce system rankings. an interface called SEE to allow human judges to compare The research is carried out using a new content-based evaluation framework called F RESA to compute a variety of a peer with a model. Thus, judges give a C OVERAGE score divergences among probability distributions. We apply our to each peer produced by a system and the final system comparison framework to various well-established content-based C OVERAGE score is the average of the C OVERAGE’s scores evaluation measures in text summarization such as C OVERAGE, asigned. These system’s C OVERAGE scores can then be used R ESPONSIVENESS, P YRAMIDS and ROUGE studying their to rank summarization systems. In the case of query-focused associations in various text summarization tasks including generic multi-document summarization in English and French, summarization (e.g. when the summary should answer a focus-based multi-document summarization in English and question or series of questions) a R ESPONSIVENESS score generic single-document summarization in French and Spanish. is also assigned to each summary, which indicates how Index Terms—Text summarization evaluation, content-based responsive the summary is to the question(s). evaluation measures, divergences. Because manual comparison of peer summaries with model summaries is an arduous and costly process, a body of I. I NTRODUCTION research has been produced in the last decade on automatic content-based evaluation procedures. Early studies used text
-📊 Lignes totales : 522
-✂️ Lignes résumé  : 18
-🔠 Longueur texte : 1669 caractères
-⏱ Temps analyse  : 0 ms
+Fichier        : Torres.txt
+Titre          : Summary Evaluation with and without References Juan-Manuel Torres-Moreno, Horacio Saggion, Iria da Cunha, Eric SanJuan, and
+Résumé         : the evaluation of text summarization systems without human models which is used to produce system rankings. The research is carried out using a new content-based evaluation framework called F RESA to compute a variety of divergences among probability distributions. We apply our comparison framework to various well-established content-based evaluation measures in text summarization such as C OVERAGE, R ESPONSIVENESS, P YRAMIDS and ROUGE studying their associations in various text summarization tasks including generic multi-document summarization in English and French, focus-based multi-document summarization in English and generic single-document summarization in French and Spanish.
+Lignes totales : 522
+Lignes résumé  : 12
+Longueur texte : 690 caractères
+Temps analyse  : 3 ms
 
 ==============================
-🗂 Fichier        : Word2Vec.txt
-📝 Titre          : Efficient Estimation of Word Representations in Vector Space Tomas Mikolov                   Kai Chen
-📄 Résumé         : We propose two novel model architectures for computing continuous vector representations of words from very large data sets. The quality of these representations is measured in a word similarity task, and the results are compared to the previously best performing techniques based on different types of neural networks. We observe large improvements in accuracy at much lower computational cost, i.e. it takes less than a day to learn high quality word vectors from a 1.6 billion words data set. Furthermore, we show that these vectors provide state-of-the-art performance on our test set for measuring syntactic and semantic word similarities.
-📊 Lignes totales : 656
-✂️ Lignes résumé  : 8
-🔠 Longueur texte : 644 caractères
-⏱ Temps analyse  : 0 ms
+Fichier        : Word2Vec.txt
+Titre          : Efficient Estimation of Word Repre Vector Space Tomas Mikolov
+Résumé         : 
+Lignes totales : 656
+Lignes résumé  : 0
+Longueur texte : 0 caractères
+Temps analyse  : 3 ms
 
