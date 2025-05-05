@@ -1,460 +1,415 @@
 Probabilistic Sentence Reduction Using Support Vector Machines
+Minh Le Nguyen, Akira Shimazu, Susumu Horiguchi Bao Tu Ho and Masaru Fukushi
+Japan Advanced Institute of Science and Technology 1-8, Tatsunokuchi, Ishikawa, 923-1211, JAPAN
+{nguyenml, shimazu, hori, bao, mfukushi}@jaist.ac.jp
 
-                   Minh Le Nguyen, Akira Shimazu, Susumu Horiguchi
-                                  Bao Tu Ho and Masaru Fukushi
+Abstract
+This paper investigates a novel application of support vector machines (SVMs) for sentence reduction. We also propose a new probabilistic sentence reduction method based on support vector machine learning. Experimental results show that the proposed methods outperform earlier methods in term of sentence reduction performance.
+1 Introduction
+The most popular methods of sentence reduction for text summarization are corpus based methods. Jing (Jing 00) developed a method to remove extraneous phrases from sentences by using multiple sources of knowledge to decide which phrases could be removed. However, while this method exploits a simple model for sentence reduction by using statistics computed from a corpus, a better model can be obtained by using a learning approach.
+Knight and Marcu (Knight and Marcu 02) proposed a corpus based sentence reduction method using machine learning techniques. They discussed a noisy-channel based approach and a decision tree based approach to sentence reduction. Their algorithms provide the best way to scale up the full problem of sentence reduction using available data. However, these algorithms require that the word order of a given sentence and its reduced sentence are the same. Nguyen and Horiguchi (Nguyen and Horiguchi 03) presented a new sentence reduction technique based on a decision tree model without that constraint. They also indicated that semantic information is useful for sentence reduction tasks.
+The major drawback of previous works on sentence reduction is that those methods are likely to output local optimal results, which may have lower accuracy. This problem is caused by the inherent sentence reduction model; that is, only a single reduced sentence can be obtained.
 
-                        Japan Advanced Institute of Science and Technology
-                            1-8, Tatsunokuchi, Ishikawa, 923-1211, JAPAN
+As pointed out by Lin (Lin 03), the best sentence reduction output for a single sentence is not approximately best for text summarization. This means that “local optimal” refers to the best reduced output for a single sentence, while the best reduced output for the whole text is “global optimal”. Thus, it would be very valuable if the sentence reduction task could generate multiple reduced outputs and select the best one using the whole text document. However, such a sentence reduction method has not yet been proposed.
+Support Vector Machines (Vapnik 95), on the other hand, are strong learning methods in comparison with decision tree learning and other learning methods (Sholkopf 97). The goal of this paper is to illustrate the potential of SVMs for enhancing the accuracy of sentence reduction in comparison with previous work. Accordingly, we describe a novel deterministic method for sentence reduction using SVMs and a twostage method using pairwise coupling (Hastie 98). To solve the problem of generating multiple best outputs, we propose a probabilistic sentence reduction model, in which a variant of probabilistic SVMs using a two-stage method with pairwise coupling is discussed.
+The rest of this paper will be organized as follows: Section 2 introduces the Support Vector Machines learning. Section 3 describes the previous work on sentence reduction and our deterministic sentence reduction using SVMs. We also discuss remaining problems of deterministic sentence reduction. Section 4 presents a probabilistic sentence reduction method using support vector machines to solve this problem. Section 5 discusses implementation and our experimental results; Section 6 gives our conclusions and describes some problems that remain to be solved in the future.
 
-                        {nguyenml, shimazu, hori, bao, mfukushi}@jaist.ac.jp
+2 Support Vector Machine
+Support vector machine (SVM)(Vapnik 95) is a technique of machine learning based on statistical learning theory. Suppose that we are given l training examples (xi, yi), (1 ≤ i ≤ l), where xi is a feature vector in n dimensional feature space, yi is the class label {-1, +1 } of xi. SVM ﬁnds a hyperplane w.x + b = 0 which correctly separates the training examples and has a maximum margin which is the distance between two hyperplanes w.x + b ≥ 1 and w.x + b ≤ −1. The optimal hyperplane with maximum margin can be obtained by solving the following quadratic programming.
 
-                      Abstract                       As pointed out by Lin (Lin 03), the best sen-
-                                                     tence reduction output for a single sentence is
-This paper investigates a novel application of sup-  not approximately best for text summarization.
-port vector machines (SVMs) for sentence reduction.  This means that “local optimal” refers to the
-We also propose a new probabilistic sentence reduc-  best reduced output for a single sentence, while
-tion method based on support vector machine learn-   the best reduced output for the whole text is
-ing. Experimental results show that the proposed     “global optimal”. Thus, it would be very valu-
-methods outperform earlier methods in term of sen-   able if the sentence reduction task could gener-
-tence reduction performance.                         ate multiple reduced outputs and select the best
-                                                     one using the whole text document. However,
-1 Introduction                                       such a sentence reduction method has not yet
-                                                     been proposed.
-The most popular methods of sentence reduc-
-tion for text summarization are corpus based            Support Vector Machines (Vapnik 95), on the
-methods. Jing (Jing 00) developed a method           other hand, are strong learning methods in com-
-to remove extraneous phrases from sentences          parison with decision tree learning and other
-by using multiple sources of knowledge to de-        learning methods (Sholkopf 97). The goal of
-cide which phrases could be removed. However,        this paper is to illustrate the potential of SVMs
-while this method exploits a simple model for        for enhancing the accuracy of sentence reduc-
-sentence reduction by using statistics computed      tion in comparison with previous work. Accord-
-from a corpus, a better model can be obtained        ingly, we describe a novel deterministic method
-by using a learning approach.                        for sentence reduction using SVMs and a two-
-                                                     stage method using pairwise coupling (Hastie
-   Knight and Marcu (Knight and Marcu 02)            98). To solve the problem of generating mul-
-proposed a corpus based sentence reduction           tiple best outputs, we propose a probabilistic
-method using machine learning techniques.            sentence reduction model, in which a variant of
-They discussed a noisy-channel based approach        probabilistic SVMs using a two-stage method
-and a decision tree based approach to sentence       with pairwise coupling is discussed.
-reduction. Their algorithms provide the best
-way to scale up the full problem of sentence re-        The rest of this paper will be organized as
-duction using available data. However, these al-     follows: Section 2 introduces the Support Vec-
-gorithms require that the word order of a given      tor Machines learning. Section 3 describes the
-sentence and its reduced sentence are the same.      previous work on sentence reduction and our
-Nguyen and Horiguchi (Nguyen and Horiguchi           deterministic sentence reduction using SVMs.
-03) presented a new sentence reduction tech-         We also discuss remaining problems of deter-
-nique based on a decision tree model without         ministic sentence reduction. Section 4 presents
-that constraint. They also indicated that se-        a probabilistic sentence reduction method using
-mantic information is useful for sentence reduc-     support vector machines to solve this problem.
-tion tasks.                                          Section 5 discusses implementation and our ex-
-                                                     perimental results; Section 6 gives our conclu-
-   The major drawback of previous works on           sions and describes some problems that remain
-sentence reduction is that those methods are         to be solved in the future.
-likely to output local optimal results, which may
-have lower accuracy. This problem is caused by
-the inherent sentence reduction model; that is,
-only a single reduced sentence can be obtained.
-2 Support Vector Machine                             that consists of sub trees in order to rewrite a
-                                                     small tree. Let RSTACK be a stack that con-
-Support vector machine (SVM)(Vapnik 95) is a         sists of sub trees which are removed from the
-technique of machine learning based on statisti-     Input list in the rewriting process.
-cal learning theory. Suppose that we are given
-l training examples (xi, yi), (1 ≤ i ≤ l), where        • SHIFT action transfers the ﬁrst word from the
-xi is a feature vector in n dimensional feature            Input list into CSTACK. It is written mathe-
-space, yi is the class label {-1, +1 } of xi. SVM          matically and given the label SHIFT.
-ﬁnds a hyperplane w.x + b = 0 which correctly
-separates the training examples and has a max-          • REDUCE(lk, X) action pops the lk syntactic
-imum margin which is the distance between two              trees located at the top of CSTACK and com-
-hyperplanes w.x + b ≥ 1 and w.x + b ≤ −1. The              bines them in a new tree, where lk is an integer
-optimal hyperplane with maximum margin can                 and X is a grammar symbol.
-be obtained by solving the following quadratic
-programming.                                            • DROP X action moves subsequences of words
-                                                           that correspond to syntactic constituents from
-min           1  w  + C0  l  ξi                            the Input list to RSTACK.
-              2
-                          i           (1)               • ASSIGN TYPE X action changes the label of
-s.t. yi(w.xi + b) ≥ 1 − ξi                                 trees at the top of the CSTACK. These POS
-ξi ≥ 0                                                     tags might be diﬀerent from the POS tags in
-                                                           the original sentence.
-where C0 is the constant and ξi is a slack vari-
-able for the non-separable case. In SVM, the            • RESTORE X action takes the X element in
-optimal hyperplane is formulated as follows:               RSTACK and moves it into the Input list,
-                                                           where X is a subtree.
-                 l
-                                                     For convenience, let conﬁguration be a status
-f (x) = sign        αiyiK(xi, x) + b  (2)            of Input list, CSTACK and RSTACK. Let cur-
-                                                     rent context be the important information in a
-                 1                                   conﬁguration. The important information are
-                                                     deﬁned as a vector of features using heuristic
-  where αi is the Lagrange multiple, and             methods as in (Knight and Marcu 02), (Nguyen
-K(x , x ) is a kernel function, the SVM calcu-       and Horiguchi 03).
-lates similarity between two arguments x and
-x . For instance, the Polynomial kernel func-           The main idea behind deterministic sentence
-tion is formulated as follow:                        reduction is that it uses a rule in the current
-                                                     context of the initial conﬁguration to select a
-     K(x , x ) = (x .x )p             (3)            distinct action in order to rewrite an input sen-
-                                                     tence into a reduced sentence. After that, the
- SVMs estimate the label of an unknown ex-           current context is changed to a new context and
-ample x whether the sign of f (x) is positive or     the rewriting process is repeated for selecting
-not.                                                 an action that corresponds to the new context.
-                                                     The rewriting process is ﬁnished when it meets
-3 Deterministic Sentence Reduction                   a termination condition. Here, one rule corre-
-     Using SVMs                                      sponds to the function that maps the current
-                                                     context to a rewriting action. These rules are
-3.1 Problem Description                              learned automatically from the corpus of long
-                                                     sentences and their reduced sentences (Knight
-In the corpus-based decision tree approach, a        and Marcu 02), (Nguyen and Horiguchi 03).
-given input sentence is parsed into a syntax tree
-and the syntax tree is then transformed into a       3.2 Example
-small tree to obtain a reduced sentence.
-                                                     Figure 1 shows an example of applying a se-
-   Let t and s be syntax trees of the original sen-  quence of actions to rewrite the input sentence
-tence and a reduced sentence, respectively. The      (a, b, c, d, e), when each character is a word. It
-process of transforming syntax tree t to small       illustrates the structure of the Input list, two
-tree s is called “rewriting process” (Knight and     stacks, and the term of a rewriting process based
-Marcu 02), (Nguyen and Horiguchi 03). To             on the actions mentioned above. For example,
-transform the syntax tree t to the syntax tree       in the ﬁrst row, DROP H deletes the sub-tree
-s, some terms and ﬁve rewriting actions are de-      with its root node H in the Input list and stores
-ﬁned.
+l
 
-   An Input list consists of a sequence of words
-subsumed by the tree t where each word in the
-Input list is labelled with the name of all syntac-
-tic constituents in t. Let CSTACK be a stack
-it in the RSTACK. The reduced tree s can be
-obtained after applying a sequence of actions
-as follows: DROP H; SHIFT; ASSIGN TYPE K;
+min
 
+1 2
+
+w
+
++ C0
+
+ξi
+
+i
+
+s.t. yi(w.xi + b) ≥ 1 − ξi
+
+(1)
+
+ξi ≥ 0
+
+where C0 is the constant and ξi is a slack variable for the non-separable case. In SVM, the optimal hyperplane is formulated as follows:
+
+l
+
+f (x) = sign
+
+αiyiK(xi, x) + b
+
+(2)
+
+1
+
+where αi is the Lagrange multiple, and K(x , x ) is a kernel function, the SVM calculates similarity between two arguments x and x . For instance, the Polynomial kernel function is formulated as follow:
+
+K(x , x ) = (x .x )p
+
+(3)
+
+SVMs estimate the label of an unknown example x whether the sign of f (x) is positive or not.
+
+3 Deterministic Sentence Reduction Using SVMs
+3.1 Problem Description
+In the corpus-based decision tree approach, a given input sentence is parsed into a syntax tree and the syntax tree is then transformed into a small tree to obtain a reduced sentence.
+Let t and s be syntax trees of the original sentence and a reduced sentence, respectively. The process of transforming syntax tree t to small tree s is called “rewriting process” (Knight and Marcu 02), (Nguyen and Horiguchi 03). To transform the syntax tree t to the syntax tree s, some terms and ﬁve rewriting actions are deﬁned.
+An Input list consists of a sequence of words subsumed by the tree t where each word in the Input list is labelled with the name of all syntactic constituents in t. Let CSTACK be a stack
+
+that consists of sub trees in order to rewrite a small tree. Let RSTACK be a stack that consists of sub trees which are removed from the Input list in the rewriting process.
+• SHIFT action transfers the ﬁrst word from the Input list into CSTACK. It is written mathematically and given the label SHIFT.
+• REDUCE(lk, X) action pops the lk syntactic trees located at the top of CSTACK and combines them in a new tree, where lk is an integer and X is a grammar symbol.
+• DROP X action moves subsequences of words that correspond to syntactic constituents from the Input list to RSTACK.
+• ASSIGN TYPE X action changes the label of trees at the top of the CSTACK. These POS tags might be diﬀerent from the POS tags in the original sentence.
+• RESTORE X action takes the X element in RSTACK and moves it into the Input list, where X is a subtree.
+For convenience, let conﬁguration be a status of Input list, CSTACK and RSTACK. Let current context be the important information in a conﬁguration. The important information are deﬁned as a vector of features using heuristic methods as in (Knight and Marcu 02), (Nguyen and Horiguchi 03).
+The main idea behind deterministic sentence reduction is that it uses a rule in the current context of the initial conﬁguration to select a distinct action in order to rewrite an input sentence into a reduced sentence. After that, the current context is changed to a new context and the rewriting process is repeated for selecting an action that corresponds to the new context. The rewriting process is ﬁnished when it meets a termination condition. Here, one rule corresponds to the function that maps the current context to a rewriting action. These rules are learned automatically from the corpus of long sentences and their reduced sentences (Knight and Marcu 02), (Nguyen and Horiguchi 03).
+3.2 Example
+Figure 1 shows an example of applying a sequence of actions to rewrite the input sentence (a, b, c, d, e), when each character is a word. It illustrates the structure of the Input list, two stacks, and the term of a rewriting process based on the actions mentioned above. For example, in the ﬁrst row, DROP H deletes the sub-tree with its root node H in the Input list and stores
+
+it in the RSTACK. The reduced tree s can be obtained after applying a sequence of actions as follows: DROP H; SHIFT; ASSIGN TYPE K;
 DROP B; SHIFT; ASSIGN TYPE H; REDUCE 2
+F; RESTORE H; SHIFT; ASSIGN TYPE D; REDUCE 2G. In this example, the reduced sentence is (b, e, a).
 
-F; RESTORE H; SHIFT; ASSIGN TYPE D; RE-
-DUCE 2G. In this example, the reduced sentence
-is (b, e, a).
+Figure 2: Example of Conﬁguration
 
-                                                   Figure 2: Example of Conﬁguration
-
- Figure 1: An Example of the Rewriting Process     that start with the ﬁrst unit in the Input list.
-                                                   For example, in Figure 2 the syntactic con-
-3.3 Learning Reduction Rules Using                 stituents are labels of the current element in the
-       SVMs                                        Input list from “VP” to the verb “convince”.
-                                                   Semantic features
-As mentioned above, the action for each conﬁg-     The following features are used in our model as
-uration can be decided by using a learning rule,   semantic information.
-which maps a context to an action. To obtain
-such rules, the conﬁguration is represented by        • Semantic information about current words
-a vector of features with a high dimension. Af-          within the Input list; these semantic types
-ter that, we estimate the training examples by           are obtained by using the named entities such
-using several support vector machines to deal            as Location, Person, Organization and Time
-with the multiple classiﬁcation problem in sen-          within the input sentence. To deﬁne these
-tence reduction.                                         name entities, we use the method described in
-                                                         (Borthwick 99).
+Figure 1: An Example of the Rewriting Process
+3.3 Learning Reduction Rules Using SVMs
+As mentioned above, the action for each conﬁguration can be decided by using a learning rule, which maps a context to an action. To obtain such rules, the conﬁguration is represented by a vector of features with a high dimension. After that, we estimate the training examples by using several support vector machines to deal with the multiple classiﬁcation problem in sentence reduction.
 3.3.1 Features
-                                                      • Semantic information about whether or not the
-One important task in applying SVMs to text              word in the Input list is a head word.
-summarization is to deﬁne features. Here, we
-describe features used in our sentence reduction      • Word relations, such as whether or not a word
-models.                                                  has a relationship with other words in the sub-
-                                                         categorization table. These relations and the
-   The features are extracted based on the cur-          sub-categorization table are obtained using the
-rent context. As it can be seen in Figure 2, a           Commlex database (Macleod 95).
-context includes the status of the Input list and
-the status of CSTACK and RSTACK. We de-            Using the semantic information, we are able to
-ﬁne a set of features for a current context as     avoid deleting important segments within the
-described bellow.                                  given input sentence. For instance, the main
-Operation feature                                  verb, the subject and the object are essential
-The set of features as described in (Nguyen and    and for the noun phrase, the head noun is essen-
-Horiguchi 03) are used in our sentence reduction   tial, but an adjective modiﬁer of the head noun
-models.                                            is not. For example, let us consider that the
-Original tree features                             verb “convince” was extracted from the Com-
-These features denote the syntactic constituents   lex database as follows.
+One important task in applying SVMs to text summarization is to deﬁne features. Here, we describe features used in our sentence reduction models.
+The features are extracted based on the current context. As it can be seen in Figure 2, a context includes the status of the Input list and the status of CSTACK and RSTACK. We deﬁne a set of features for a current context as described bellow. Operation feature The set of features as described in (Nguyen and Horiguchi 03) are used in our sentence reduction models. Original tree features These features denote the syntactic constituents
 
-                                                      convince
-                                                      NP-PP: PVAL (“of”)
-                                                      NP-TO-INF-OC
-                                                   This entry indicates that the verb “convince”
-can be followed by a noun phrase and a preposi-      Table 1: Distribution of example data on ﬁve
-tional phrase starting with the preposition “of”.
-It can be also followed by a noun phrase and a       data groups
-to-inﬁnite phrase. This information shows that
-we cannot delete an “of” prepositional phrase        Name           Number of examples
-or a to-inﬁnitive that is the part of the verb
-phrase.                                              SHIFT-GROUP    13,363
+that start with the ﬁrst unit in the Input list. For example, in Figure 2 the syntactic constituents are labels of the current element in the Input list from “VP” to the verb “convince”. Semantic features The following features are used in our model as semantic information.
+• Semantic information about current words within the Input list; these semantic types are obtained by using the named entities such as Location, Person, Organization and Time within the input sentence. To deﬁne these name entities, we use the method described in (Borthwick 99).
+• Semantic information about whether or not the word in the Input list is a head word.
+• Word relations, such as whether or not a word has a relationship with other words in the subcategorization table. These relations and the sub-categorization table are obtained using the Commlex database (Macleod 95).
+Using the semantic information, we are able to avoid deleting important segments within the given input sentence. For instance, the main verb, the subject and the object are essential and for the noun phrase, the head noun is essential, but an adjective modiﬁer of the head noun is not. For example, let us consider that the verb “convince” was extracted from the Comlex database as follows.
+convince NP-PP: PVAL (“of”) NP-TO-INF-OC This entry indicates that the verb “convince”
 
-3.3.2 Two-stage SVM Learning using                   REDUCE-GROUP   11,406
-          Pairwise Coupling
-                                                     DROP-GROUP     4,216
-Using these features we can extract training
-data for SVMs. Here, a sample in our training        ASSIGN-GROUP   13,363
-data consists of pairs of a feature vector and
-an action. The algorithm to extract training         RESTORE-GROUP  2,004
-data from the training corpus is modiﬁed using
-the algorithm described in our pervious work         TOTAL          44,352
-(Nguyen and Horiguchi 03).
-                                                     tions, then the possibility of obtaining a wrong
-   Since the original support vector machine         reduced output becomes high.
-(SVM) is a binary classiﬁcation method, while
-the sentence reduction problem is formulated as         One way to solve this problem is to select mul-
-multiple classiﬁcation, we have to ﬁnd a method      tiple actions that correspond to the context at
-to adapt support vector machines to this prob-       each step in the rewriting process. However,
-lem. For multi-class SVMs, one can use strate-       the question that emerges here is how to deter-
-gies such as one-vs all, pairwise comparison or      mine which criteria to use in selecting multiple
-DAG graph (Hsu 02). In this paper, we use the        actions for a context. If this problem can be
-pairwise strategy, which constructs a rule for       solved, then multiple best reduced outputs can
-discriminating pairs of classes and then selects     be obtained for each input sentence and the best
-the class with the most winning among two class      one will be selected by using the whole text doc-
-decisions.                                           ument.
+can be followed by a noun phrase and a prepositional phrase starting with the preposition “of”. It can be also followed by a noun phrase and a to-inﬁnite phrase. This information shows that we cannot delete an “of” prepositional phrase or a to-inﬁnitive that is the part of the verb phrase.
+3.3.2 Two-stage SVM Learning using Pairwise Coupling
+Using these features we can extract training data for SVMs. Here, a sample in our training data consists of pairs of a feature vector and an action. The algorithm to extract training data from the training corpus is modiﬁed using the algorithm described in our pervious work (Nguyen and Horiguchi 03).
+Since the original support vector machine (SVM) is a binary classiﬁcation method, while the sentence reduction problem is formulated as multiple classiﬁcation, we have to ﬁnd a method to adapt support vector machines to this problem. For multi-class SVMs, one can use strategies such as one-vs all, pairwise comparison or DAG graph (Hsu 02). In this paper, we use the pairwise strategy, which constructs a rule for discriminating pairs of classes and then selects the class with the most winning among two class decisions.
+To boost the training time and the sentence reduction performance, we propose a two-stage SVM described below.
+Suppose that the examples in training data are divided into ﬁve groups m1, m2, ..., m5 according to their actions. Let Svmc be multiclass SVMs and let Svmc-i be multi-class SVMs for a group mi. We use one Svmc classiﬁer to identify the group to which a given context e should be belong. Assume that e belongs to the group mi. The classiﬁer Svmc-i is then used to recognize a speciﬁc action for the context e. The ﬁve classiﬁers Svmc-1, Svmc-2,..., Svmc-5 are trained by using those examples which have actions belonging to SHIFT, REDUCE, DROP, ASSIGN TYPE and RESTORE.
+Table 1 shows the distribution of examples in ﬁve data groups.
+3.4 Disadvantage of Deterministic Sentence Reductions
+The idea of the deterministic algorithm is to use the rule for each current context to select the next action, and so on. The process terminates when a stop condition is met. If the early steps of this algorithm fail to select the best ac-
 
-   To boost the training time and the sentence          In the next section propose a model for se-
-reduction performance, we propose a two-stage        lecting multiple actions for a context in sentence
-SVM described below.                                 reduction as a probabilistic sentence reduction
-                                                     and present a variant of probabilistic sentence
-   Suppose that the examples in training data        reduction.
-are divided into ﬁve groups m1, m2, ..., m5 ac-
-cording to their actions. Let Svmc be multi-         4 Probabilistic Sentence Reduction
-class SVMs and let Svmc-i be multi-class SVMs             Using SVM
-for a group mi. We use one Svmc classiﬁer to
-identify the group to which a given context e        4.1 The Probabilistic SVM Models
-should be belong. Assume that e belongs to
-the group mi. The classiﬁer Svmc-i is then used      Let A be a set of k actions A =
-to recognize a speciﬁc action for the context e.     {a1, a2...ai, ..., ak} and C be a set of n con-
-The ﬁve classiﬁers Svmc-1, Svmc-2,..., Svmc-5        texts C = {c1, c2...ci, ..., cn} . A probabilistic
-are trained by using those examples which have       model α for sentence reduction will select an
-actions belonging to SHIFT, REDUCE, DROP,            action a ∈ A for the context c with probability
-ASSIGN TYPE and RESTORE.                             pα(a|c). The pα(a|c) can be used to score ac-
-                                                     tion a among possible actions A depending the
-   Table 1 shows the distribution of examples in     context c that is available at the time of deci-
-ﬁve data groups.                                     sion. There are several methods for estimating
-                                                     such scores; we have called these “probabilistic
-3.4 Disadvantage of Deterministic                    sentence reduction methods”. The conditional
-       Sentence Reductions                           probability pα(a|c) is estimated using a variant
-                                                     of probabilistic support vector machine, which
-The idea of the deterministic algorithm is to        is described in the following sections.
-use the rule for each current context to select
-the next action, and so on. The process termi-       4.1.1 Probabilistic SVMs using
-nates when a stop condition is met. If the early               Pairwise Coupling
-steps of this algorithm fail to select the best ac-
-                                                     For convenience, we denote uij = p(a = ai|a =
-                                                     ai ∨ aj, c). Given a context c and an action a, we
-                                                     assume that the estimated pairwise class prob-
-                                                     abilities rij of uij are available. Here rij can
-                                                     be estimated by some binary classiﬁers. For
-                                                     instance, we could estimate rij by using the
-SVM binary posterior probabilities as described                           the search procedure ranks the derivation of in-
-in (Plat 2000). Then, the goal is to estimate                             complete and complete reduced sentences. Let
-                                                                          d(s) = {a1, a2, ...ad} be the derivation of a small
-F{poir}kit=h1is,  where pi   =      p(a = ai|c), i = 1, 2, ..., k.        tree s, where each action ai belongs to a set of
-                  propose,    a     simple estimate of these              possible actions. The score of s is the product
-probabilities can be derived using the following                          of the conditional probabilities of the individual
-voting method:                                                            actions in its derivation.
+Table 1: Distribution of example data on ﬁve
 
-                  pi = 2           I{rij>rji}/k(k − 1)                    Score(s) =            p(ai|ci)  (6)
+data groups
 
-                            j:j=i                                                     ai ∈d(s)
+Name
 
-where I is an indicator function and k(k − 1) is                          where ci is the context in which ai was decided.
-the number of pairwise classes. However, this                             The search heuristic tries to ﬁnd the best re-
-model is too simple; we can obtain a better one                           duced tree s∗ as follows:
-with the following method.
-                                                                          s∗ = argmax Score(s)            (7)
-   Assume that uij are pairwise probabilities of
-the model subject to the condition that uij =                             s∈tree(t)
-pi/(pi+pj). In (Hastie 98), the authors proposed
-to minimize the Kullback-Leibler (KL) distance                            where tree(t) are all the complete reduced trees
-between the rij and uij                                                   from the tree t of the given long sentence. As-
-                                                                          sume that for each conﬁguration the actions
-                  l(p)       =         nij  rij  log  rij            (4)  {a1, a2, ...an} are sorted in decreasing order ac-
-                                                      uij                 cording to p(ai|ci), in which ci is the context
-                                  i=j                                     of that conﬁguration. Algorithm 1 shows a
-                                                                          probabilistic sentence reduction using the top
-where rij and uij are the probabilities of a pair-                        K-BFS search algorithm. This algorithm uses
-wise ai and aj in the estimated model and in                              a breadth-ﬁrst search which does not expand
-our model, respectively, and nij is the number                            the entire frontier, but instead expands at most
-of training data in which their classes are ai or                         the top K scoring incomplete conﬁgurations in
-aj. To ﬁnd the minimizer of equation (6), they                            the frontier; it is terminated when it ﬁnds M
-ﬁrst calculate                                                            completed reduced sentences (CL is a list of re-
-                                                                          duced trees), or when all hypotheses have been
-                  ∂l(p)  =        nij  (−  rij   +    pi  1  pj  ).       exhausted. A conﬁguration is completed if and
-                   ∂pi                     pi             +               only if the Input list is empty and there is one
-                             i=j                                          tree in the CSTACK. Note that the function
-                                                                          get-context(hi, j) obtains the current context of
- Thus, letting ∆l(p) = 0, they proposed to ﬁnd                            the jth conﬁguration in hi, where hi is a heap at
-a point satisfying                                                        step i. The function Insert(s,h) ensures that the
-                                                                          heap h is sorted according to the score of each
-                  nij uij =         nij rij ,          k                  element in h. Essentially, in implementation we
-                                                                          can use a dictionary of contexts and actions ob-
-j:j=i                        j:j=i                        pi = 1,         served from the training data in order to reduce
-                                                                          the number of actions to explore for a current
-                                                      i=1                 context.
+Number of examples
 
-where i = 1, 2, ...k and pi > 0.                                          5 Experiments and Discussion
-Such a point can be obtained by using an algo-
-rithm described elsewhere in (Hastie 98). We                              We used the same corpus as described in
-applied it to obtain a probabilistic SVM model                            (Knight and Marcu 02), which includes 1,067
-for sentence reduction using a simple method as                           pairs of sentences and their reductions. To
-follows. Assume that our class labels belong to                           evaluate sentence reduction algorithms, we ran-
-l groups: M = {m1, m2...mi, ..., ml} , where l                            domly selected 32 pairs of sentences from our
-is a number of groups and mi is a group e.g.,                             parallel corpus, which is refered to as the test
-SHIFT, REDUCE ,..., ASSIGN TYPE. Then                                     corpus. The training corpus of 1,035 sentences
-the probability p(a|c) of an action a for a given                         extracted 44,352 examples, in which each train-
-context c can be estimated as follows.                                    ing example corresponds to an action. The
-                                                                          SVM tool, LibSVM (Chang 01) is applied to
-                  p(a|c) = p(mi|c) × p(a|c, mi)                      (5)  train our model. The training examples were
+SHIFT-GROUP
 
-where mi is a group and a ∈ mi. Here, p(mi|c)
-and p(a|c, mi) are estimated by the method in
-(Hastie 98).
+13,363
 
-4.2 Probabilistic sentence reduction
-       algorithm
+REDUCE-GROUP
 
-After obtaining a probabilistic model p, we then
-use this model to deﬁne function score, by which
-Algorithm 1 A probabilistic sentence reduction            reduced sentences.
-algorithm                                                    Table 2 shows the results of English language
+11,406
 
-  1: CL={Empty};                                          sentence reduction using a support vector ma-
-                                                          chine compared with the baseline methods and
-      i = 0; h0={ Initial conﬁguration}                   with human reduction. Table 2 shows compres-
-                                                          sion rates, and mean and standard deviation re-
-2: while |CL| < M do                                      sults across all judges, for each algorithm. The
-     if hi is empty then                                  results show that the length of the reduced sen-
-3:                                                        tences using decision trees is shorter than using
-4:      break;                                            SVMs, and indicate that our new methods out-
-5:                                                        perform the baseline algorithms in grammatical
-6:   end if                                               and importance criteria. Table 2 shows that the
-7:
-8:   u =min(|hi|, K)
-     for j = 1 to u do
+DROP-GROUP
 
-        c=get-context(hi, j)
-                            m
+4,216
+
+ASSIGN-GROUP
+
+13,363
+
+RESTORE-GROUP
+
+2,004
+
+TOTAL
+
+44,352
+
+tions, then the possibility of obtaining a wrong reduced output becomes high.
+One way to solve this problem is to select multiple actions that correspond to the context at each step in the rewriting process. However, the question that emerges here is how to determine which criteria to use in selecting multiple actions for a context. If this problem can be solved, then multiple best reduced outputs can be obtained for each input sentence and the best one will be selected by using the whole text document.
+In the next section propose a model for selecting multiple actions for a context in sentence reduction as a probabilistic sentence reduction and present a variant of probabilistic sentence reduction.
+4 Probabilistic Sentence Reduction Using SVM
+4.1 The Probabilistic SVM Models
+Let A be a set of k actions A = {a1, a2...ai, ..., ak} and C be a set of n contexts C = {c1, c2...ci, ..., cn} . A probabilistic model α for sentence reduction will select an action a ∈ A for the context c with probability pα(a|c). The pα(a|c) can be used to score action a among possible actions A depending the context c that is available at the time of decision. There are several methods for estimating such scores; we have called these “probabilistic sentence reduction methods”. The conditional probability pα(a|c) is estimated using a variant of probabilistic support vector machine, which is described in the following sections.
+4.1.1 Probabilistic SVMs using Pairwise Coupling
+For convenience, we denote uij = p(a = ai|a = ai ∨ aj, c). Given a context c and an action a, we assume that the estimated pairwise class probabilities rij of uij are available. Here rij can be estimated by some binary classiﬁers. For instance, we could estimate rij by using the
+
+SVM binary posterior probabilities as described
+
+in (Plat 2000). Then, the goal is to estimate
+
+F{poir}kit=h1is,
+
+where pi propose,
+
+= a
+
+p(a = ai|c), i = 1, 2, ..., k. simple estimate of these
+
+probabilities can be derived using the following
+
+voting method:
+
+pi = 2
+
+I{rij>rji}/k(k − 1)
+
+j:j=i
+
+where I is an indicator function and k(k − 1) is the number of pairwise classes. However, this model is too simple; we can obtain a better one with the following method.
+Assume that uij are pairwise probabilities of the model subject to the condition that uij = pi/(pi+pj). In (Hastie 98), the authors proposed to minimize the Kullback-Leibler (KL) distance between the rij and uij
+
+l(p)
+
+=
+
+i=j
+
+nij
+
+rij
+
+log
+
+rij uij
+
+(4)
+
+where rij and uij are the probabilities of a pairwise ai and aj in the estimated model and in our model, respectively, and nij is the number of training data in which their classes are ai or aj. To ﬁnd the minimizer of equation (6), they ﬁrst calculate
+
+∂l(p) ∂pi
+
+=
+
+i=j
+
+nij
+
+(−
+
+rij pi
+
++
+
+pi
+
+1 +
+
+pj
+
+).
+
+Thus, letting ∆l(p) = 0, they proposed to ﬁnd a point satisfying
+
+nij uij =
+
+nij rij ,
+
+j:j=i
+
+j:j=i
+
+k
+pi = 1,
+i=1
+
+where i = 1, 2, ...k and pi > 0. Such a point can be obtained by using an algorithm described elsewhere in (Hastie 98). We applied it to obtain a probabilistic SVM model for sentence reduction using a simple method as follows. Assume that our class labels belong to l groups: M = {m1, m2...mi, ..., ml} , where l is a number of groups and mi is a group e.g., SHIFT, REDUCE ,..., ASSIGN TYPE. Then the probability p(a|c) of an action a for a given context c can be estimated as follows.
+
+p(a|c) = p(mi|c) × p(a|c, mi)
+
+(5)
+
+where mi is a group and a ∈ mi. Here, p(mi|c) and p(a|c, mi) are estimated by the method in (Hastie 98).
+
+4.2 Probabilistic sentence reduction algorithm
+After obtaining a probabilistic model p, we then use this model to deﬁne function score, by which
+
+the search procedure ranks the derivation of incomplete and complete reduced sentences. Let d(s) = {a1, a2, ...ad} be the derivation of a small tree s, where each action ai belongs to a set of possible actions. The score of s is the product of the conditional probabilities of the individual actions in its derivation.
+
+Score(s) =
+
+p(ai|ci)
+
+(6)
+
+ai ∈d(s)
+
+where ci is the context in which ai was decided. The search heuristic tries to ﬁnd the best reduced tree s∗ as follows:
+
+s∗ = argmax Score(s)
+
+(7)
+
+s∈tree(t)
+
+where tree(t) are all the complete reduced trees from the tree t of the given long sentence. Assume that for each conﬁguration the actions {a1, a2, ...an} are sorted in decreasing order according to p(ai|ci), in which ci is the context of that conﬁguration. Algorithm 1 shows a probabilistic sentence reduction using the top K-BFS search algorithm. This algorithm uses a breadth-ﬁrst search which does not expand the entire frontier, but instead expands at most the top K scoring incomplete conﬁgurations in the frontier; it is terminated when it ﬁnds M completed reduced sentences (CL is a list of reduced trees), or when all hypotheses have been exhausted. A conﬁguration is completed if and only if the Input list is empty and there is one tree in the CSTACK. Note that the function get-context(hi, j) obtains the current context of the jth conﬁguration in hi, where hi is a heap at step i. The function Insert(s,h) ensures that the heap h is sorted according to the score of each element in h. Essentially, in implementation we can use a dictionary of contexts and actions observed from the training data in order to reduce the number of actions to explore for a current context.
+
+5 Experiments and Discussion
+We used the same corpus as described in (Knight and Marcu 02), which includes 1,067 pairs of sentences and their reductions. To evaluate sentence reduction algorithms, we randomly selected 32 pairs of sentences from our parallel corpus, which is refered to as the test corpus. The training corpus of 1,035 sentences extracted 44,352 examples, in which each training example corresponds to an action. The SVM tool, LibSVM (Chang 01) is applied to train our model. The training examples were
+
+Algorithm 1 A probabilistic sentence reduction algorithm
+1: CL={Empty};
+
+i = 0; h0={ Initial conﬁguration}
+2: while |CL| < M do
+
+3: 4:
+
+if hi is empty then
+break;
+
+5:
+
+end if
+
+6: 7: 8:
+
+u =min(|hi|, K) for j = 1 to u do
+c=get-context(hi, j)
+
+m
+
 9:
-     Select m so that          p(ai|c) < Q is maximal
 
-10:                    i=1
+Select m so that
 
-11:  for l=1 to m do
-12:
-     parameter=get-parameter(al );
-     Obtain a new conﬁguration s by performing action al
-     with parameter
-     if Complete(s) then
-13:                                                       Table 2: Experiment results with Test Corpus
+p(ai|c) < Q is maximal
+
+i=1
+
+10:
+
+for l=1 to m do
+
+11: 12:
+
+parameter=get-parameter(al ); Obtain a new conﬁguration s by performing action al
+
+with parameter
+
+13:
+
+if Complete(s) then
+
 14:
-15:          Insert(s, CL)                                Method Comp Gramma      Impo
-16:
-17:  else                                                 Baseline1 57.19% 8.60 ± 2.8 7.18 ± 1.92
-        Insert(s, hi+1)
 
-18:  end if                                               Baseline2 57.15% 8.60 ± 2.1 7.42 ± 1.90
+Insert(s, CL)
 
-     end for
+15: 16:
+
+else Insert(s, hi+1)
+
+17:
+
+end if
+
+18:
+
+end for
+
 19: end for
-20: i = i + 1                                             SVM-D 57.65% 8.76 ± 1.2 7.53 ± 1.53
 
-21: end while                                             SVMP-10 57.51% 8.80 ± 1.3 7.74 ± 1.39
+20: i = i + 1
 
-                                                          Human 64.00% 9.05 ± 0.3 8.50 ± 0.80
+21: end while
 
-divided into SHIFT, REDUCE, DROP, RE-                     ﬁrst 10 reduced sentences produced by SVMP-
-STORE, and ASSIGN groups. To train our                    10 (the SVM probabilistic model) obtained the
-support vector model in each group, we used               highest performances. We also compared the
-the pairwise method with the polynomial ker-              computation time of sentence reduction using
-nel function, in which the parameter p in (3)             support vector machine with that in previous
-and the constant C0 in equation (1) are 2 and             works. Table 3 shows that the computational
-0.0001, respectively.                                     times for SVM-D and SVMP-10 are slower than
-                                                          baseline, but it is acceptable for SVM-D.
-   The algorithms (Knight and Marcu 02) and
-(Nguyen and Horiguchi 03) served as the base-             Table 3: Computational times of performing re-
-line1 and the baseline2 for comparison with the
-proposed algorithms. Deterministic sentence re-           ductions on test-set. Average sentence length
-duction using SVM and probabilistic sentence
-reduction were named as SVM-D and SVMP, re-               was 21 words.
-spectively. For convenience, the ten top reduced          Method Computational times (sec)
-outputs using SVMP were called SVMP-10. We
-used the same evaluation method as described              Baseline1      138.25
-in (Knight and Marcu 02) to compare the pro-
-posed methods with previous methods. For this             SVM-D          212.46
-experiment, we presented each original sentence
-in the test corpus to three judges who are spe-           SVMP-10        1030.25
-cialists in English, together with three sentence
-reductions: the human generated reduction sen-               We also investigated how sensitive the pro-
-tence, the outputs of the proposed algorithms,            posed algorithms are with respect to the train-
-and the output of the baseline algorithms.                ing data by carrying out the same experi-
-                                                          ment on sentences of diﬀerent genres. We
-   The judges were told that all outputs were             created the test corpus by selecting sentences
-generated automatically. The order of the out-            from the web-site of the Benton Foundation
-puts was scrambled randomly across test cases.            (http://www.benton.org). The leading sen-
-The judges participated in two experiments. In            tences in each news article were selected as the
-the ﬁrst, they were asked to determine on a scale         most relevant sentences to the summary of the
-from 1 to 10 how well the systems did with re-            news. We obtained 32 leading long sentences
-spect to selecting the most important words in            and 32 headlines for each item. The 32 sen-
-the original sentence. In the second, they were           tences are used as a second test for our methods.
-asked to determine the grammatical criteria of            We use a simple ranking criterion: the more the
-                                                          words in the reduced sentence overlap with the
-                                                          words in the headline, the more important the
-sentence is. A sentence satisfying this criterion  References
-is called a relevant candidate.
-                                                   A. Borthwick, “A Maximum Entropy Approach
-   For a given sentence, we used a simple             to Named Entity Recognition”, Ph.D the-
-method, namely SVMP-R to obtain a re-                 sis, Computer Science Department, New York
-duced sentence by selecting a relevant candi-         University (1999).
-date among the ten top reduced outputs using
-SVMP-10.                                           C.-C. Chang and C.-J. Lin, “LIB-
-                                                      SVM: a library for support vec-
-   Table 4 depicts the experiment results for         tor machines”, Software available at
-the baseline methods, SVM-D, SVMP-R, and              http://www.csie.ntu.edu.tw/ cjlin/libsvm.
-SVMP-10. The results shows that, when ap-
-plied to sentence of a diﬀerent genre, the per-    H. Jing, “Sentence reduction for automatic
-formance of SVMP-10 degrades smoothly, while          text summarization”, In Proceedings of the
-the performance of the deterministic sentence         First Annual Meeting of the North Ameri-
-reductions (the baselines and SVM determinis-         can Chapter of the Association for Compu-
-tic) drops sharply. This indicates that the prob-     tational Linguistics NAACL-2000.
-abilistic sentence reduction using support vector
-machine is more stable.                            T.T. Hastie and R. Tibshirani, “Classiﬁcation
-                                                      by pairwise coupling”, The Annals of Statis-
-   Table 4 shows that the performance of              tics, 26(1): pp. 451-471, 1998.
-SVMP-10 is also close to the human reduction
-outputs and is better than previous works. In      C.-W. Hsu and C.-J. Lin, “A comparison of
-addition, SVMP-R outperforms the determin-            methods for multi-class support vector ma-
-istic sentence reduction algorithms and the dif-      chines”, IEEE Transactions on Neural Net-
-ferences between SVMP-R’s results and SVMP-           works, 13, pp. 415-425, 2002.
-10 are small. This indicates that we can ob-
-tain reduced sentences which are relevant to the   K. Knight and D. Marcu, “Summarization be-
-headline, while ensuring the grammatical and          yond sentence extraction: A Probabilistic ap-
-the importance criteria compared to the origi-        proach to sentence compression”, Artiﬁcial
-nal sentences.                                        Intelligence 139: pp. 91-107, 2002.
+reduced sentences. Table 2 shows the results of English language
+sentence reduction using a support vector machine compared with the baseline methods and with human reduction. Table 2 shows compression rates, and mean and standard deviation results across all judges, for each algorithm. The results show that the length of the reduced sentences using decision trees is shorter than using SVMs, and indicate that our new methods outperform the baseline algorithms in grammatical and importance criteria. Table 2 shows that the
 
-Table 4: Experiment results with Benton Cor-       C.Y. Lin, “Improving Summarization Perfor-
-                                                      mance by Sentence Compression — A Pi-
-pus                                                   lot Study”, Proceedings of the Sixth Inter-
-                                                      national Workshop on Information Retrieval
-Method Comp Gramma  Impo                              with Asian Languages, pp.1-8, 2003.
+Table 2: Experiment results with Test Corpus
 
-Baseline1 54.14% 7.61 ± 2.10 6.74 ± 1.92           C. Macleod and R. Grishman, “COMMLEX
-                                                      syntax Reference Manual”; Proteus Project,
-Baseline2 53.13% 7.72 ± 1.60 7.02 ± 1.90              New York University (1995).
+Method Comp Gramma
 
-SVM-D 56.64% 7.86 ± 1.20 7.23 ± 1.53               M.L. Nguyen and S. Horiguchi, “A new sentence
-                                                      reduction based on Decision tree model”,
-SVMP-R 58.31% 8.25 ± 1.30 7.54 ± 1.39                 Proceedings of 17th Paciﬁc Asia Conference
-                                                      on Language, Information and Computation,
-SVMP-10 57.62% 8.60 ± 1.32 7.71 ± 1.41                pp. 290-297, 2003
+Impo
 
-Human 64.00% 9.01 ± 0.25 8.40 ± 0.60               V. Vapnik, “The Natural of Statistical Learning
-                                                      Theory”, New York: Springer-Verlag, 1995.
+Baseline1 57.19% 8.60 ± 2.8 7.18 ± 1.92
+
+Baseline2 57.15% 8.60 ± 2.1 7.42 ± 1.90
+
+SVM-D 57.65% 8.76 ± 1.2 7.53 ± 1.53
+
+SVMP-10 57.51% 8.80 ± 1.3 7.74 ± 1.39
+
+Human 64.00% 9.05 ± 0.3 8.50 ± 0.80
+
+divided into SHIFT, REDUCE, DROP, RESTORE, and ASSIGN groups. To train our support vector model in each group, we used the pairwise method with the polynomial kernel function, in which the parameter p in (3) and the constant C0 in equation (1) are 2 and 0.0001, respectively.
+The algorithms (Knight and Marcu 02) and (Nguyen and Horiguchi 03) served as the baseline1 and the baseline2 for comparison with the proposed algorithms. Deterministic sentence reduction using SVM and probabilistic sentence reduction were named as SVM-D and SVMP, respectively. For convenience, the ten top reduced outputs using SVMP were called SVMP-10. We used the same evaluation method as described in (Knight and Marcu 02) to compare the proposed methods with previous methods. For this experiment, we presented each original sentence in the test corpus to three judges who are specialists in English, together with three sentence reductions: the human generated reduction sentence, the outputs of the proposed algorithms, and the output of the baseline algorithms.
+The judges were told that all outputs were generated automatically. The order of the outputs was scrambled randomly across test cases. The judges participated in two experiments. In the ﬁrst, they were asked to determine on a scale from 1 to 10 how well the systems did with respect to selecting the most important words in the original sentence. In the second, they were asked to determine the grammatical criteria of
+
+ﬁrst 10 reduced sentences produced by SVMP10 (the SVM probabilistic model) obtained the highest performances. We also compared the computation time of sentence reduction using support vector machine with that in previous works. Table 3 shows that the computational times for SVM-D and SVMP-10 are slower than baseline, but it is acceptable for SVM-D.
+
+Table 3: Computational times of performing re-
+
+ductions on test-set. Average sentence length
+
+was 21 words.
+
+Method Computational times (sec)
+
+Baseline1
+
+138.25
+
+SVM-D
+
+212.46
+
+SVMP-10
+
+1030.25
+
+We also investigated how sensitive the proposed algorithms are with respect to the training data by carrying out the same experiment on sentences of diﬀerent genres. We created the test corpus by selecting sentences from the web-site of the Benton Foundation (http://www.benton.org). The leading sentences in each news article were selected as the most relevant sentences to the summary of the news. We obtained 32 leading long sentences and 32 headlines for each item. The 32 sentences are used as a second test for our methods. We use a simple ranking criterion: the more the words in the reduced sentence overlap with the words in the headline, the more important the
+
+sentence is. A sentence satisfying this criterion is called a relevant candidate.
+For a given sentence, we used a simple method, namely SVMP-R to obtain a reduced sentence by selecting a relevant candidate among the ten top reduced outputs using SVMP-10.
+Table 4 depicts the experiment results for the baseline methods, SVM-D, SVMP-R, and SVMP-10. The results shows that, when applied to sentence of a diﬀerent genre, the performance of SVMP-10 degrades smoothly, while the performance of the deterministic sentence reductions (the baselines and SVM deterministic) drops sharply. This indicates that the probabilistic sentence reduction using support vector machine is more stable.
+Table 4 shows that the performance of SVMP-10 is also close to the human reduction outputs and is better than previous works. In addition, SVMP-R outperforms the deterministic sentence reduction algorithms and the differences between SVMP-R’s results and SVMP10 are small. This indicates that we can obtain reduced sentences which are relevant to the headline, while ensuring the grammatical and the importance criteria compared to the original sentences.
+
+Table 4: Experiment results with Benton Cor-
+
+pus
+
+Method Comp Gramma
+
+Impo
+
+Baseline1 54.14% 7.61 ± 2.10 6.74 ± 1.92
+
+Baseline2 53.13% 7.72 ± 1.60 7.02 ± 1.90
+
+SVM-D 56.64% 7.86 ± 1.20 7.23 ± 1.53
+
+SVMP-R 58.31% 8.25 ± 1.30 7.54 ± 1.39
+
+SVMP-10 57.62% 8.60 ± 1.32 7.71 ± 1.41
+
+Human 64.00% 9.01 ± 0.25 8.40 ± 0.60
+
 6 Conclusions
-                                                   J. Platt,“ Probabilistic outputs for support vec-
-We have presented a new probabilistic sentence        tor machines and comparison to regularized
-reduction approach that enables a long sentence       likelihood methods,” in Advances in Large
-to be rewritten into reduced sentences based on       Margin Classiﬁers, Cambridege, MA: MIT
-support vector models. Our methods achieves           Press, 2000.
-better performance when compared with earlier
-methods. The proposed reduction approach can       B. Scholkopf et al, “Comparing Support Vec-
-generate multiple best outputs. Experimental          tor Machines with Gausian Kernels to Radius
-results showed that the top 10 reduced sentences      Basis Function Classifers”, IEEE Trans. Sig-
-returned by the reduction process might yield         nal Procesing, 45, pp. 2758-2765, 1997.
-accuracies higher than previous work. We be-
-lieve that a good ranking method might improve
-the sentence reduction performance further in a
-text.
+We have presented a new probabilistic sentence reduction approach that enables a long sentence to be rewritten into reduced sentences based on support vector models. Our methods achieves better performance when compared with earlier methods. The proposed reduction approach can generate multiple best outputs. Experimental results showed that the top 10 reduced sentences returned by the reduction process might yield accuracies higher than previous work. We believe that a good ranking method might improve the sentence reduction performance further in a text.
+
+References
+A. Borthwick, “A Maximum Entropy Approach to Named Entity Recognition”, Ph.D thesis, Computer Science Department, New York University (1999).
+C.-C. Chang and C.-J. Lin, “LIBSVM: a library for support vector machines”, Software available at http://www.csie.ntu.edu.tw/ cjlin/libsvm.
+H. Jing, “Sentence reduction for automatic text summarization”, In Proceedings of the First Annual Meeting of the North American Chapter of the Association for Computational Linguistics NAACL-2000.
+T.T. Hastie and R. Tibshirani, “Classiﬁcation by pairwise coupling”, The Annals of Statistics, 26(1): pp. 451-471, 1998.
+C.-W. Hsu and C.-J. Lin, “A comparison of methods for multi-class support vector machines”, IEEE Transactions on Neural Networks, 13, pp. 415-425, 2002.
+K. Knight and D. Marcu, “Summarization beyond sentence extraction: A Probabilistic approach to sentence compression”, Artiﬁcial Intelligence 139: pp. 91-107, 2002.
+C.Y. Lin, “Improving Summarization Performance by Sentence Compression — A Pilot Study”, Proceedings of the Sixth International Workshop on Information Retrieval with Asian Languages, pp.1-8, 2003.
+C. Macleod and R. Grishman, “COMMLEX syntax Reference Manual”; Proteus Project, New York University (1995).
+M.L. Nguyen and S. Horiguchi, “A new sentence reduction based on Decision tree model”, Proceedings of 17th Paciﬁc Asia Conference on Language, Information and Computation, pp. 290-297, 2003
+V. Vapnik, “The Natural of Statistical Learning Theory”, New York: Springer-Verlag, 1995.
+J. Platt,“ Probabilistic outputs for support vector machines and comparison to regularized likelihood methods,” in Advances in Large Margin Classiﬁers, Cambridege, MA: MIT Press, 2000.
+B. Scholkopf et al, “Comparing Support Vector Machines with Gausian Kernels to Radius Basis Function Classifers”, IEEE Trans. Signal Procesing, 45, pp. 2758-2765, 1997.
+
