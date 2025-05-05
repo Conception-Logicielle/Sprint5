@@ -176,7 +176,7 @@ Temps analyse  : {} ms\n",
     }
 
     println!(
-        "✅ Extraction réussie en mode {}. Temps total : {} ms",
+        "Extraction réussie en mode {}. Temps total : {} ms",
         mode,
         start_all.elapsed().as_millis()
     );
