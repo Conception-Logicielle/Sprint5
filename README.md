@@ -1,47 +1,65 @@
 ## 📚 Parseur d'Articles Scientifiques en Texte
 
-Ce projet convertit automatiquement des articles scientifiques au format PDF en texte brut et
-en fait des résumés.
+Ce projet convertit automatiquement des articles scientifiques au format PDF en texte brut, puis génère des résumés (au format texte ou XML) via un parseur écrit en Rust.
 
 ---
 
 ### 🧰 Prérequis
 
-il est necessaire d’avoir :
-
-- Un environnement **Linux/WSL** avec `bash`  
-- **Poppler-utils** (pour utiliser `pdftotext`)  
+- Un environnement **Linux/WSL** avec `bash`
+- `zenity` (pour l’interface graphique simple)
   ```bash
-  sudo apt update
+  sudo apt install zenity
+  ```
+
+* `poppler-utils` (pour utiliser `pdftotext`)
+
+  ```bash
   sudo apt install poppler-utils
   ```
-- **Un environnement Rust pour effectuer la génération de résumé**  
+* Un environnement **Rust** avec `cargo` installé :
+
+  ```bash
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  ```
 
 ---
 
-### 📁 Structure
+### 📁 Structure du projet
 
 ```
-- CORPUS_TRAIN   # Dossier contenant les fichiers PDF à traiter
-- Final_Version
-  ├── main.sh               # Script principal de conversion + mise en forme
-  └── corpus_txt/             # Sortie texte générée automatiquement
+- CORPUS_TRAIN/            # Dossier contenant les fichiers PDF à traiter
+- Final_Version/
+  ├── main.sh              # Script principal avec interface Zenity
+  ├── pdftotext.sh         # Script de conversion PDF → texte via pdftotext
+  ├── corpus_txt/          # Dossier généré contenant les fichiers .txt extraits
+  ├── resumes/             # Dossier de sortie contenant les résumés générés
+  └── extractInfo/
+       └── main/           # Contient le code Rust (main.rs + Cargo.toml)
 ```
 
-> 📌 Les fichiers PDF doivent être placés dans `../CORPUS_TRAIN`  
-> Le script générera un `.txt` par PDF dans `./corpus_txt`
+> 📌 Les fichiers PDF peuvent être sélectionnés via l’interface, peu importe leur emplacement.
 
 ---
 
-### 🚀 Lancer le script
+### 🚀 Lancer le script principal
 
 ```bash
 chmod +x main.sh
 ./main.sh
 ```
+---
 
-### AddON
-Une interface a été ajoutée par notre membre Gautier Jourdon dans le dossier interface. Cette dernière permet de selectionner
-un fichier PDF et de le convertir en texte brut peut importe le dossier dans lequel il se trouve.
+### 🔧 Modes de sortie
 
-Warn : Il faut lancer le programme python "Interface" sur linux
+Le script Rust permet deux types de sortie :
+
+* `txt` : un fichier `resumes.txt` contenant les titres, auteurs, résumés et références formatés.
+* `xml` : un fichier `articles.xml` contenant les mêmes données sous forme de balises XML.
+
+Choisir le modde en ligne de commande dans `main.sh` avec le paramètre `-x` :
+
+```bash
+./main.sh -x     # génère un fichier XML
+./main.sh -t     # génère un fichier texte
+```

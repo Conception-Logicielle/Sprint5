@@ -3,10 +3,11 @@ use std::{
     fs::{self, File},
     io::{self, BufRead, BufReader, Write},
     path::{Path, PathBuf},
-    time::{Duration, Instant},
+    time::{Instant},
 };
 use rayon::prelude::*;
 
+/// Structure représentant les métadonnées extraites d'un article.
 struct ArticleData {
     filename: String,
     title: String,
@@ -15,12 +16,12 @@ struct ArticleData {
     bibliography: String,
 }
 
+/// Extrait les sections importantes (titre, auteurs, résumé, bibliographie) d'un fichier texte.
 fn extract_article_fields(path: &Path) -> io::Result<ArticleData> {
     let file = File::open(path)?;
     let reader = BufReader::new(file);
 
-    let filename = path
-        .file_name()
+    let filename = path.file_name()
         .unwrap_or_default()
         .to_string_lossy()
         .replace(' ', "_");
@@ -30,7 +31,7 @@ fn extract_article_fields(path: &Path) -> io::Result<ArticleData> {
     let mut abstract_text = String::with_capacity(1024);
     let mut bibliography = String::with_capacity(1024);
 
-    let mut section = 0; // 0=title, 1=authors, 2=abstract, 3=main, 4=biblio
+    let mut section = 0; // 0=titre, 1=auteurs, 2=abstract, 3=corps, 4=bibliographie
 
     for line_result in reader.lines() {
         let Ok(mut line) = line_result else { continue };
@@ -41,6 +42,7 @@ fn extract_article_fields(path: &Path) -> io::Result<ArticleData> {
 
         let lower = line.to_ascii_lowercase();
 
+        // Détection des changements de section
         if lower.contains("abstract") {
             section = 2;
             continue;
@@ -54,6 +56,7 @@ fn extract_article_fields(path: &Path) -> io::Result<ArticleData> {
             continue;
         }
 
+        // Remplissage des champs en fonction de la section
         match section {
             0 => {
                 if line.contains('@')
@@ -94,24 +97,40 @@ fn extract_article_fields(path: &Path) -> io::Result<ArticleData> {
     })
 }
 
+/// Génère un fichier XML regroupant les métadonnées de tous les articles.
 fn write_combined_xml(path: &Path, articles: &[ArticleData]) -> io::Result<()> {
+    let xml_blocks: Vec<String> = articles
+        .par_iter()
+        .map(|article| {
+            format!(
+                "  <article>\n\
+    <preamble>{}</preamble>\n\
+    <titre>{}</titre>\n\
+    <auteur>{}</auteur>\n\
+    <abstract>{}</abstract>\n\
+    <biblio>{}</biblio>\n\
+  </article>",
+                article.filename,
+                article.title,
+                article.authors,
+                article.abstract_text,
+                article.bibliography
+            )
+        })
+        .collect();
+
     let mut file = File::create(path)?;
     writeln!(file, "<articles>")?;
-
-    for article in articles {
-        writeln!(file, "  <article>")?;
-        writeln!(file, "    <preamble>{}</preamble>", article.filename)?;
-        writeln!(file, "    <titre>{}</titre>", article.title)?;
-        writeln!(file, "    <auteur>{}</auteur>", article.authors)?;
-        writeln!(file, "    <abstract>{}</abstract>", article.abstract_text)?;
-        writeln!(file, "    <biblio>{}</biblio>", article.bibliography)?;
-        writeln!(file, "  </article>")?;
+    for block in xml_blocks {
+        writeln!(file, "{}", block)?;
     }
-
     writeln!(file, "</articles>")?;
     Ok(())
 }
 
+
+/// Point d'entrée du programme.
+/// Utilisation : `cargo run -- <input_folder> <output_folder> <mode: txt|xml>`
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
     if args.len() != 4 {
@@ -127,6 +146,7 @@ fn main() -> io::Result<()> {
 
     let start_all = Instant::now();
 
+    // Liste tous les fichiers .txt dans le dossier d'entrée
     let entries: Vec<PathBuf> = fs::read_dir(input_folder)?
         .filter_map(Result::ok)
         .map(|e| e.path())
@@ -134,6 +154,7 @@ fn main() -> io::Result<()> {
         .collect();
 
     if mode == "txt" {
+        // Mode résumé texte simple
         let resumes: Vec<String> = entries
             .par_iter()
             .filter_map(|path| {
@@ -168,10 +189,12 @@ Temps analyse  : {} ms\n",
         writeln!(file, "==============================")?;
         writeln!(file, "Traitement terminé en {} ms", start_all.elapsed().as_millis())?;
     } else {
+        // Mode XML
         let articles: Vec<_> = entries
             .par_iter()
             .filter_map(|path| extract_article_fields(path).ok())
             .collect();
+
         write_combined_xml(&output_folder.join("articles.xml"), &articles)?;
     }
 
