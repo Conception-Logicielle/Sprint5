@@ -1,5 +1,4 @@
-Multi-Candidate Reduction: Sentence Compression as a Tool for
-Document Summarization Tasks∗
+Multi-Candidate Reduction: Sentence Compression as a Tool for Document Summarization Tasks∗
 David Zajic1 , Bonnie J. Dorr1 , Jimmy Lin1 , Richard Schwartz2
 1
 

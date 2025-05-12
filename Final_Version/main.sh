@@ -43,6 +43,8 @@ for fichier_pdf in "$DOSSIER_PDF"/*.pdf; do
     fi
 
     echo "Fichier $fichier_pdf converti avec succès."
+    tmp_fichier="$fichier_txt.tmp"
+    awk 'NF { printf "%s ", $0; next } { print "" }' "$fichier_txt" > "$tmp_fichier" && mv "$tmp_fichier" "$fichier_txt"
 done
 
 echo "Conversion et mise en page terminées pour tous les fichiers."

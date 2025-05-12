@@ -2,8 +2,7 @@ Journal of Artificial Intelligence Research 31 (2008) 399-429
 
 Submitted 09/07; published 03/08
 
-Global Inference for Sentence Compression
-An Integer Linear Programming Approach
+Global Inference for Sentence Compression An Integer Linear Programming Approach
 James Clarke
 
 jclarke@ed.ac.uk

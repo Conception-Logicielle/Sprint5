@@ -1,7 +1,6 @@
 arXiv:1301.3781v3 [cs.CL] 7 Sep 2013
 
-Efficient Estimation of Word Representations in
-Vector Space
+Efficient Estimation of Word Representations in Vector Space
 
 Tomas Mikolov
 Google Inc., Mountain View, CA
