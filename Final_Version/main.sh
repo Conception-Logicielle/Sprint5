@@ -5,9 +5,9 @@ if ! command -v zenity &> /dev/null; then
     exit 1
 fi
 
-DOSSIER_PDF=$(zenity --file-selection --directory --title="Choisis un dossier contenant les fichiers PDF")
-if [ -z "$DOSSIER_PDF" ]; then
-    zenity --error --text="Aucun dossier sélectionné. Abandon."
+FICHIER_PDF=$(zenity --file-selection --title="Choisis un ou plusieurs fichiers PDF" --file-filter="*.pdf" --multiple --separator="|")
+if [ -z "$FICHIER_PDF" ]; then
+    zenity --error --text="Abandon. Aucun fichier n'a été sélectionné..."
     exit 1
 fi
 
@@ -25,7 +25,8 @@ if [ ! -x ./pdftotext.sh ]; then
     exit 1
 fi
 
-for fichier_pdf in "$DOSSIER_PDF"/*.pdf; do
+IFS="|" read -ra fichiers_array <<< "$FICHIER_PDF"
+for fichier_pdf in "${fichiers_array[@]}"; do
     nom_fichier=$(basename "$fichier_pdf" .pdf)
     fichier_txt="$DOSSIER_TEXTE/$nom_fichier.txt"
 
@@ -52,9 +53,9 @@ echo "Génération des fichiers de résumés..."
 cd extractInfo/main || exit 1
 
 if [ "$1" == "-x" ]; then
-  cargo run --release ../../corpus_txt ../../resume xml
+  cargo run --release ../../corpus_txt ../../resumes xml
 else
-  cargo run --release ../../corpus_txt ../../resume txt
+  cargo run --release ../../corpus_txt ../../resumes txt
 fi
 
 ) | zenity --progress --title="Traitement des fichiers" --text="Traitement en cours..." --pulsate --auto-close --width=500 --height=100
