@@ -28,6 +28,7 @@ struct RegexSet {
     likely_author: Regex,
     name_pair: Regex,
     multiple_names: Regex,
+    bad_header: Regex,
 }
 
 impl RegexSet {
@@ -37,6 +38,7 @@ impl RegexSet {
             likely_author: Regex::new(r"(?ix)^((?:[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)(?:[\d†*]*)\s*(?:,\s*|\s+and\s+|\s+et\s+)?)+$").unwrap(),
             name_pair: Regex::new(r"^[A-Z][a-z]+(\s+[A-Z][a-z]{2,})([\d†*∗°]*)$").unwrap(),
             multiple_names: Regex::new(r"(?i)([A-Z][a-z]+(?:\s+[A-Z]\.?)?\s+[A-Z][a-z]+(?:\d*)\s*(,|and|et)\s*){1,}").unwrap(),
+            bad_header: Regex::new(r"(?i)(journal|volume|submitted|published|copyright|doi|issn|arxiv|^[0-9]{2}/[0-9]{2})").unwrap(),
         }
     }
 }
@@ -49,46 +51,56 @@ impl RegexSet {
 /// 3. Ligne valide si au moins 2 mots et majorité de mots avec majuscule.
 /// 4. Continue tant qu’aucun motif d’auteur n’est détecté.
 /// 5. S’arrête sur ligne vide après le début ou motif d’auteur.
-fn extract_title(lines: &[String], regex: &RegexSet) -> (String, usize) {
-    let mut title_lines = Vec::new();
-    let mut started = false;
-    let mut last_index = 0;
+fn extract_title(lines: &[String], regex: &RegexSet) -> Option<(String, usize)> {
+    let mut i = 0;
 
-    for (i, line) in lines.iter().enumerate() {
-        let trimmed = line.trim();
-        if trimmed.is_empty() {
-            if started {
-                break;
-            }
+    // Ignorer les en-têtes non pertinents
+    while i < lines.len() {
+        let line = lines[i].trim();
+
+        if line.is_empty() || regex.bad_header.is_match(line) || line.contains('@') {
+            i += 1;
             continue;
         }
-        if regex.metadata.is_match(trimmed) {
+
+        // ignorer ligne si elle ressemble à un nom de journal
+        if line.to_lowercase().contains("journal of")
+            || line.to_lowercase().contains("volume")
+            || line.to_lowercase().contains("submitted")
+            || line.chars().all(|c| c.is_numeric() || c == '/' || c == ';' || c.is_whitespace()) {
+            i += 1;
             continue;
         }
-        let words: Vec<_> = trimmed.split_whitespace().collect();
-        let uppercase_count = words.iter().filter(|w| w.chars().next().map(|c| c.is_uppercase()).unwrap_or(false)).count();
 
-        if !started {
-            if uppercase_count >= words.len() / 2 && words.len() >= 2 {
-                started = true;
-                title_lines.push(trimmed.to_string());
-                last_index = i + 1;
-            }
+        break; // on a trouvé une première ligne candidate
+    }
+
+    if i >= lines.len() {
+        return None;
+    }
+
+    let mut title = lines[i].trim().to_string();
+    let mut end_index = i + 1;
+    println!("Line {}: {}", i, title);
+    if i + 1 < lines.len() {
+        let next = lines[i + 1].trim();
+        println!("Next line: {}", next);
+        let is_author_like = next.contains(',') ||
+            next.contains(" and ") ||
+            next.to_lowercase().contains("university") ||
+            next.contains('@');
+        if !is_author_like {
+            println!("c'est un titre");
+            title.push(' ');
+            title.push_str(next);
+            end_index = i + 2;
         } else {
-            if regex.likely_author.is_match(trimmed)
-                || regex.name_pair.is_match(trimmed)
-                || trimmed.contains('\\')
-                || regex.multiple_names.is_match(trimmed) {
-                break;
-            }
-            title_lines.push(trimmed.to_string());
-            last_index = i + 1;
+            println!("{} c'est pas un titre", next);
         }
     }
 
-    (title_lines.join(" ").trim().to_string(), last_index)
+    Some((title.trim().to_string(), end_index))
 }
-
 
 /// Nettoie une chaîne de caractères contenant des noms ou affiliations.
 fn clean_string(input: &str) -> String {
@@ -110,45 +122,52 @@ fn clean_string(input: &str) -> String {
 /// 5. Accepte les lignes si au moins un nom probable est détecté.
 /// 6. Termine dès qu’aucun nom n’est trouvé après le début.
 fn extract_authors(lines: &[String], start_after_title: usize) -> String {
-    let mut author_lines = Vec::new();
+    let mut authors = String::new();
     let mut started = false;
 
     for line in lines.iter().skip(start_after_title) {
         let trimmed = line.trim();
-        let lower = trimmed.to_lowercase();
 
         if trimmed.is_empty() {
             continue;
         }
 
-        let breaks_section = [
-            "abstract", "university", "laboratoire", "school", "@",
-            "technologies", "street", "avenue", "parkway"
-        ];
+        let lower = trimmed.to_lowercase();
 
-        if breaks_section.iter().any(|kw| lower.contains(kw))
-            || trimmed.chars().all(|c| c.is_numeric()) {
+        // Arrêt dès qu’on tombe sur le texte courant ou début de section
+        if lower.contains("abstract")
+            || lower.contains("introduction")
+            || lower.starts_with("1 ") {
             break;
         }
 
-        let contains_names = trimmed
-            .split(|c: char| c == ',' || c == '\\' || c == '/' || c == ';')
-            .filter(|part| {
-                let part = part.trim();
-                part.split_whitespace().count() >= 2
-                    && part.chars().next().map(|c| c.is_uppercase()).unwrap_or(false)
-            })
-            .count();
+        // Heuristique : si la ligne commence par une minuscule et ne contient ni @ ni majuscules significatives, c’est du texte
+        let is_likely_text = {
+            let starts_with_lower = trimmed
+                .chars()
+                .next()
+                .map(|c| c.is_lowercase())
+                .unwrap_or(false);
+            let has_email = trimmed.contains('@');
+            let has_many_uppers = trimmed
+                .split_whitespace()
+                .filter(|w| w.chars().next().map(|c| c.is_uppercase()).unwrap_or(false))
+                .count() >= 2;
+            starts_with_lower && !has_email && !has_many_uppers
+        };
 
-        if contains_names >= 1 {
-            author_lines.push(trimmed.to_string());
-            started = true;
-        } else if started {
+        if is_likely_text && started {
             break;
         }
+
+        if !authors.is_empty() {
+            authors.push(' ');
+        }
+        authors.push_str(trimmed);
+        started = true;
     }
 
-    clean_string(&author_lines.join(" "))
+    authors
 }
 
 /// Extraite le résumé de l'article.
@@ -625,41 +644,48 @@ fn extract_article_fields(path: &Path, regex: &RegexSet) -> io::Result<ArticleDa
         .map(|f| f.to_string_lossy().replace(' ', "_"))
         .unwrap_or_else(|| "unknown_file".to_string());
 
-    let (title, title_end_index) = extract_title(&lines, regex);
-    let authors = extract_authors(&lines, title_end_index);
-    let abstract_text = extract_abstract(&lines);
-    let (introduction, intro_char_end) = extract_introduction(&lines, &abstract_text);
-    let (body, body_char_end) = extract_body(&lines, intro_char_end);
-    //println!("{}: {}", filename, body_char_end);
-    let (temp_conclusion, _) = extract_conclusion(&lines, body_char_end);
-    let mut conclusion : String;
-    if temp_conclusion.is_empty() {
-        conclusion = "Aucune conclusion trouvée.".clone().to_string();
-    } else {
-        conclusion = temp_conclusion.clone();
-    };
-    let (tempdiscussion, discutionend) = extract_discussion(&lines, body_char_end);
-    let mut discussion : String;
-    if tempdiscussion.is_empty() {
-        discussion = "Aucune discussion trouvée.".clone().to_string();
-    } else {
-        discussion = tempdiscussion.clone();
-    };
-    let bibliography = extract_bibliography(&lines, body_char_end);
-    println!("{}: {}", filename, body_char_end);
+    if let Some((title, title_end_index)) = extract_title(&lines, &regex) {
+        let authors = extract_authors(&lines, title_end_index);
+        let abstract_text = extract_abstract(&lines);
+        let (introduction, intro_char_end) = extract_introduction(&lines, &abstract_text);
+        let (body, body_char_end) = extract_body(&lines, intro_char_end);
+        //println!("{}: {}", filename, body_char_end);
+        let (temp_conclusion, _) = extract_conclusion(&lines, body_char_end);
+        let mut conclusion: String;
+        if temp_conclusion.is_empty() {
+            conclusion = "Aucune conclusion trouvée.".clone().to_string();
+        } else {
+            conclusion = temp_conclusion.clone();
+        };
+        let (tempdiscussion, discutionend) = extract_discussion(&lines, body_char_end);
+        let mut discussion: String;
+        if tempdiscussion.is_empty() {
+            discussion = "Aucune discussion trouvée.".clone().to_string();
+        } else {
+            discussion = tempdiscussion.clone();
+        };
+        let bibliography = extract_bibliography(&lines, body_char_end);
+        println!("{}: {}", filename, body_char_end);
 
 
-    Ok(ArticleData {
-        filename,
-        title,
-        authors,
-        abstract_text,
-        introduction,
-        body,
-        conclusion,
-        discussion,
-        bibliography
-    })
+        Ok(ArticleData {
+            filename,
+            title,
+            authors,
+            abstract_text: String::new(),
+            introduction: String::new(),
+            body: String::new(),
+            conclusion : String::new(),
+            discussion : String::new(),
+            bibliography : String::new(),
+        })
+    }
+    else {
+        Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!("Titre introuvable dans le fichier : {:?}", path),
+        ))
+    }
 }
 
 /// Écrit les articles en XML.
