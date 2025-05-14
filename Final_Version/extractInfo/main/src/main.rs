@@ -33,7 +33,6 @@ pub struct RegexSet {
     pub body_like_line: Regex,
     pub contains_abstract: Regex,
     pub introduction_header: Regex,
-    pub new_section: Regex,
 }
 
 impl RegexSet {
@@ -599,6 +598,8 @@ fn extract_article_fields(path: &Path, regex: &RegexSet) -> io::Result<ArticleDa
         .map(|f| f.to_string_lossy().replace(' ', "_"))
         .unwrap_or_else(|| "unknown_file".to_string());
 
+    println!("Traitement du fichier : {:?}", filename);
+
     if let Some((title, title_end_index)) = extract_title(&lines, &regex) {
         let authors = extract_authors(&lines, title_end_index, &regex);
         let abstract_text = extract_abstract(&lines , &regex);
@@ -619,7 +620,6 @@ fn extract_article_fields(path: &Path, regex: &RegexSet) -> io::Result<ArticleDa
             discussion = tempdiscussion.clone();
         };
         let bibliography = extract_bibliography(&lines, body_char_end);
-        println!("{}: {}", filename, body_char_end);
 
 
         Ok(ArticleData {
