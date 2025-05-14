@@ -23,56 +23,65 @@ struct ArticleData {
 }
 
 /// Toutes les regex utilisées sont compilées une seule fois ici.
-struct RegexSet {
-    metadata: Regex,
-    likely_author: Regex,
-    name_pair: Regex,
-    multiple_names: Regex,
-    bad_header: Regex,
+pub struct RegexSet {
+    pub metadata: Regex,
+    pub likely_author: Regex,
+    pub name_pair: Regex,
+    pub multiple_names: Regex,
+    pub bad_header: Regex,
+    pub numeric_line: Regex,
+    pub body_like_line: Regex,
+    pub contains_abstract: Regex,
+    pub introduction_header: Regex,
+    pub new_section: Regex,
 }
 
 impl RegexSet {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self {
-            metadata: Regex::new(r"(?i)(conference|volume|doi|issn|copyright|journal|published|©)").unwrap(),
-            likely_author: Regex::new(r"(?ix)^((?:[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)(?:[\d†*]*)\s*(?:,\s*|\s+and\s+|\s+et\s+)?)+$").unwrap(),
-            name_pair: Regex::new(r"^[A-Z][a-z]+(\s+[A-Z][a-z]{2,})([\d†*∗°]*)$").unwrap(),
-            multiple_names: Regex::new(r"(?i)([A-Z][a-z]+(?:\s+[A-Z]\.?)?\s+[A-Z][a-z]+(?:\d*)\s*(,|and|et)\s*){1,}").unwrap(),
-            bad_header: Regex::new(r"(?i)(journal|volume|submitted|published|copyright|doi|issn|arxiv|^[0-9]{2}/[0-9]{2})").unwrap(),
+            metadata: Regex::new(r"(?i)(conference|volume|doi|issn|copyright|journal|published|©)").unwrap(), // detecte les entêtes génériques
+            likely_author: Regex::new(r"(?ix)^((?:[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)(?:[\d†*]*)\s*(?:,\s*|\s+and\s+|\s+et\s+)?)+$").unwrap(), // detecte les noms d'auteurs qui sont formatés comme "Nom Prénom" ou "Nom Prénom Nom Prénom"
+            name_pair: Regex::new(r"^[A-Z][a-z]+(\s+[A-Z][a-z]{2,})([\d†*∗°]*)$").unwrap(), // detecte les noms d'auteurs qui sont formatés comme "Nom Prénom" ou "Nom Prénom Nom Prénom"
+            multiple_names: Regex::new(r"(?i)([A-Z][a-z]+(?:\s+[A-Z]\.?)?\s+[A-Z][a-z]+(?:\d*)\s*(,|and|et)\s*){1,}").unwrap(), // detecte les noms d'auteurs qui sont formatés comme "Nom Prénom" ou "Nom Prénom Nom Prénom"
+            bad_header: Regex::new(r"(?i)(journal|volume|submitted|published|copyright|doi|issn|arxiv|^\s*\d{2}/\d{2})").unwrap(), // detecte les entêtes génériques
+            numeric_line: Regex::new(r"^[\d\s/;,\(\)\-]+$").unwrap(), // detecte les lignes qui ne contiennent que des chiffres ou des caractères de ponctuation
+            introduction_header: Regex::new(r"(?ix)^\s*(introduction| i+[\.\)]?\s*(introduction|I\s*N\s*T\s*R\s*O\s*D\s*U\s*C\s*T\s*I\s*O\s*N)| \d+[\.\)]?\s*introduction)\b").unwrap(),
+            body_like_line: Regex::new(r#"(?i)^[a-z][a-z\s,;\-\(\)\[\]\.:'"0-9]+$"#).unwrap(), // detecte les lignes qui ressemblent à du texte normal
+            contains_abstract: Regex::new(r"(?i)\babstract\b").unwrap(), // detecte les lignes qui contiennent le mot "abstract"
         }
     }
 }
 
-/// Détecte le titre de l'article dans les premières lignes du fichier.
+
+/// Extrait le titre de l'article à partir des premières lignes du fichier texte.
 /// Critères utilisés pour détecter un titre :
 ///
-/// 1. Doit apparaître dans les premières lignes.
-/// 2. Ignore les lignes détectées comme métadonnées (`regex.metadata`).
-/// 3. Ligne valide si au moins 2 mots et majorité de mots avec majuscule.
-/// 4. Continue tant qu’aucun motif d’auteur n’est détecté.
-/// 5. S’arrête sur ligne vide après le début ou motif d’auteur.
+/// 1. Ignore les lignes vides, contenant des emails ou correspondant à des entêtes génériques
+///    (journal, volume, dates de soumission/publication, etc.) via `regex.bad_header`.
+/// 2. Ignore également les lignes uniquement numériques ou ponctuelles via `regex.numeric_line`.
+/// 3. Prend la première ligne non filtrée comme début du titre.
+/// 4. Ajoute la ligne suivante au titre si elle ne correspond pas à un motif  de liste
+/// d'auteur (and, ",") ou présence d’email/université).
+/// 5. Retourne le titre concaténé (sur 1 ou 2 lignes max) ainsi que l’index de fin du titre.
 fn extract_title(lines: &[String], regex: &RegexSet) -> Option<(String, usize)> {
     let mut i = 0;
 
-    // Ignorer les en-têtes non pertinents
     while i < lines.len() {
         let line = lines[i].trim();
 
+        // On saute les lignes inutiles détectées par regex ou qui contiennent des emails
         if line.is_empty() || regex.bad_header.is_match(line) || line.contains('@') {
             i += 1;
             continue;
         }
 
-        // ignorer ligne si elle ressemble à un nom de journal
-        if line.to_lowercase().contains("journal of")
-            || line.to_lowercase().contains("volume")
-            || line.to_lowercase().contains("submitted")
-            || line.chars().all(|c| c.is_numeric() || c == '/' || c == ';' || c.is_whitespace()) {
+        // Lignes purement numériques ou ponctuelles (dates, numéros)
+        if Regex::new(r"^[\d\s/;,\(\)\-]+$").unwrap().is_match(line) {
             i += 1;
             continue;
         }
 
-        break; // on a trouvé une première ligne candidate
+        break;
     }
 
     if i >= lines.len() {
@@ -81,47 +90,34 @@ fn extract_title(lines: &[String], regex: &RegexSet) -> Option<(String, usize)> 
 
     let mut title = lines[i].trim().to_string();
     let mut end_index = i + 1;
-    println!("Line {}: {}", i, title);
+
     if i + 1 < lines.len() {
         let next = lines[i + 1].trim();
-        println!("Next line: {}", next);
-        let is_author_like = next.contains(',') ||
-            next.contains(" and ") ||
-            next.to_lowercase().contains("university") ||
-            next.contains('@');
-        if !is_author_like {
-            println!("c'est un titre");
+
+        let is_likely_author = next.contains("and")
+            || next.contains(",")
+            || next.contains('@')
+            || next.to_lowercase().contains("university");
+
+        if !is_likely_author {
             title.push(' ');
             title.push_str(next);
             end_index = i + 2;
-        } else {
-            println!("{} c'est pas un titre", next);
         }
     }
 
     Some((title.trim().to_string(), end_index))
 }
 
-/// Nettoie une chaîne de caractères contenant des noms ou affiliations.
-fn clean_string(input: &str) -> String {
-    let to_remove = ["1", "2", "†", "*", "∗", "\\", "  "];
-    let mut cleaned = input.to_string();
-    for item in to_remove {
-        cleaned = cleaned.replace(item, " ");
-    }
-    cleaned.trim().to_string()
-}
-
-/// Extraite les auteurs de l'article.
-/// Critères utilisés pour détecter les auteurs :
+/// Extrait la section des auteurs immédiatement après le titre.
+/// Cette fonction utilise des expressions régulières centralisées pour :
+/// - ignorer les lignes vides,
+/// - s'arrêter dès qu'une section connue commence (Abstract, Introduction, etc.),
+/// - s'arrêter si une ligne typique du corps de texte est rencontrée (phrase normale),
+/// - inclure les lignes contenant des noms, affiliations ou emails,
+/// - concaténer toutes les lignes pertinentes en une seule chaîne.
 ///
-/// 1. Commence après la fin du titre (`start_after_title`).
-/// 2. Ignore les lignes vides.
-/// 3. S'arrête si la ligne contient des mots-clés d'affiliation ou un email.
-/// 4. Cherche des segments contenant au moins deux mots et une majuscule initiale.
-/// 5. Accepte les lignes si au moins un nom probable est détecté.
-/// 6. Termine dès qu’aucun nom n’est trouvé après le début.
-fn extract_authors(lines: &[String], start_after_title: usize) -> String {
+fn extract_authors(lines: &[String], start_after_title: usize, regex: &RegexSet) -> String {
     let mut authors = String::new();
     let mut started = false;
 
@@ -132,37 +128,20 @@ fn extract_authors(lines: &[String], start_after_title: usize) -> String {
             continue;
         }
 
-        let lower = trimmed.to_lowercase();
-
-        // Arrêt dès qu’on tombe sur le texte courant ou début de section
-        if lower.contains("abstract")
-            || lower.contains("introduction")
-            || lower.starts_with("1 ") {
+        // Si on tombe sur une section explicite (Abstract, Introduction, etc.)
+        if regex.contains_abstract.is_match(trimmed) || regex.introduction_header.is_match(trimmed) {
             break;
         }
 
-        // Heuristique : si la ligne commence par une minuscule et ne contient ni @ ni majuscules significatives, c’est du texte
-        let is_likely_text = {
-            let starts_with_lower = trimmed
-                .chars()
-                .next()
-                .map(|c| c.is_lowercase())
-                .unwrap_or(false);
-            let has_email = trimmed.contains('@');
-            let has_many_uppers = trimmed
-                .split_whitespace()
-                .filter(|w| w.chars().next().map(|c| c.is_uppercase()).unwrap_or(false))
-                .count() >= 2;
-            starts_with_lower && !has_email && !has_many_uppers
-        };
-
-        if is_likely_text && started {
+        // Si la ligne ressemble à une phrase du corps de texte, on s’arrête
+        if (regex.body_like_line.is_match(trimmed) || regex.contains_abstract.is_match(trimmed)) && started {
             break;
         }
 
         if !authors.is_empty() {
             authors.push(' ');
         }
+
         authors.push_str(trimmed);
         started = true;
     }
@@ -170,21 +149,16 @@ fn extract_authors(lines: &[String], start_after_title: usize) -> String {
     authors
 }
 
-/// Extraite le résumé de l'article.
-/// Critères utilisés pour détecter un abstract :
-///
-/// 1. Commence à la première ligne qui contient un mot-clé comme "abstract", "résumé", etc.
-/// 2. Accepte les formes avec séparateur (`:` ou `—`) ou seul sur la ligne.
-/// 3. Ignore les mots-clés initiaux dans la ligne pour ne garder que le contenu réel.
-/// 4. Continue tant qu’aucun mot-clé de début de section n’est détecté (ex. "introduction").
-/// 5. Arrête si une structure "1" + vide + "Introduction" est rencontrée.
-/// 6. Si aucun abstract explicite n’est trouvé, utilise un paragraphe de fallback assez long.
-fn extract_abstract(lines: &[String]) -> String {
-    const START_KEYWORDS: &[&str] = &["abstract", "résumé", "summary", "executive summary"];
-    const STOP_KEYWORDS: &[&str] = &[
-        "introduction", "keywords", "index terms", "1.", "i.", "1 introduction", "1. introduction"
-    ];
 
+/// Extrait le résumé (abstract) d’un article à partir de son contenu texte.
+///
+/// Critères :
+/// - Débute sur une ligne correspondant à un en-tête de section "abstract" (regex.contains_abstract).
+/// - Nettoie le préfixe (e.g. "Abstract —", "Résumé:", etc.)
+/// - S’arrête sur une ligne qui est une section d’introduction (regex.introduction_header).
+/// - Ou sur un début de corps (`regex.body_like_line`) après détection
+/// - Fournit une ligne longue alternative si aucun abstract explicite n’est trouvé
+fn extract_abstract(lines: &[String], regex: &RegexSet) -> String {
     let mut abstract_lines = Vec::new();
     let mut in_abstract = false;
     let mut fallback: Option<String> = None;
@@ -194,24 +168,17 @@ fn extract_abstract(lines: &[String]) -> String {
         let trimmed = lines[i].trim();
         let lower = trimmed.to_lowercase();
 
-        // Début explicite
-        if !in_abstract && START_KEYWORDS.iter().any(|kw| {
-            lower.starts_with(&format!("{kw}—")) ||
-                lower.starts_with(&format!("{kw}:")) ||
-                lower == *kw
-        }) {
+        // Détection de début d’abstract
+        if !in_abstract && regex.contains_abstract.is_match(trimmed) {
             in_abstract = true;
 
-            let mut cleaned = trimmed.to_string();
-            for kw in START_KEYWORDS {
-                for sep in ["—", ":", "-"] {
-                    let prefix = format!("{kw}{sep}");
-                    if cleaned.to_lowercase().starts_with(&prefix) {
-                        cleaned = cleaned[prefix.len()..].trim_start().to_string();
-                        break;
-                    }
-                }
-            }
+            // Nettoyage du préfixe (e.g. "Abstract:", "Résumé -")
+            let cleaned = regex
+                .contains_abstract
+                .replace(&lower, "")
+                .replace([':', '-', '–', '—'], "")
+                .trim()
+                .to_string();
 
             if cleaned.split_whitespace().count() > 2 {
                 abstract_lines.push(cleaned);
@@ -221,25 +188,17 @@ fn extract_abstract(lines: &[String]) -> String {
         }
 
         if in_abstract {
-            // Fin si structure : ligne avec "1", puis vide, puis "Introduction"
-            if i + 2 < lines.len()
-                && lines[i].trim() == "1"
-                && lines[i + 1].trim().is_empty()
-                && lines[i + 2].trim().to_lowercase().starts_with("introduction")
-            {
-                break;
-            }
-
-            // Fin si ligne de section
-            if STOP_KEYWORDS.iter().any(|kw| lower.starts_with(kw)) {
+            // Fin explicite si nouvelle section
+            if regex.introduction_header.is_match(trimmed) {
                 break;
             }
 
             abstract_lines.push(trimmed.to_string());
         }
 
+        // Fallback : première ligne longue qui ne semble pas être un titre
         if !in_abstract && fallback.is_none() {
-            if trimmed.len() > 100 && !lower.contains("introduction") {
+            if trimmed.len() > 100 && !regex.introduction_header.is_match(trimmed) {
                 fallback = Some(trimmed.to_string());
             }
         }
@@ -254,16 +213,12 @@ fn extract_abstract(lines: &[String]) -> String {
     }
 }
 
-/// Extrait l'introduction à partir des lignes, après le résumé
-/// Critères utilisés pour détecter une introduction :
+
+/// Extrait le contenu de la section Introduction d’un article.
 ///
-/// 1. Commence juste après la fin de l’abstract détecté.
-/// 2. Débute à la ligne contenant le mot "Introduction" (avec ou sans numérotation).
-/// 3. Reconnaît aussi les variantes typographiques ou fautes légères (ex. "1. Introduction", "I. INTRODUCTION").
-/// 4. Termine si une section numérotée est détectée (ligne comme "2.", "II.", etc.).
-/// 5. S’arrête si une ligne tout en majuscules ressemble à un titre de section.
-/// 6. S’arrête si une phrase clé précise est rencontrée (ex. `hardcoded_stop_phrase`).
-/// 7. Ignore les lignes vides pendant la lecture de l’introduction.
+/// Recherche la section `introduction` après l'abstract et récupère son contenu,
+/// jusqu’à une heuristique de fin : ligne vide suivie d’un nouveau titre, nouvelle section,
+/// ou structure numérotée inline.
 fn extract_introduction(lines: &[String], abstract_text: &str) -> (String, usize) {
     use regex::Regex;
 
@@ -645,11 +600,10 @@ fn extract_article_fields(path: &Path, regex: &RegexSet) -> io::Result<ArticleDa
         .unwrap_or_else(|| "unknown_file".to_string());
 
     if let Some((title, title_end_index)) = extract_title(&lines, &regex) {
-        let authors = extract_authors(&lines, title_end_index);
-        let abstract_text = extract_abstract(&lines);
+        let authors = extract_authors(&lines, title_end_index, &regex);
+        let abstract_text = extract_abstract(&lines , &regex);
         let (introduction, intro_char_end) = extract_introduction(&lines, &abstract_text);
         let (body, body_char_end) = extract_body(&lines, intro_char_end);
-        //println!("{}: {}", filename, body_char_end);
         let (temp_conclusion, _) = extract_conclusion(&lines, body_char_end);
         let mut conclusion: String;
         if temp_conclusion.is_empty() {
@@ -672,12 +626,12 @@ fn extract_article_fields(path: &Path, regex: &RegexSet) -> io::Result<ArticleDa
             filename,
             title,
             authors,
-            abstract_text: String::new(),
-            introduction: String::new(),
-            body: String::new(),
-            conclusion : String::new(),
-            discussion : String::new(),
-            bibliography : String::new(),
+            abstract_text,
+            introduction,
+            body,
+            conclusion ,
+            discussion ,
+            bibliography ,
         })
     }
     else {
