@@ -35,7 +35,7 @@ class PDFConverterGUI(tk.Tk):
         self.pdf_paths = []
 
     def _init_pub(self):
-        tk.Label(self.pub_frame, text="Ta pub ici", bg="#1e1e1e", fg="#ffffff",
+        tk.Label(self.pub_frame, bg="#1e1e1e", fg="#ffffff",
                  font=("Helvetica", 10, "italic")).pack(pady=(0,5))
         try:
             img = Image.open("./img/pull_promo.jpg").resize((140, 420), Image.ANTIALIAS)
@@ -110,7 +110,7 @@ class PDFConverterGUI(tk.Tk):
 
     def start_conversion(self):
         if not self.pdf_paths:
-            messagebox.showerror("Erreur", "Aucun PDF sélectionné !")
+            messagebox.showerror("Erreur", "Aucun PDF sélectionné !")
             return
 
         self.convert_btn.config(state="disabled")
@@ -145,7 +145,7 @@ class PDFConverterGUI(tk.Tk):
         self.output_log.config(state="disabled")
 
         if proc.returncode == 0:
-            messagebox.showinfo("Succès", "Conversion & résumés terminés ! 🎉")
+            messagebox.showinfo("Succès", "Conversion & résumés terminée !")
         else:
             messagebox.showerror("Erreur", "Un souci est survenu, regarde les logs.")
 

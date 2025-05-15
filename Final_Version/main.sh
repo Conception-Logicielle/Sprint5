@@ -23,8 +23,8 @@ for fichier_pdf in "$@"; do
   fi
   echo "[CONVERT] $fichier_pdf -> $fichier_txt"
 
-  if ! ./pdftotext.sh "$fichier_pdf" "$fichier_txt"; then
-    echo "[ERROR] conversion échouée pour $fichier_pdf" >&2
+  if ! ./pdftotext.sh "$fichier_pdf" "$DOSSIER_TEXTE"; then
+      echo "[ERROR] conversion échouée pour $fichier_pdf" >&2
     continue
   fi
   echo "[OK] $fichier_pdf converti."
@@ -40,7 +40,7 @@ for arg in "$@"; do
 done
 
 echo "[SUMMARY] génération résumés en mode $MODE"
-if ! cargo run --release ../../corpus_txt ../../resumes "$MODE"; then
+if ! cargo run --release ../../corpus_txt ../../resume "$MODE"; then
   echo "[ERROR] échec génération résumés" >&2
   exit 1
 fi

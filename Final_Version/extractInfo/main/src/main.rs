@@ -646,7 +646,6 @@ fn extract_article_fields(path: &Path, regex: &RegexSet) -> io::Result<ArticleDa
 fn write_combined_xml(path: &Path, articles: &[ArticleData]) -> io::Result<()> {
     let mut file = File::create(path)?;
     writeln!(file, "<articles>")?;
-
     for article in articles {
         writeln!(
             file,
