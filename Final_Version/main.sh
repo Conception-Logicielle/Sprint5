@@ -23,7 +23,7 @@ for fichier_pdf in "$@"; do
   fi
   echo "[CONVERT] $fichier_pdf -> $fichier_txt"
 
-  if ! ./pdftotext.sh "$fichier_pdf" "$DOSSIER_TEXTE"; then
+  if ! ./pdftotext.sh "$fichier_pdf" "$fichier_txt"; then
     echo "[ERROR] conversion échouée pour $fichier_pdf" >&2
     continue
   fi
