@@ -1,0 +1,327 @@
+<articles>
+	<article>
+		<preamble>Cabrera_RESUMES_2019.pdf</preamble>
+		<titre>Ranking résumés automatically using only résumés: A method free of job offers</titre>
+		<auteur>
+			Luis Adrián Cabrera-Diegoa,c,1, Marc El-Bézea, Juan-Manuel Torres-Morenoa,b, Barthélémy Durettec
+			a LIA, Avignon Université, France
+			b Polytechnique Montréal, Canada
+			c Adoc Talent Management, Paris, France
+		</auteur>
+		<abstract>
+			With the success of electronic recruitment, human resource managers receive high volumes of applications for each job offer. These applications, i.e., résumés, must be ranked automatically. Most existing systems require job offers, but this paper presents methods that do not, using only résumé similarity (Inter-Résumé Proximity) and Relevance Feedback. Tested on 14,000 résumés from 171 processes, results show 93% average accuracy without job offers or semantic resources, indicating résumés can self-rank and provide composite representations of ideal candidates.
+		</abstract>
+		<introduction>
+			The introduction discusses how recruitment has moved online (e-Recruitment), increasing reach and decreasing costs but creating issues like volume overload and unqualified applicants. Manual résumé screening becomes inefficient. Traditional systems compare résumés to job offers, but when job offers are unavailable—as in the studied dataset—alternative methods are needed. This paper proposes résumé-only methods based on similarity between résumés and relevance feedback.
+		</introduction>
+		<corps>
+			The body is divided into methodology, data, and experiments. The methodology introduces Inter-Résumé Proximity (IRP), Average/Median IRP (AIRP/MIRP), and Relevance Feedback through Relevance Factor and Vocabulary Scoring. The dataset includes over 14,000 résumés from 171 French recruitment cases. Résumés are classified as relevant or irrelevant based on selection outcome. Experiments compare AIRP, MIRP, and their variations against baselines, with and without Relevance Feedback, including simulations of HR behavior. Evaluation uses Mean Average Precision (MAP).
+		</corps>
+		<conclusion>
+			The proposed résumé-only ranking methods outperform baselines, even those using job offers. They are simple, language-independent, and do not require semantic resources. Relevance Feedback combined with Vocabulary Scoring significantly boosts performance (MAP ~0.937). Résumés can form a “facial composite” of ideal candidates. These methods are scalable, reproducible, and useful for a posteriori HR analysis. Future work includes adapting to real-time processes and exploring embedding-based methods.
+		</conclusion>
+		<discussion>
+			The discussion highlights that résumé similarity is a viable ranking approach, especially when job offers are missing. Top-position Relevance Feedback is more effective than bottom-position, and term selection is critical for Vocabulary Scoring success. Iterative feedback does not significantly improve speed. Human-selected terms may perform better than simulated ones. The study supports that relevant résumés share a common vocabulary pattern, reinforcing the validity of proximity-based ranking.
+		</discussion>
+		<biblio>
+			Includes references such as:
+			- Cabrera-Diego et al. (2015, 2019) on Inter-Résumé Proximity,
+			- Kessler et al. on résumé-job matching systems,
+			- Rocchio (1971) on Relevance Feedback,
+			- Fang and Zhan (2015), Senthil Kumaran & Sankar (2013), Montuschi et al. (2014), and others on résumé ranking and NLP in recruitment.
+		</biblio>
+	</article>
+	<article>
+		<preamble>Dynamical_Models_Explaining_Socia_Balance_and_Evolution_of_Cooperation.pdf</preamble>
+		<titre>Dynamical Models Explaining Social Balance and Evolution of Cooperation</titre>
+		<auteur>
+			Vincent Antonio Traag, Paul Van Dooren, Patrick De Leenheer
+			Affiliations :
+			- ICTEAM, Université catholique de Louvain, Belgique
+			- Department of Mathematics, University of Florida, États-Unis
+		</auteur>
+		<abstract>
+			Social networks with both positive and negative links often split into two opposing factions—a phenomenon known as social balance. This paper compares two dynamical models: the original model based on symmetric gossiping fails to generically achieve social balance, while the proposed alternative model, based on gossiping with the person of interest, leads robustly to social balance. Moreover, the alternative model fosters cooperation when facing defectors, offering insights into the evolution of cooperation and group formation through gossip mechanisms.
+		</abstract>
+		<introduction>
+			Introduces the concept of social balance, where triads of individuals prefer to maintain consistent relational structures (friend of a friend is a friend, etc.). Reviews historical foundations by Heider and Harary. Raises the need for dynamical models that explain how such balance naturally emerges. Presents the goal of comparing two such models, and links this to cooperation dynamics via reputations and gossip.
+		</introduction>
+		<corps>
+			The article develops two models: 
+			1. The Earlier Model (_XX = X²), where reputations are updated based on gossip with others about a third party. This model leads to social balance only under symmetric conditions and breaks down otherwise.
+			2. The Alternative Model (_XX = XXᵗ), based on gossiping with the subject about others (a homophily process). It robustly leads to balanced social networks for generic initial conditions.
+
+			The paper connects these models to the evolution of cooperation by mapping positive links to cooperative behavior and negative links to defection. Simulations show that agents using the alternative model outperform others and resist defectors, depending on the benefit-to-cost ratio and group size. The paper also presents analytical solutions, including Riccati equations and spectral analysis.
+
+			The simulation setup is detailed: agents evolve via Wright-Fisher processes, with reputations initialized and updated according to each model. Cooperation decisions and payoffs are based on current reputations.
+		</corps>
+		<conclusion>
+			The alternative model (_XX = XXᵗ) consistently leads to social balance and cooperation. The model provides a tractable and insightful framework for understanding the emergence of group structure and cooperative behavior via gossip. It suggests that talking with others about shared relations (rather than about someone) is more effective for building balanced, cooperative societies. The work contributes to linking social balance theory with indirect reciprocity and provides a foundation for future, more realistic modeling.
+		</conclusion>
+		<discussion>
+			The paper emphasizes that gossip dynamics shape reputation and cooperation. The success of the alternative model in simulations highlights how minor differences in interaction dynamics (direction of gossip) lead to significant macroscopic outcomes. The discussion acknowledges simplifications in the models (e.g., full connectivity, finite-time blowups, agent homogeneity) and calls for extensions toward more realistic networks and behaviors. This work bridges social psychology, network science, and evolutionary game theory.
+		</discussion>
+		<biblio>
+			References include foundational works by Heider (1946), Harary (1953), and Cartwright & Harary (1956) on social balance, as well as Nowak, Sigmund, and others on indirect reciprocity, cooperation, and evolutionary dynamics. The bibliography also covers computational models, gossip theory, and social network analysis. Key cited works:
+			- Marvel et al. (2011) on continuous-time structural balance models
+			- Nowak & Sigmund (2005) on indirect reciprocity
+			- Dunbar (1998) on gossip and brain evolution
+			- Fehr & Fischbacher (2004) on norm enforcement
+		</biblio>
+	</article>
+	<article>
+		<preamble>A_Benders_Decomposition_Approach_toCorrelation_Clustering.pdf</preamble>
+		<titre>A Benders Decomposition Approach to Correlation Clustering</titre>
+		<auteur>
+			Margret Keuper, Jovita Lukasik (University of Mannheim, Germany),
+			Maneesh Singh, Julian Yarkony (Verisk, Jersey City, USA)
+		</auteur>
+		<abstract>
+			Ce travail propose une méthode d’optimisation efficace pour le problème de clustering par corrélation (correlation clustering - CC) en vision par ordinateur, notamment pour la segmentation d’images. Les auteurs utilisent la décomposition de Benders, une technique classique en recherche opérationnelle, pour résoudre ce problème formulé comme un programme linéaire en nombres entiers (ILP). Chaque sous-problème de Benders est associé à un nœud du graphe et impose des inégalités cycliques, avec possibilité de parallélisation massive. Les auteurs intègrent également les lignes de Magnanti-Wong (MWR) pour accélérer la convergence. L’approche permet d’atteindre des performances supérieures aux méthodes classiques de plans de coupe.
+		</abstract>
+		<introduction>
+			Le clustering par corrélation est une méthode puissante pour partitionner des graphes en entités significatives, notamment en segmentation d’images. Contrairement à d’autres méthodes, le nombre de clusters émerge naturellement à partir des poids des arêtes. Ce travail s’attaque à l’intractabilité du problème par une reformulation adaptée à la décomposition de Benders, permettant une optimisation distribuée et accélérée.
+		</introduction>
+		<corps>
+			Le papier commence par une présentation du problème standard de correlation clustering, modélisé comme un ILP avec des contraintes cycliques. Les auteurs introduisent ensuite la décomposition de Benders : le problème principal (master) gère les variables entières, tandis que des sous-problèmes, définis sur des couvertures de sommets, imposent les contraintes liées aux cycles.
+
+			Le modèle est étendu avec des lignes de Magnanti-Wong, générées avec des objectifs alternatifs, afin de renforcer les contraintes ajoutées au master. Un algorithme d’optimisation par plans de coupe (cutting plane) est présenté, permettant d’ajouter dynamiquement les lignes de Benders violées. Un processus de "rounding" est proposé pour générer des solutions entières à tout moment, même avant convergence.
+
+			Enfin, une implémentation efficace exploitant la parallélisation des sous-problèmes et les solveurs ILP est proposée. Des versions sérielles et parallèles sont comparées empiriquement.
+		</corps>
+		<conclusion>
+			Les auteurs montrent que la décomposition de Benders, combinée aux lignes de Magnanti-Wong, permet de résoudre efficacement des instances complexes de correlation clustering. L’approche offre de grandes possibilités de parallélisation, s’adapte aux grands graphes et peut être intégrée dans des pipelines de vision par ordinateur. Elle constitue une avancée significative dans le domaine de l’optimisation combinatoire appliquée.
+		</conclusion>
+		<discussion>
+			Le papier souligne que la puissance de l’approche réside dans sa capacité à éviter l’énumération explicite des contraintes cycliques, tout en maintenant des garanties d’optimalité. Les expériences montrent que les lignes MWR accélèrent plus la convergence que la seule parallélisation. Les auteurs proposent également des pistes pour améliorer l’efficacité, comme le "partial pricing" ou l’application sélective d’intégralité dans le master.
+
+			Le travail s’inscrit dans une lignée récente d’applications de techniques de recherche opérationnelle en vision par ordinateur, notamment dans le contexte de la pose humaine multi-personne.
+		</discussion>
+		<biblio>
+			Les références incluent des travaux fondateurs sur la correlation clustering (Bansal et al. 2002), la décomposition de Benders (Benders 1962, Magnanti & Wong 1981), les applications en segmentation (Andres et al., Keuper et al.) et les méthodes combinatoires en vision. Les travaux récents sur les MWR, les graphes planaires et les approches de génération de colonnes sont également cités.
+		</biblio>
+	</article>
+	<article>
+		<preamble>A_memetic_algorithm_for_community_detectionin_signed_networks.pdf</preamble>
+		<titre>A Memetic Algorithm for Community Detection in Signed Networks</titre>
+		<auteur>
+			Shiwei Che, Wu Yang*, Wei Wang
+			Affiliation: Information Security Research Center, Harbin Engineering University, Heilongjiang Province, China
+			(*auteur correspondant : yangwu@hrbeu.edu.cn)
+		</auteur>
+		<abstract>
+			Cet article présente MACD-SN, un nouvel algorithme mémétique pour la détection de communautés dans les réseaux signés, c’est-à-dire les graphes où les arêtes peuvent être positives ou négatives. L’algorithme intègre un mécanisme d’initialisation optimisé, de nouveaux opérateurs de croisement et de mutation, ainsi qu’une fonction de recherche locale permettant d’éviter les optima locaux. Les expérimentations sur réseaux synthétiques et réels montrent que MACD-SN est plus précis et efficace que d'autres méthodes concurrentes.
+		</abstract>
+		<introduction>
+			La détection de communautés est cruciale pour analyser les systèmes complexes représentés sous forme de graphes. Dans les réseaux signés, les liens positifs représentent la coopération, et les liens négatifs, la rivalité. Le défi est d’identifier des communautés où les liens internes sont majoritairement positifs et les liens entre communautés majoritairement négatifs. Ce papier introduit MACD-SN, un algorithme mémétique dédié à ce type de réseaux.
+		</introduction>
+		<corps>
+			MACD-SN utilise un encodage basé sur des chaînes pour représenter les partitions de communauté. Une méthode d’initialisation originale utilisant la "node imbalance degree" est introduite pour améliorer la qualité initiale de la population. Des opérateurs génétiques spécifiques (croisement aléatoire à double sens, mutation de communauté) augmentent la diversité et la précision de la recherche. Une recherche locale probabiliste permet à l’algorithme d’échapper aux optima locaux. Les tests sont menés sur des réseaux synthétiques générés avec divers niveaux de déséquilibre ainsi que sur des réseaux réels comme Slashdot, Epinions, GGSN et SPPN.
+		</corps>
+		<conclusion>
+			MACD-SN s’avère performant pour la détection de communautés dans les réseaux signés, surpassant plusieurs algorithmes de l’état de l’art en termes de précision (NMI) et de robustesse. Il est toutefois limité à la détection de communautés non chevauchantes. Une extension future visera à détecter des communautés chevauchantes dans les graphes signés.
+		</conclusion>
+		<discussion>
+			Les résultats montrent que MACD-SN est particulièrement robuste aux déséquilibres internes (liens négatifs intra-communautaires) et externes (liens positifs intercommunautaires). L’approche mémétique combinée avec des stratégies d’optimisation locale permet de maintenir un bon compromis entre exploration et exploitation. La complexité est raisonnable pour des réseaux de taille moyenne. Comparé à SSL, SISN ou DM, MACD-SN s’impose comme une alternative compétitive.
+		</discussion>
+		<biblio>
+			L’article s’appuie sur une large littérature, incluant les travaux fondateurs de Cartwright & Harary (1956), les approches de modularité pour réseaux signés (Arenas et al., 2009), les modèles stochastiques (Jiang, 2015), ainsi que de nombreux algorithmes évolutionnaires multi-objectifs (Shi et al., Liu et al., Pizzuti). Les références totalisent plus de 70 articles, couvrant l’état de l’art en détection de communautés dans les réseaux signés et les algorithmes évolutionnaires.
+		</biblio>
+	</article>
+	<article>
+		<preamble>An_Improved_Branch-and-Cut_Code_for_the_Maximum_Balanced_Subgraph_of_a_Signed_Graph.pdf</preamble>
+		<titre>An Improved Branch-and-Cut Code for the Maximum Balanced Subgraph of a Signed Graph</titre>
+		<auteur>
+			Rosa Figueiredo (CIDMA, Department of Mathematics, University of Aveiro, Portugal),
+			Yuri Frota (Department of Computer Science, Fluminense Federal University, Brazil)
+		</auteur>
+		<abstract>
+			Cet article traite du Maximum Balanced Subgraph Problem (MBSP), qui consiste à extraire un sous-graphe équilibré d’un graphe signé en maximisant le nombre de sommets. Les auteurs proposent une version améliorée d’un algorithme exact de type branch-and-cut. Des expériences computationnelles approfondies sur divers ensembles d’instances (aléatoires, réelles et issues d'applications) montrent que le nouvel algorithme surpasse la version précédente, en résolvant plus d’instances dans un temps limité avec de meilleurs gaps.
+		</abstract>
+		<introduction>
+			Les graphes signés, avec des arêtes positives ou négatives, apparaissent dans des domaines comme l’analyse de portefeuilles, la biologie, les réseaux sociaux et les structures communautaires. Le MBSP consiste à extraire un sous-graphe équilibré avec le maximum de sommets. Ce problème est NP-difficile. L’article présente des applications du MBSP et décrit les méthodes antérieures, en particulier un premier algorithme exact basé sur la décomposition en coupes.
+		</introduction>
+		<corps>
+			La formulation du MBSP repose sur l'interdiction des cycles impairs à arêtes négatives. Les variables binaires indiquent l’inclusion d’un sommet dans le sous-graphe. Les contraintes assurent l’équilibre structurel. Les auteurs rappellent l’approche précédente : une méthode branch-and-cut classique, intégrant des coupes issues de cycles impairs et de cliques, avec une séparation exacte ou heuristique.
+
+			L'amélioration proposée introduit un nouveau schéma de branchement basé sur les cycles négatifs impairs et plusieurs routines de séparation supplémentaires : lifting des contraintes de trous impairs, lifting de cycles impairs, et utilisation d’un "cut pool" mémorisant les inégalités précédentes. L’arbre de décision devient plus équilibré, et les coupes sont mieux ciblées, renforçant ainsi le modèle.
+
+			Des expériences sur quatre familles d’instances sont réalisées : aléatoires, structures communautaires (UNGA), matrices réseau intégrées (DMERN), et portefeuilles financiers. L'implémentation repose sur C++ et le solveur Xpress.
+		</corps>
+		<conclusion>
+			L’algorithme amélioré résout 431 instances sur 1445, contre 410 pour la version précédente. Il améliore systématiquement les gaps sur les instances non résolues. L’introduction d’un branchement sur les cycles négatifs impairs et de routines de séparation renforcées permet d’obtenir de meilleures performances sans augmenter significativement la complexité. Ce travail représente un progrès notable dans la résolution exacte du MBSP.
+		</conclusion>
+		<discussion>
+			Les améliorations sont particulièrement utiles sur les instances complexes issues de problèmes réels, comme les structures financières ou les matrices issues de programmes linéaires mixtes. Les résultats montrent également que les méthodes classiques de branchement 0–1 sont moins efficaces que des stratégies basées sur la structure du graphe (ex. cycles impairs). La séparation via lifting améliore également la qualité des coupes. Enfin, le "cut pool" réduit les appels redondants aux procédures de séparation.
+		</discussion>
+		<biblio>
+			L'article s’appuie sur des travaux classiques sur les graphes signés (Harary, Zaslavsky), la programmation en nombres entiers, les heuristiques de séparation (Padberg), la structure communautaire (Traag & Bruggeman), et l'analyse de portefeuille (Harary et al.). Il fait aussi référence à des approches liées au problème DMERN, à la reconnaissance de réseaux intégrés et à la programmation combinatoire.
+		</biblio>
+	</article>
+	<article>
+		<preamble>Conversational_Networks_for_Automatic_Online_Moderation.pdf</preamble>
+		<titre>Conversational Networks for Automatic Online Moderation</titre>
+		<auteur>
+			Etienne Papegnies, Vincent Labatut, Richard Dufour, Georges Linarès  
+			Laboratoire Informatique d’Avignon, Avignon Université, France  
+			Etienne Papegnies est également affilié à Nectar de Code, France
+		</auteur>
+		<abstract>
+			Cet article propose une méthode de modération automatique de contenu en ligne basée sur les réseaux de conversation, sans analyse du texte des messages. À partir de journaux de discussion (chat logs), les auteurs extraient des graphes conversationnels caractérisés par des mesures topologiques, qui servent ensuite à l’apprentissage supervisé. Les performances sont évaluées sur un jeu de données issu du jeu en ligne SpaceOrigin. L’approche atteint un F-mesure de 83.89 %, surpassant les méthodes de l’état de l’art, et reste performante (82.65 %) même avec une sélection réduite de caractéristiques, permettant un gain en temps de calcul significatif.
+		</abstract>
+		<introduction>
+			L’introduction met en contexte la difficulté de modérer automatiquement les discussions en ligne, en raison du bruit, de l’obfuscation intentionnelle et de la nécessité de contextualisation. Les méthodes basées sur le contenu sont limitées, notamment par la dépendance à la langue et à la structure du texte. Les auteurs proposent une méthode basée uniquement sur la structure des échanges entre utilisateurs, via des réseaux conversationnels extraits de discussions.
+		</introduction>
+		<corps>
+			La méthode repose sur trois étapes principales :  
+			1. Extraction de réseaux de conversation à partir de fenêtres glissantes sur les messages.  
+			2. Caractérisation topologique des graphes par des mesures à différentes échelles (micro, meso, macro) sur les sommets ou sur l’ensemble du graphe.  
+			3. Entraînement et évaluation d’un classifieur (SVM) sur ces caractéristiques pour détecter les messages abusifs.
+
+			Les expérimentations portent sur 779 messages abusifs et 1890 non abusifs extraits de SpaceOrigin. Les graphes sont dirigés, pondérés, et construits selon une logique de proximité temporelle et de mentions explicites. Plusieurs versions des graphes sont testées (avant, après, autour du message cible). Les mesures comprennent centralité, densité, modularité, distances, etc.
+
+			L’étude évalue aussi les contributions respectives des poids, des directions et de la taille des fenêtres/contextes, et procède à une sélection automatique de caractéristiques discriminantes pour optimiser les performances.
+		</corps>
+		<conclusion>
+			L’approche proposée atteint une F-mesure de 83.89 %, dépassant les méthodes basées sur le contenu. Elle est robuste à l’obfuscation, indépendante de la langue, et exploitable en contexte temps réel si l’on utilise les caractéristiques les plus pertinentes. Les auteurs montrent que les graphes "avant" le message sont presque aussi informatifs que ceux "après", et que la topologie des échanges est un bon prédicteur d’abus. Des perspectives d’amélioration incluent l’ajout de caractéristiques textuelles ou la détection d'interactions hostiles via des graphes signés.
+		</conclusion>
+		<discussion>
+			La discussion met en lumière l’importance du contexte dans la détection d’abus. Les caractéristiques comme la centralité de proximité, la réciprocité ou le nombre de participants sont fortement discriminantes. La structure conversationnelle peut donc refléter l’abus, sans analyse de contenu. La méthode est prometteuse, mais dépend du type de communauté et de la structure des discussions (chat vs forum). Les auteurs évoquent la généralisation à d’autres corpus et la combinaison avec des approches sémantiques.
+		</discussion>
+		<biblio>
+			La bibliographie est très fournie et couvre les approches de modération automatique, l’analyse de sentiments, les graphes conversationnels, les mesures de centralité, la théorie des réseaux sociaux et la détection de comportements antisociaux. Les références incluent Spertus (1997), Chen et al. (2012), Pavlopoulos et al. (2017), Freeman, Katz, Bonacich, Newman, Wasserman & Faust, ainsi que des travaux antérieurs des auteurs eux-mêmes sur le sujet.
+		</biblio>
+	</article>
+	<article>
+		<preamble>Exact_Clustering_via_Integer_Programming_and_Maximum_Satisfiability.pdf</preamble>
+		<titre>Exact Clustering via Integer Programming and Maximum Satisfiability</titre>
+		<auteur>
+			Atsushi Miyauchi (RIKEN AIP, Tokyo, Japan),  
+			Tomohiro Sonobe (National Institute of Informatics & JST ERATO, Tokyo, Japan),  
+			Noriyoshi Sukegawa (Chuo University, Tokyo, Japan)
+		</auteur>
+		<abstract>
+			Cet article traite d’un problème général de clustering sur graphes : le partitionnement de sommets d’un graphe complet pondéré en sous-ensembles maximisant la somme des poids internes. Les auteurs proposent une nouvelle formulation en programmation linéaire en nombres entiers (ILP) avec beaucoup moins de contraintes que les formulations classiques, ainsi qu’une version basée sur MaxSAT. Des algorithmes exacts basés sur ILP et MaxSAT sont introduits, accompagnés de post-traitements efficaces. Les expérimentations montrent que ces approches surpassent les méthodes existantes sur des jeux de données réels, tant en mémoire qu’en temps de calcul.
+		</abstract>
+		<introduction>
+			Les auteurs s’intéressent au problème de clustering par partition de clique (CPP) sur un graphe complet avec poids rationnels. Ce problème englobe plusieurs applications comme le correlation clustering, la détection de communautés ou la technologie de groupe. Ce problème est NP-difficile. L’approche proposée repose sur la reformulation mathématique du problème en ILP et en MaxSAT, deux paradigmes puissants pour les problèmes combinatoires complexes.
+		</introduction>
+		<corps>
+			Le corps de l’article est structuré autour de quatre contributions principales :
+			1. Une nouvelle formulation ILP qui réduit drastiquement le nombre de contraintes par un astucieux ré-encodage des poids nuls.
+			2. Un algorithme exact basé sur cette formulation, utilisant un objectif non perturbé combiné à un post-traitement linéaire.
+			3. La déclinaison MaxSAT des formulations ILP précédentes, exploitant les encodeurs binaires/unaires, et permettant un traitement alternatif avec des solveurs satisfiabilité.
+			4. Une campagne expérimentale montrant que les nouvelles approches résolvent efficacement des instances allant jusqu’à plusieurs milliers de sommets, surpassant les méthodes antérieures (comme Grötschel & Wakabayashi).
+
+			Les auteurs analysent aussi la correction des modèles, leur robustesse théorique, et détaillent leur efficacité mémoire et en temps de calcul à travers des benchmarks (clustering, bioinformatique, réseau, industrie).
+		</corps>
+		<conclusion>
+			Les nouvelles formulations ILP et MaxSAT sont plus efficaces que les formulations classiques, notamment dans des contextes où le nombre de contraintes devient prohibitif. Elles permettent de résoudre des instances de grande taille auparavant inaccessibles. L’ajout d’un léger bruit négatif sur les arêtes de poids nul permet une reformulation correcte avec moins de contraintes. Les algorithmes proposés sont démontrés exacts, efficaces et applicables à des cas réels variés.
+		</conclusion>
+		<discussion>
+			La discussion porte sur l’intérêt de transformer les poids nuls, la pertinence des formulations réduites, la complémentarité entre ILP et MaxSAT, et le potentiel de généralisation. Les auteurs mentionnent aussi que le nombre de contraintes passe de O(n³) à O(nm⁺), ce qui rend possible le traitement de très grands graphes. Ils soulignent également les gains apportés par le post-traitement et par l’intégration dans des solveurs modernes comme Gurobi ou MaxHS.
+		</discussion>
+		<biblio>
+			Les références incluent des travaux classiques sur le CPP (Grötschel & Wakabayashi), le correlation clustering (Bansal et al.), la modularité (Newman, Fortunato), les formulations ILP/MaxSAT (Jaehn, Berg & Järvisalo), et des contributions récentes dans le domaine de la recherche opérationnelle, de l’optimisation et de l’IA. Les auteurs citent également des applications concrètes : bioinformatique, réseaux sociaux, industrie manufacturière.
+		</biblio>
+	</article>
+	<article>
+		<preamble>LDA_resume.pdf</preamble>
+		<titre>Automatic Summarization Approaches to Speed up Topic Model Learning Process</titre>
+		<auteur>
+			Mohamed Morchid, Juan-Manuel Torres-Moreno, Richard Dufour,  
+			Javier Ramirez-Rodriguez, Georges Linarès  
+			Affiliations :  
+			1. LIA - Université d’Avignon, France  
+			2. SFR Agorantic, Université d’Avignon, France  
+			3. École Polytechnique de Montréal, Canada  
+			4. Universidad Autónoma Metropolitana–Azcapotzalco, Mexico
+		</auteur>
+		<abstract>
+			Cet article explore l’idée d’accélérer l’apprentissage des modèles thématiques de type LDA (Latent Dirichlet Allocation) en utilisant des résumés automatiques plutôt que des documents complets. L’approche vise à réduire le temps de traitement tout en conservant l’intelligibilité et la qualité des modèles. Des expériences sur des corpus multilingues (anglais, français, espagnol) montrent que les modèles entraînés sur des résumés peuvent être aussi pertinents que ceux issus de documents complets, avec une réduction du temps de traitement de plus de 60 %.
+		</abstract>
+		<introduction>
+			Face à l’explosion du volume d’informations textuelles disponibles en ligne (ex. Wikipedia), le traitement efficace devient un enjeu critique. Les représentations thématiques, comme LDA, sont utiles mais gourmandes en ressources. Ce papier propose une alternative : résumer les documents en amont pour réduire leur taille et accélérer l’apprentissage des modèles thématiques. L’objectif est de maintenir la performance tout en réduisant le coût computationnel.
+		</introduction>
+		<corps>
+			Le corps de l’article décrit :  
+			- l’algorithme LDA et ses variantes d’apprentissage (Gibbs Sampling),  
+			- les systèmes de résumé automatique utilisés (Baseline First, Baseline Random, ARTEX),  
+			- l’approche expérimentale : construction de corpus multilingues (100k documents par langue), résumé des documents d’entraînement, construction de modèles LDA, et évaluation par perplexité et divergence de Jensen-Shannon (JS).  
+			Les résultats montrent que les résumés produits par ARTEX permettent d’entraîner des modèles LDA compétitifs, avec une perplexité proche de celle obtenue avec les textes complets.
+		</corps>
+		<conclusion>
+			Les modèles LDA entraînés sur des résumés bien conçus permettent d’économiser significativement du temps tout en conservant une bonne qualité. À partir de 200 sujets, les modèles issus de résumés atteignent une divergence JS proche des modèles complets. L’approche est particulièrement utile dans des contextes multilingues ou à grande échelle.
+		</conclusion>
+		<discussion>
+			Les différences de performances entre langues sont expliquées par la nature du langage (latin vs anglais), la taille des corpus, et la structure des articles. L’ordre de performance des systèmes est généralement ARTEX > Baseline First > Baseline Random. La perplexité reste meilleure avec les textes complets, mais l’efficacité en temps et en JS divergence rend les résumés attractifs.
+		</discussion>
+		<biblio>
+			Références principales :  
+			- Blei et al. (2003) sur LDA  
+			- Hofmann (1999) sur PLSA  
+			- Salton (1989) sur les représentations TF-IDF  
+			- Torres-Moreno et al. sur les systèmes de résumé automatique (ARTEX, CORTEX)  
+			- McCallum (2002) pour la boîte à outils MALLET  
+			- Louis & Nenkova (2009), Saggion et al. (2010) sur l’évaluation sans référence (FRESA, JS divergence)
+		</biblio>
+	</article>
+	<article>
+		<preamble>Partitioning_large_signed_two-mode_networks__Problems_and_prospects.pdf</preamble>
+		<titre>Partitioning Large Signed Two-Mode Networks: Problems and Prospects</titre>
+		<auteur>
+			Patrick Doreian (University of Pittsburgh & University of Ljubljana),  
+			Paulette Lloyd (Indiana University),  
+			Andrej Mrvar (University of Ljubljana)
+		</auteur>
+		<abstract>
+			Cet article étend la théorie de l’équilibre structurel relaxé aux réseaux signés bimodes (deux types de nœuds), avec application à un ensemble de votes de l’Assemblée générale des Nations Unies (UNGA). Les auteurs développent une méthode de partitionnement de ces réseaux et comparent leur approche à d’autres méthodes existantes. L’objectif principal est méthodologique : relier la théorie de l’équilibre de Heider aux processus de "soft balancing" en relations internationales. Les auteurs proposent des solutions à plusieurs problèmes liés au partitionnement de grands réseaux signés bimodes.
+		</abstract>
+		<introduction>
+			L’étude se fonde sur la reconnaissance que les réseaux bimodes, notamment ceux ayant des liens signés (positifs ou négatifs), sont sous-étudiés. À partir de la théorie de l’équilibre structurel, l'article se concentre sur le développement d’outils méthodologiques pour partitionner ces réseaux, tout en reliant ces outils aux conflits d’intérêts entre acteurs (ex : votes divergents à l’ONU).
+		</introduction>
+		<corps>
+			Les auteurs formalisent l’équilibre structurel relaxé pour les réseaux signés bimodes. Un algorithme de partitionnement basé sur la minimisation des incohérences (liens positifs dans des blocs négatifs, ou l’inverse) est proposé. Ils appliquent leur méthode à deux périodes temporelles de votes de l’UNGA sur les résolutions militaires : pendant la Guerre froide (1981–1985) et après (1996–2001). Le papier discute des défis computationnels liés aux grandes matrices bimodes et des stratégies pour y remédier (pré-spécification de modèles, optimisation locale, etc.). Une comparaison est également faite avec d’autres approches (Homals, Eigenvector centrality, méthodes d’îlots, détection de communautés).
+		</corps>
+		<conclusion>
+			La méthode de blockmodélisation signée appliquée aux réseaux bimodes fournit des partitions cohérentes, révèle des blocs d’acteurs votant de manière similaire, et permet une interprétation substantielle des relations internationales sous l’angle de l’équilibre structurel. Les auteurs montrent que cette approche complète les méthodes existantes tout en soulignant les défis computationnels à surmonter pour les grands jeux de données.
+		</conclusion>
+		<discussion>
+			Le papier discute des compromis entre qualité de partition et charge computationnelle. Il souligne l’importance d’utiliser des méthodes combinées (directes et indirectes), et de recourir à des pré-spécifications éclairées pour guider l’optimisation. L’analyse fine des blocs permet d’identifier des coalitions durables ou temporaires et des dynamiques de pouvoir (soft balancing), notamment dans le cadre du vote aux Nations Unies.
+		</discussion>
+		<biblio>
+			Références clés : Heider (1946), Harary & Cartwright (1956), Doreian & Mrvar (1996, 2009), Fortunado (2009), Girvan & Newman (2002), Poole (2005), Voeten (2000). L’article s’appuie également sur les données de l’ONU (résolutions militaires de l’Assemblée Générale) et inclut des outils analytiques comme Pajek, UCINET et R.
+		</biblio>
+	</article>
+	<article>
+		<preamble>Polibits_42_02.pdf</preamble>
+		<titre>Summary Evaluation with and without References</titre>
+		<auteur>
+			Juan-Manuel Torres-Moreno, Horacio Saggion, Iria da Cunha, Eric SanJuan, Patricia Velázquez-Morales  
+			Affiliations :  
+			- LIA, Université d’Avignon, France  
+			- École Polytechnique de Montréal, Canada  
+			- Universitat Pompeu Fabra, Espagne  
+			- Instituto de Ingeniería UNAM, Mexique  
+			- VM Labs, France
+		</auteur>
+		<abstract>
+			Cet article propose une méthode d’évaluation des systèmes de résumé automatique sans avoir besoin de modèles humains. Elle repose sur FRESA, un nouveau cadre d’évaluation basé sur des divergences entre distributions de probabilité. Les expériences portent sur diverses langues et tâches de résumé, avec des corrélations mesurées entre FRESA (utilisant la divergence de Jensen-Shannon), ROUGE, PYRAMIDS et d’autres métriques, montrant que FRESA permet des classements fiables sans modèle humain.
+		</abstract>
+		<introduction>
+			L’évaluation de résumés automatiques est un problème complexe. L’approche traditionnelle repose sur des modèles de référence humains. Des initiatives comme SUMMAC, DUC et TAC ont défini des critères tels que COVERAGE, RESPONSIVENESS et ROUGE. Toutefois, ces approches sont coûteuses. L’article s’inscrit dans une série de recherches qui visent à s’en affranchir, en évaluant les résumés directement par comparaison avec le texte source à l’aide de mesures comme la divergence de Jensen-Shannon.
+		</introduction>
+		<corps>
+			Les auteurs comparent plusieurs méthodes d’évaluation : ROUGE, PYRAMIDS, RESPONSIVENESS et les divergences JS. FRESA est introduit comme un cadre d’évaluation multilingue. Sept tâches de résumé sont testées sur des corpus en anglais, espagnol et français (DUC, TAC, Medicina Clínica, PISTES, RPM2). FRESA est comparé à ROUGE selon les corrélations de Spearman. Les systèmes testés incluent ENERTEX, CORTEX, SUMMTERM, REG, JS, ainsi que des systèmes commerciaux. L’implémentation de FRESA est détaillée, avec des considérations sur le lissage et la comparaison à base de documents entiers.
+		</corps>
+		<conclusion>
+			Les mesures sans modèles humains, en particulier la divergence de Jensen-Shannon, permettent d’obtenir des classements proches de ceux produits par des méthodes standard. Cependant, cela dépend fortement de la tâche. Pour les tâches complexes (ex. résumé biographique, opinions), la corrélation est faible. FRESA est un outil efficace pour certaines tâches multilingues. Les auteurs proposent de l’appliquer à d'autres langues et types de résumés, comme la compression de phrases.
+		</conclusion>
+		<discussion>
+			Les corrélations JS/ROUGE sont élevées pour le résumé générique, mais faibles pour les tâches plus ciblées. L’absence de modèles peut parfois être compensée par une comparaison au texte source. Les auteurs soulignent l’importance du choix des tâches pour l’évaluation automatique. L’article met aussi en lumière les limites des évaluations sans référence humaine dans certains contextes.
+		</discussion>
+		<biblio>
+			Le texte cite des travaux majeurs : ROUGE (Lin), PYRAMIDS (Nenkova), SUMMAC, DUC, TAC, BLEU, Lin & Hovy, Kullback-Leibler, Jensen-Shannon, entre autres. Des expérimentations sont basées sur DUC 2002, DUC 2004, TAC 2008, et plusieurs corpus multilingues. FRESA s’appuie sur des travaux antérieurs de Torres-Moreno, Saggion, da Cunha, SanJuan, etc.
+		</biblio>
+	</article>
+<articles>
