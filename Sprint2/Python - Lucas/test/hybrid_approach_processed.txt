@@ -1,3 +1,0 @@
-hybrid_approach.txt
-    Sentence Compression for Automated Subtitling: A Hybrid Approach
-In this paper a sentence compression tool is de-

@@ -1,3 +1,0 @@
-marcu_statistics_sentence_pass_one.txt
-From: AAAI-00 Proceedings. Copyright © 2000, AAAI (www.aaai.org). All rights reserved.
-When humans produce summaries of documents, they

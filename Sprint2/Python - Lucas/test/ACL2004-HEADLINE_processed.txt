@@ -1,3 +1,0 @@
-ACL2004-HEADLINE.txt
-       Hybrid Headlines: Combining Topics and Sentence Compression
-This paper presents Topiary, a headline- generation system that creates very short, informative summaries for news stories by combining sentence compres- sion and unsupervised topic discovery. We will show that the combination of linguistically motivated sentence com- pression with statistically selected topic terms performs better than either alone, according to some automatic summary evaluation measures. In addition we de- scribe experimental results establishing an appropriate extrinsic task on which to measure the effect of summarization on human performance. We demonstrate the usefulness of headlines in compar- ison to full texts in the context of this extrinsic task.
