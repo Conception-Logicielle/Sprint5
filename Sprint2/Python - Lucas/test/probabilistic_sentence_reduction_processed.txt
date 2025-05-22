@@ -1,3 +1,0 @@
-probabilistic_sentence_reduction.txt
-Probabilistic Sentence Reduction Using Support Vector Machines
-This paper investigates a novel application of sup-

@@ -1,3 +1,0 @@
-Word2Vec.txt
-                                             Efficient Estimation of Word Representations in
-Aucun résumé (abstract) trouvé.
