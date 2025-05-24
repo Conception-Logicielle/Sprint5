@@ -10,10 +10,40 @@ const ALLOWED_TAGS = [
 ];
 
 /**
+ * @description Compare 2 strings ligne-par-ligne laissant les marges extra ou des lignes manquantes
+ */
+function compareWithMargin(texteGenere, texteAttendu, marge = 2) {
+    const lignesGenerees = texteGenere.split(/\r?\n/).map(ligne => ligne.trim()).filter(ligne => ligne.length);
+    const lignesAttendues = texteAttendu.split(/\r?\n/).map(ligne => ligne.trim()).filter(ligne => ligne.length);
+    const nbLignesGenerees = lignesGenerees.length;
+    const nbLignesAttendues = lignesAttendues.length;
+
+    if (nbLignesAttendues === 0) return false;
+
+    for (let positionDebut = 0; positionDebut <= nbLignesGenerees - nbLignesAttendues; positionDebut++) {
+        const lignesAvant = positionDebut;
+        const lignesApres = nbLignesGenerees - (positionDebut + nbLignesAttendues);
+
+        if (lignesAvant <= marge && lignesApres <= marge) {
+            let correspondance = true;
+            for (let i = 0; i < nbLignesAttendues; i++) {
+                if (lignesGenerees[positionDebut + i] !== lignesAttendues[i]) {
+                    correspondance = false;
+                    break;
+                }
+            }
+            if (correspondance) return true;
+        }
+    }
+    return false;
+}
+
+
+/**
  * @description Retourne true si le titre (une fois qu'il est mis sur une ligne) est exactement le meme que celui attendu
  */
-function verifiyTitle(generated, expected) {
-    return true
+function verifyTitle(generated, expected) {
+    return generated.trim() === expected.trim();
 }
 
 /**
@@ -21,7 +51,7 @@ function verifiyTitle(generated, expected) {
  * WARN : si il y a (max) deux ligne en plus que celles attendus, ou deux lignes oubliées, que ce soit au début ou a la fin, le test doit réussir (marge d'erreur)
  * */
 function verifyAuthors(generated, expected) {
-    return true
+    return compareWithMargin(generated, expected, 2);
 }
 
 /**
@@ -29,7 +59,7 @@ function verifyAuthors(generated, expected) {
  * WARN : si il y a (max) deux ligne en plus que celles attendus, ou deux lignes oubliées, que ce soit au début ou a la fin, le test doit réussir (marge d'erreur)
  */
 function verifyAbstract(generated, expected) {
-    return true
+    return compareWithMargin(generated, expected, 2);
 }
 
 /**
@@ -37,7 +67,7 @@ function verifyAbstract(generated, expected) {
  * WARN : si il y a (max) deux ligne en plus que celles attendus, ou deux lignes oubliées, que ce soit au début ou a la fin, le test doit réussir (marge d'erreur)
  */
 function verifyIntroduction(generated, expected) {
-    return true
+    return compareWithMargin(generated, expected, 2);
 }
 
 /**
@@ -150,7 +180,7 @@ function computeAccuracy() {
                     }
                 }
 
-                check("titre", verifiyTitle);
+                check("titre", verifyTitle);
                 check("auteur", verifyAuthors);
                 check("abstract", verifyAbstract);
                 check("introduction", verifyIntroduction);
