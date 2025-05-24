@@ -1,2 +1,4 @@
 node_modules/
 accuracyTest/package-lock.json
+.vscode/
+

@@ -27,6 +27,13 @@ for fichier_pdf in "$@"; do
       echo "[ERROR] conversion échouée pour $fichier_pdf" >&2
     continue
   fi
+
+#  if ! python3 ./pdfminer_six.py "$fichier_pdf" "$DOSSIER_TEXTE"
+#  then
+#    echo "[ERROR] échec de l'extraction de texte pour $fichier_pdf" >&2
+#    continue
+#  fi
+
   echo "[OK] $fichier_pdf converti."
 done
 

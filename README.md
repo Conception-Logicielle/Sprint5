@@ -125,11 +125,40 @@ Vous pouvez choisir entre deux formats de résumé :
 
 ---
 
-## 📎 À venir
+## 📊 Tests d'Accuracy (Dossier `AccuracyTest`)
 
-- Transcription du parseur Rust dans un langage plus accessible à l’équipe
-- Optimisation des performances (temps de traitement divisé par 3 visé)
-- Amélioration du taux de précision d’extraction au-delà de 80 %
+Dans le dossier `AccuracyTest`, vous trouverez des scripts pour comparer la qualité des résumés XML générés par rapport aux fichiers de référence.
 
+### Deux types de comparaison sont proposés :
+
+1. **Comparaison avec marge (ligne par ligne)**
+
+    * Cette méthode compare les textes section par section en tenant compte d’une marge de décalage de lignes (±2 lignes).
+    * Elle est cependant **trop stricte** et ne supporte pas bien les différences d’indentation, casse, ou coupures de mots.
+    * Par conséquent, elle produit généralement un **taux de réussite faible**.
+
+2. **Comparaison avec normalisation complète**
+
+    * Cette méthode normalise les textes avant comparaison en supprimant retours à la ligne, différences de casse, espaces multiples, et tirets.
+    * Elle réalise une comparaison plus souple basée sur l’inclusion textuelle.
+    * Ce test donne un **taux de réussite plus élevé et plus représentatif** de la qualité réelle.
 
 ---
+
+### Lancer les tests
+
+Les scripts sont écrits en Node.js et s’exécutent via la commande :
+
+```bash
+node accuracyTest.js
+```
+
+Assurez-vous que les fichiers XML `articles.xml` (généré) et `expected.xml` (référence) sont bien présents dans les chemins configurés.
+
+---
+
+### Remarques
+
+* La méthode avec marge est utile pour des cas très stricts, mais souvent trop sévère.
+* La méthode avec normalisation est recommandée pour évaluer les résultats dans un cadre réel, avec des variations courantes dans la mise en forme.
+* Les deux méthodes sont complémentaires et peuvent être utilisées selon vos besoins.

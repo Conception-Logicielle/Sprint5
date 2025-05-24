@@ -68,7 +68,7 @@ fn extract_title(lines: &[String], regex: &RegexSet) -> Option<(String, usize)> 
     while i < lines.len() {
         let line = lines[i].trim();
 
-        // On saute les lignes inutiles détectées par regex ou qui contiennent des emails
+        // on sauve les lignes intitiles ( exo documentation, résumé, etc.)
         if line.is_empty() || regex.bad_header.is_match(line) || line.contains('@') {
             i += 1;
             continue;
@@ -127,12 +127,10 @@ fn extract_authors(lines: &[String], start_after_title: usize, regex: &RegexSet)
             continue;
         }
 
-        // Si on tombe sur une section explicite (Abstract, Introduction, etc.)
         if regex.contains_abstract.is_match(trimmed) || regex.introduction_header.is_match(trimmed) {
             break;
         }
 
-        // Si la ligne ressemble à une phrase du corps de texte, on s’arrête
         if (regex.body_like_line.is_match(trimmed) || regex.contains_abstract.is_match(trimmed)) && started {
             break;
         }
@@ -167,11 +165,9 @@ fn extract_abstract(lines: &[String], regex: &RegexSet) -> String {
         let trimmed = lines[i].trim();
         let lower = trimmed.to_lowercase();
 
-        // Détection de début d’abstract
         if !in_abstract && regex.contains_abstract.is_match(trimmed) {
             in_abstract = true;
 
-            // Nettoyage du préfixe (e.g. "Abstract:", "Résumé -")
             let cleaned = regex
                 .contains_abstract
                 .replace(&lower, "")
@@ -187,7 +183,6 @@ fn extract_abstract(lines: &[String], regex: &RegexSet) -> String {
         }
 
         if in_abstract {
-            // Fin explicite si nouvelle section
             if regex.introduction_header.is_match(trimmed) {
                 break;
             }
@@ -221,102 +216,87 @@ fn extract_abstract(lines: &[String], regex: &RegexSet) -> String {
 fn extract_introduction(lines: &[String], abstract_text: &str) -> (String, usize) {
     use regex::Regex;
 
-    let intro_regex = Regex::new(r"(?i)^(\d+\.?|[ivxlc]+\.?)?\s*introduction\s*$").unwrap();
-    let numbered_section_inline = Regex::new(r"(?i)^\s*(\d+|[ivxlc]+)\.?\s+[A-Za-z].+").unwrap();
-    let section_number_only = Regex::new(r"^\s*(\d+|[ivxlc]+)\s*$").unwrap();
-    let capitalized_line = Regex::new(r"^[A-Z][a-zA-Z\s\-]{3,}$").unwrap();
-    let hardcoded_stop_phrase = "A noisy-channel model for sentence";
+    let intro_re = Regex::new(r"(?i)^(\d+\.?|[ivxlc]+\.?)?\s*introduction\s*$").unwrap();
+    let heading_re = Regex::new(r"(?i)^\s*(\d{1,2}|[ivxlc]{1,5})[.)]?\s+[A-Z][a-zA-Z]").unwrap();
+    let section_only_re = Regex::new(r"^\s*(\d{1,2}|[ivxlc]{1,5})\s*$").unwrap();
+    let caps_line_re = Regex::new(r"^[A-Z][A-Z\s\-]{3,}$").unwrap();
 
-    fn is_uppercase_section_title(line: &str) -> bool {
-        let without_number = line.trim_start()
-            .trim_start_matches(|c: char| c.is_ascii_alphanumeric() || c == '.' || c == ' ');
-        let cleaned: String = without_number.chars().filter(|c| !c.is_whitespace()).collect();
-        let total = cleaned.len();
-        let uppercase_count = cleaned.chars().filter(|c| c.is_uppercase()).count();
-        total > 5 && uppercase_count as f32 / total as f32 > 0.8
-    }
-
-    fn looks_like_intro_heading(line: &str) -> bool {
+    fn is_intro_heading(line: &str) -> bool {
         let stripped = line
             .trim()
-            .trim_start_matches(|c: char| c.is_ascii_digit() || c == '.' || c == 'I' || c == 'i')
-            .replace(char::is_whitespace, "");
-
-        let cleaned = stripped.to_ascii_lowercase();
-        cleaned.contains("introduction") || cleaned == "ntroduction"
+            .trim_start_matches(|c: char| c.is_ascii_digit() || c == '.' || c == ')' || c == 'I' || c == 'i')
+            .replace(char::is_whitespace, "")
+            .to_ascii_lowercase();
+        stripped.contains("introduction") || stripped == "ntroduction"
     }
 
-    let mut intro_lines = Vec::new();
-    let mut in_intro = false;
-    let mut abstract_end_index = 0;
+    fn is_uppercase_title(line: &str) -> bool {
+        let cleaned: String = line
+            .trim_start()
+            .trim_start_matches(|c: char| c.is_ascii_alphanumeric() || c == '.' || c == ' ' || c == ')')
+            .chars()
+            .filter(|c| !c.is_whitespace())
+            .collect();
+        let len = cleaned.len();
+        let upper = cleaned.chars().filter(|c| c.is_uppercase()).count();
+        len > 5 && (upper as f32) / (len as f32) > 0.8
+    }
 
-    if let Some(first_line) = abstract_text.lines().next() {
-        for (i, line) in lines.iter().enumerate() {
-            if line.contains(first_line.trim()) {
-                abstract_end_index = i;
-                break;
-            }
+    fn is_valid_section_number(s: &str) -> bool {
+        let upper = s.to_ascii_uppercase();
+        match upper.as_str() {
+            "I" | "1" => false,
+            x if x.starts_with('0') => false,
+            _ => true,
         }
     }
 
+    let hardcoded_stop = "A noisy-channel model for sentence";
+    let abstract_first_line = abstract_text.lines().next().unwrap_or("").trim();
+    let abstract_end_index = lines.iter().position(|l| l.contains(abstract_first_line)).unwrap_or(0);
+
+    let mut intro_lines = Vec::new();
+    let mut in_intro = false;
     let mut i = abstract_end_index;
-    let mut char_offset = 0;
 
     while i < lines.len() {
-        let trimmed = lines[i].trim();
+        let line = lines[i].trim();
 
-        if !in_intro {
-            if intro_regex.is_match(trimmed) || looks_like_intro_heading(trimmed) {
-                in_intro = true;
+        if !in_intro && (intro_re.is_match(line) || is_intro_heading(line)) {
+            in_intro = true;
+            i += 1;
+            continue;
+        }
+
+        if in_intro {
+            if line.is_empty() {
                 i += 1;
                 continue;
             }
-        } else {
-            if trimmed.is_empty() {
-                i += 1;
-                continue;
-            }
 
-            if trimmed.contains(hardcoded_stop_phrase) {
-                break;
-            }
-
-            if i + 2 < lines.len()
-                && section_number_only.is_match(trimmed)
+            let end_condition = line.contains(hardcoded_stop)
+                || heading_re.captures(line).map(|c| is_valid_section_number(&c[1])).unwrap_or(false)
+                || (i + 2 < lines.len()
+                && section_only_re.captures(line).map(|c| is_valid_section_number(&c[1])).unwrap_or(false)
                 && lines[i + 1].trim().is_empty()
-                && capitalized_line.is_match(lines[i + 2].trim())
-            {
+                && caps_line_re.is_match(lines[i + 2].trim()))
+                || is_uppercase_title(line);
+
+            if end_condition {
                 break;
             }
 
-            if numbered_section_inline.is_match(trimmed) {
-                break;
-            }
-
-            if is_uppercase_section_title(trimmed) {
-                break;
-            }
-
-            intro_lines.push(trimmed.to_string());
-
-            if trimmed.ends_with('.') && i + 1 < lines.len() && lines[i + 1].trim().is_empty() {
-                i += 1;
-                break;
-            }
+            intro_lines.push(line.to_string());
         }
 
         i += 1;
     }
 
-    for line in lines.iter().take(i) {
-        char_offset += line.len() + 1;
-    }
-
-    (
-        intro_lines.join(" ").replace("  ", " ").trim().to_string(),
-        char_offset,
-    )
+    let char_offset = lines.iter().take(i).map(|l| l.len() + 1).sum();
+    (intro_lines.join(" ").replace("  ", " ").trim().to_string(), char_offset)
 }
+
+
 
 /// Extrait le corps de l'article.
 /// Critères utilisés pour détecter le corps (<corps>) :
@@ -335,28 +315,6 @@ fn extract_body(lines: &[String], intro_char_end: usize) -> (String, usize) {
         r"(?i)^\s*(\d+\.?|[ivxlc]+\.?)?\s*(discussion|experiments|conclusion|conclusions|concluding remarks|future work|acknowledg(?:ment|ement)|references|bibliography)(\s+.*)?"
     ).unwrap();
 
-    fn normalize_line(text: &str) -> String {
-        text
-            .chars()
-            .filter(|c| !c.is_control()) // enlève \x0c, \r, etc.
-            .fold((String::new(), false), |(mut acc, mut prev_letter), c| {
-                if c.is_whitespace() {
-                    if prev_letter {
-                        prev_letter = false;
-                    }
-                } else {
-                    if c.is_alphabetic() {
-                        prev_letter = true;
-                    } else {
-                        prev_letter = false;
-                    }
-                    acc.push(c);
-                }
-                (acc, prev_letter)
-            })
-            .0
-    }
-
     let mut char_count = 0;
     let mut start_index = None;
     let mut end_index = lines.len();
@@ -369,8 +327,7 @@ fn extract_body(lines: &[String], intro_char_end: usize) -> (String, usize) {
         }
 
         if let Some(_) = start_index {
-            let cleaned = normalize_line(line);
-            if end_section_regex.is_match(&cleaned) {
+            if end_section_regex.is_match(line) {
                 end_index = i;
                 break;
             }
@@ -379,10 +336,11 @@ fn extract_body(lines: &[String], intro_char_end: usize) -> (String, usize) {
 
     let body_lines = &lines[start_index.unwrap_or(0)..end_index];
     let body_text = body_lines.join("\n");
-    let body_char_end = lines.iter().take(end_index-2).map(|l| l.len()).sum();
+    let body_char_end = lines.iter().take(end_index).map(|l| l.len() + 1).sum();
 
     (body_text.trim().to_string(), body_char_end)
 }
+
 
 /// Extrait la conclusion de l'article.
 /// Critères utilisés pour détecter une conclusion (<conclusion>) :
@@ -572,7 +530,7 @@ fn extract_bibliography(lines: &[String], _body_char_end: usize) -> String {
             .to_string();
 
         if start_regex.is_match(&normalized) {
-            start_index = Some(i + 1); // commence après le titre
+            start_index = Some(i + 1);
             break;
         }
     }
