@@ -98,7 +98,12 @@ function verifyConclusion(generated, expected) {
  * Si il n'y en a pas, il faut que la fonction le prenne en compte et verifie que "Aucune discussion trouvée." est bien écrit
  */
 function verifyDiscussion(generated, expected) {
-    return true
+    const genTrim = generated.trim();
+    const expTrim = expected.trim();
+    if (!expTrim) {
+        return genTrim === "Aucune discussion trouvée.";
+    }
+    return compareWithMargin(generated, expected, 2);
 }
 
 /**
@@ -106,7 +111,7 @@ function verifyDiscussion(generated, expected) {
  * WARN : si il y a (max) deux ligne en plus que celles attendus, ou deux lignes oubliées, que ce soit au début ou a la fin, le test doit réussir (marge d'erreur)
  */
 function verifyBibliography(generated, expected) {
-    return true
+    return compareWithMargin(generated, expected, 2);
 }
 
 function wrapCDataInTags(xml, tags) {
