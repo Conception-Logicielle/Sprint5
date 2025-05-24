@@ -168,11 +168,8 @@ function computeAccuracy() {
             console.log(`\nSections correctes : ${total_correct}`);
             console.log(`Sections trouvées   : ${total_sections_trouvees}`);
             console.log(`Précision            : ${(accuracy * 100).toFixed(2)} %`);
-            // Test manuel
-console.log(verifyBody("ligne1\nligne2\nligne3", "ligne1\nligne2\nligne3")); // true
-console.log(verifyBody("ligne0\nligne1\nligne2\nligne3", "ligne1\nligne2\nligne3")); // true (1 ligne en plus au début)
-console.log(verifyBody("ligne1\nligne2", "ligne1\nligne2\nligne3")); // true (1 ligne en moins à la fin)
-console.log(verifyBody("ligne1\nligne2\nligne3\nligne4\nligne5", "ligne1\nligne2\nligne3")); // false (>2 lignes d'écart)
+           
+
         });
     });
 }
