@@ -74,8 +74,8 @@ function verifyIntroduction(generated, expected) {
  * @description Retourne true si le body est le meme que celui attendu
  * WARN : si il y a (max) deux ligne en plus que celles attendus, ou deux lignes oubliées, que ce soit au début ou a la fin, le test doit réussir (marge d'erreur)
  */
-function verifyBody(generated, expected) {
-    return compareWithMargin(generated, expected, 2);
+function verifyBody(genere, attendu) {
+    return lignesSontSimilaires(genere, attendu);
 }
 
 /**
@@ -83,13 +83,8 @@ function verifyBody(generated, expected) {
  * WARN : si il y a (max) deux ligne en plus que celles attendus, ou deux lignes oubliées, que ce soit au début ou a la fin, le test doit réussir (marge d'erreur)
  * Si il n'y en a pas, il faut que la fonction le prenne en compte et verifie que "Aucune conclusion trouvée." est bien écrit
  */
-function verifyConclusion(generated, expected) {
-    const genTrim = generated.trim();
-    const expTrim = expected.trim();
-    if (!expTrim) {
-        return genTrim === "Aucune conclusion trouvée.";
-    }
-    return compareWithMargin(generated, expected, 2);
+function verifyConclusion(genere, attendu) {
+    return lignesSontSimilaires(genere, attendu, "Aucune conclusion trouvée.");
 }
 
 /**
@@ -97,21 +92,16 @@ function verifyConclusion(generated, expected) {
  * WARN : si il y a (max) deux ligne en plus que celles attendus, ou deux lignes oubliées, que ce soit au début ou a la fin, le test doit réussir (marge d'erreur)
  * Si il n'y en a pas, il faut que la fonction le prenne en compte et verifie que "Aucune discussion trouvée." est bien écrit
  */
-function verifyDiscussion(generated, expected) {
-    const genTrim = generated.trim();
-    const expTrim = expected.trim();
-    if (!expTrim) {
-        return genTrim === "Aucune discussion trouvée.";
-    }
-    return compareWithMargin(generated, expected, 2);
+function verifyDiscussion(genere, attendu) {
+    return lignesSontSimilaires(genere, attendu, "Aucune discussion trouvée.");
 }
 
 /**
  * @description Retourne true si la bibliographie est la meme que celle attendue
  * WARN : si il y a (max) deux ligne en plus que celles attendus, ou deux lignes oubliées, que ce soit au début ou a la fin, le test doit réussir (marge d'erreur)
  */
-function verifyBibliography(generated, expected) {
-    return compareWithMargin(generated, expected, 2);
+function verifyBibliography(genere, attendu) {
+    return lignesSontSimilaires(genere, attendu);
 }
 
 function wrapCDataInTags(xml, tags) {
@@ -208,8 +198,51 @@ function computeAccuracy() {
             console.log(`\nSections correctes : ${total_correct}`);
             console.log(`Sections trouvées   : ${total_sections_trouvees}`);
             console.log(`Précision            : ${(accuracy * 100).toFixed(2)} %`);
+           
+
         });
     });
+}
+
+/**
+ * Compare deux textes ligne par ligne avec une tolérance de 2 lignes en plus ou en moins
+ * (au début ou à la fin). Si le texte attendu est vide et qu'un messageManquant est fourni,
+ * vérifie que le texte généré contient exactement ce message. Retourne true si les textes
+ * sont considérés comme similaires selon ces critères.
+ * @param {string} genere - Le texte généré à comparer
+ * @param {string} attendu - Le texte attendu
+ * @param {string|null} messageManquant - Message à attendre si le texte attendu est vide
+ * @returns {boolean}
+ */
+function lignesSontSimilaires(genere, attendu, messageManquant = null) {
+    // Découper les textes en lignes, retirer les espaces inutiles
+    const lignesGen = genere.trim().split(/\r?\n/).map(ligne => ligne.trim()).filter(ligne => ligne.length > 0);
+    const lignesAtt = attendu.trim().split(/\r?\n/).map(ligne => ligne.trim()).filter(ligne => ligne.length > 0);
+
+    // Cas où aucune ligne attendue, on vérifie le message spécial
+    if (lignesAtt.length === 0 && messageManquant) {
+        return lignesGen.length === 1 && lignesGen[0] === messageManquant;
+    }
+
+    // Si la différence de nombre de lignes est trop grande, ce n'est pas valide
+    if (Math.abs(lignesGen.length - lignesAtt.length) > 2) return false;
+
+    // On teste tous les décalages possibles (marge d'erreur de 2 lignes)
+    for (let decalage = -2; decalage <= 2; decalage++) {
+        let debutGen = Math.max(0, decalage);
+        let debutAtt = Math.max(0, -decalage);
+        let longueur = Math.min(lignesGen.length - debutGen, lignesAtt.length - debutAtt);
+        if (longueur < lignesAtt.length - 2) continue;
+        let ok = true;
+        for (let i = 0; i < longueur; i++) {
+            if (lignesGen[debutGen + i] !== lignesAtt[debutAtt + i]) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) return true;
+    }
+    return false;
 }
 
 computeAccuracy();
